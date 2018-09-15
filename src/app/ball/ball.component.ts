@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, HostBinding, Output, EventEmitter, HostListener } from '@angular/core';
 import { BallColor, BallState, Ball } from './ball.model';
 
 @Component({
@@ -13,10 +13,11 @@ export class BallComponent implements OnInit {
 
   public BALL_STATE = BallState;
   public BALL_COLOR = BallColor;
+  public state: BallState;
 
   constructor() { }
 
-  @HostBinding('click')
+  @HostListener('click')
   onClick() {
     this.clicked.emit(this.data);
   }

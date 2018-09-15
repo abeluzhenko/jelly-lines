@@ -6,6 +6,14 @@ export enum BallColor {
   purple = 'purple'
 }
 
+export const BallColors = [
+  'red',
+  'green',
+  'blue',
+  'yellow',
+  'purple'
+];
+
 export enum BallState {
   idle = 0,
   active = 1,
@@ -13,7 +21,11 @@ export enum BallState {
   disabled = 3
 }
 
-export interface Ball {
+export class Ball {
   state: BallState;
   color: BallColor;
+  constructor(color: BallColor = BallColor.red, state: BallState = BallState.idle) {
+    this.state = state;
+    this.color = color;
+  }
 }

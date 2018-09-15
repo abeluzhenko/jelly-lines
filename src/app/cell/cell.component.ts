@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Ball } from '../ball/ball.model';
+import { Cell } from './cell.model';
 
 @Component({
   selector: 'app-cell',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CellComponent implements OnInit {
 
+  @Input() data: Cell;
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  ballClicked(ball: Ball) {
+    console.log(ball);
+  }
 }

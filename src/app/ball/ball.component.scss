@@ -1,5 +1,100 @@
+$balls-colors: (
+  red: #FF1155,
+  green: #66B8BA,
+  blue: #176475,
+  yellow: #F5FF9B,
+  purple: #E1EFE8
+);
+
 :host {
+  position: relative;
   width: 100%;
   height: 100%;
+  display: block;
+}
+
+.ball {
+  width: 80%;
+  height: 80%;
+  top: 50%;
+  left: 50%;
   border-radius: 50%;
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 0 16px 2px var(--color-dark);
+  overflow: hidden;
+
+  &::before, &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+
+  &::before {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    background: var(--color-light);
+    box-shadow: 0 0 10px 6px var(--color-light);
+    opacity: 0;
+    transition: 320ms;
+  }
+
+  &::after {
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    background: var(--color-light);
+    box-shadow: 0 0 10px 6px var(--color-light);
+    transform: translate(-75%, -75%);
+    z-index: 2;
+  }
+
+  &:hover {
+    &::before {
+      opacity: 0.5;
+    }
+  }
+
+  &.animated {
+    animation: jump 700ms infinite ease;
+  }
+
+  @each $name, $value in $balls-colors {
+    &.color--#{$name} {
+      background: $value;
+      --color-dark: #{ rgba(darken(adjust-hue($value, -10%), 50%), 0.6) };
+      --color-light: #{ rgba(lighten(adjust-hue($value, 10%), 50%), 0.3) };
+    }
+  }
+}
+
+.shadow {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 2px 6px 1px 0 rgba(#000, 0.2);
+}
+
+@keyframes jump {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
