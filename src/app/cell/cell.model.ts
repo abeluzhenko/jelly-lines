@@ -8,7 +8,7 @@ export enum CellState {
 export class Cell {
   state: CellState;
   ball: Ball;
-  constructor(ball: Ball, state: CellState = CellState.empty) {
+  constructor(ball: Ball = null, state: CellState = CellState.empty) {
     this.state = state;
     this.ball = ball;
   }

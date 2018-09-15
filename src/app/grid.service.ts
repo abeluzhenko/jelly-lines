@@ -12,6 +12,7 @@ export class GridService {
 
   constructor() {
     this._data = new Grid();
+    this._data.randomize();
   }
 
   public get data(): Grid {

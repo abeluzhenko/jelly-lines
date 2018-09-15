@@ -1,3 +1,4 @@
-<app-ball 
+<app-ball
+  *ngIf="data?.ball"
   [data]="data?.ball" 
   (clicked)="ballClick($event)"></app-ball>

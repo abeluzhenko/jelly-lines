@@ -15,6 +15,17 @@ export class Grid {
     for (let i = 0; i < size; i++) {
       result.push([]);
       for (let j = 0; j < size; j++) {
+        result[i].push(new Cell());
+      }
+    }
+    return result;
+  }
+
+  private generateRandomCells(size: number): Cell[][] {
+    const result = [];
+    for (let i = 0; i < size; i++) {
+      result.push([]);
+      for (let j = 0; j < size; j++) {
         result[i].push(new Cell(new Ball(
           BallColors[Math.floor(BallColors.length * Math.random())] as BallColor
         )));
@@ -32,5 +43,9 @@ export class Grid {
 
   public get cells(): Cell[][] {
     return this._cells;
+  }
+
+  public randomize() {
+    this._cells = this.generateRandomCells(this._size);
   }
 }

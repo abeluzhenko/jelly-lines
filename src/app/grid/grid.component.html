@@ -1,3 +1,7 @@
 <ng-container *ngFor="let row of grid.cells">
-  <app-cell *ngFor="let cell of row" [data]="cell"></app-cell>
+  <app-cell 
+    *ngFor="let cell of row"
+    [data]="cell" 
+    (clicked)="cellClicked($event)"
+    (ballClicked)="ballClicked($event)"></app-cell>
 </ng-container>

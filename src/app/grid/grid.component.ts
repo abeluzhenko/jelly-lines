@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Grid } from './grid.model';
 import { GridService } from '../grid.service';
+import { Cell } from '../cell/cell.model';
+import { Ball } from '../ball/ball.model';
 
 @Component({
   selector: 'app-grid',
@@ -19,6 +21,12 @@ export class GridComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  cellClicked(cell: Cell) {
+  }
+
+  ballClicked(ball: Ball) {
   }
 
 }
