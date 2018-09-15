@@ -6,9 +6,14 @@ export enum CellState {
 }
 
 export class Cell {
+  id: number;
   state: CellState;
   ball: Ball;
-  constructor(ball: Ball = null, state: CellState = CellState.empty) {
+  constructor(
+    id: number,
+    ball: Ball = null,
+    state: CellState = CellState.empty
+  ) {
     this.state = state;
     this.ball = ball;
   }

@@ -16,7 +16,7 @@ export class GridComponent implements OnInit {
   constructor(
     private _gridService: GridService
   ) {
-    this.cells = this._gridService.data;
+    this.cells = this._gridService.cells;
   }
 
   ngOnInit() {

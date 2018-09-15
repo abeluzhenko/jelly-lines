@@ -15,7 +15,7 @@ describe('GridService', () => {
   }));
 
   it('should properly set current ball', inject([GridService], (service: GridService) => {
-    const cells = service.data;
+    const cells = service.cells;
     for (let i = 0; i < cells.length; i++) {
       for (let j = 0; j < cells[i].length; j++) {
         const currentBall = cells[i][j].ball;
@@ -27,7 +27,7 @@ describe('GridService', () => {
   }));
 
   it('should properly add new items to the grid', inject([GridService], (service: GridService) => {
-    const snapshot = service.data;
-    // service.next();
+    const cells = service.cells;
+    service.next();
   }));
 });

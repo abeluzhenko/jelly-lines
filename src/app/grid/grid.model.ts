@@ -15,7 +15,7 @@ export class Grid {
     for (let i = 0; i < size; i++) {
       result.push([]);
       for (let j = 0; j < size; j++) {
-        result[i].push(new Cell());
+        result[i].push(new Cell(i * (size - 1) + j));
       }
     }
     return result;
@@ -26,9 +26,13 @@ export class Grid {
     for (let i = 0; i < size; i++) {
       result.push([]);
       for (let j = 0; j < size; j++) {
-        result[i].push(new Cell(new Ball(
-          BallColors[Math.floor(BallColors.length * Math.random())] as BallColor
-        )));
+        result[i].push(new Cell(
+          i * (size - 1) + j,
+          new Ball(
+            i * (size - 1) + j,
+            BallColors[Math.floor(BallColors.length * Math.random())] as BallColor
+          )
+        ));
       }
     }
     return result;
@@ -40,11 +44,13 @@ export class Grid {
       result.push([]);
       for (let j = 0; j < this._cells[i].length; j++) {
         const ball = new Ball(
+          this._cells[i][j].ball.id,
           this._cells[i][j].ball.color,
           this._cells[i][j].ball.state
         );
         result[i].push(
           new Cell(
+            this._cells[i][j].id,
             ball,
             this._cells[i][j].state
           )

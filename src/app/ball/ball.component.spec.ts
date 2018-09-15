@@ -27,7 +27,7 @@ describe('BallComponent', () => {
 
   it('should render proper color', () => {
     for (const color of BallColors) {
-      component.data = new Ball(color as BallColor);
+      component.data = new Ball(0, color as BallColor);
       fixture.detectChanges();
       const ballEl = fixture.debugElement.query(By.css('.ball'));
       expect(ballEl.classes['color--' + color]).toBeTruthy();
@@ -35,7 +35,7 @@ describe('BallComponent', () => {
   });
 
   it('should render proper class', () => {
-    component.data = new Ball();
+    component.data = new Ball(0);
     fixture.detectChanges();
     const ballEl = fixture.debugElement.query(By.css('.ball'));
     expect(ballEl.classes['active']).toBeFalsy();

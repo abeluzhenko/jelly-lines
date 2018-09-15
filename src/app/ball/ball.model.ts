@@ -22,9 +22,14 @@ export enum BallState {
 }
 
 export class Ball {
+  id: number;
   state: BallState;
   color: BallColor;
-  constructor(color: BallColor = BallColor.red, state: BallState = BallState.idle) {
+  constructor(
+    id: number,
+    color: BallColor = BallColor.red,
+    state: BallState = BallState.idle
+  ) {
     this.state = state;
     this.color = color;
   }

@@ -9,15 +9,18 @@ import { Cell } from './cell/cell.model';
 export class GridService {
 
   private _data: Grid;
+  private _history: Cell[][][] = [];
   private _currentBall: Ball;
+  private _cells: Cell[][];
 
   constructor() {
     this._data = new Grid();
     this._data.randomize();
+    this._cells = this._data.snapshot;
   }
 
-  public get data(): Cell[][] {
-    return this._data.snapshot;
+  public get cells(): Cell[][] {
+    return this._cells;
   }
 
   public setCurrentBall(ball: Ball): Ball {
@@ -30,5 +33,9 @@ export class GridService {
     this._currentBall = ball;
     this._currentBall.state = BallState.active;
     return this._currentBall;
+  }
+
+  public next() {
+    this._history.push(this._cells);
   }
 }

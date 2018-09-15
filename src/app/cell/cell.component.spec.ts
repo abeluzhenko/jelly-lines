@@ -28,7 +28,7 @@ describe('CellComponent', () => {
   });
 
   it('should promote an event when ball is clicked', done => {
-    component.data = new Cell(new Ball());
+    component.data = new Cell(0, new Ball(0));
     fixture.detectChanges();
     component.ballClicked.subscribe(ball => {
       expect(ball).toBe(component.data.ball);
@@ -40,7 +40,7 @@ describe('CellComponent', () => {
   });
 
   it('should emit an event when clicked', done => {
-    component.data = new Cell(new Ball());
+    component.data = new Cell(0, new Ball(0));
     component.clicked.subscribe(cell => {
       expect(cell).toBe(component.data);
       done();
