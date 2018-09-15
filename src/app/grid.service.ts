@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Grid } from './grid/grid.model';
+import { Ball, BallState } from './ball/ball.model';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import { Grid } from './grid/grid.model';
 export class GridService {
 
   private _data: Grid;
+  private _currentBall: Ball;
 
   constructor() {
     this._data = new Grid();
@@ -14,5 +16,17 @@ export class GridService {
 
   public get data(): Grid {
     return this._data;
+  }
+
+  public setCurrentBall(ball: Ball): Ball {
+    if (this._currentBall === ball) {
+      return null;
+    }
+    if (this._currentBall) {
+      this._currentBall.state = BallState.idle;
+    }
+    this._currentBall = ball;
+    this._currentBall.state = BallState.active;
+    return this._currentBall;
   }
 }

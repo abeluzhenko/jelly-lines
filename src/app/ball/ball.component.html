@@ -1,8 +1,9 @@
 <div class="shadow"></div>
 <div class="ball" [ngClass]="{
-  'color--red': data.color === BALL_COLOR.red,
-  'color--green': data.color === BALL_COLOR.green,
-  'color--yellow': data.color === BALL_COLOR.yellow,
-  'color--blue': data.color === BALL_COLOR.blue,
-  'color--purple': data.color === BALL_COLOR.purple
+  'color--red': data?.color === BALL_COLOR.red,
+  'color--green': data?.color === BALL_COLOR.green,
+  'color--yellow': data?.color === BALL_COLOR.yellow,
+  'color--blue': data?.color === BALL_COLOR.blue,
+  'color--purple': data?.color === BALL_COLOR.purple,
+  'active': data?.state === BALL_STATE.active
 }"></div>

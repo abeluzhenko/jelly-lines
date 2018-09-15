@@ -13,7 +13,6 @@ export class BallComponent implements OnInit {
 
   public BALL_STATE = BallState;
   public BALL_COLOR = BallColor;
-  public state: BallState;
 
   constructor() { }
 

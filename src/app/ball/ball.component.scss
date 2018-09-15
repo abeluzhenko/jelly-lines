@@ -62,7 +62,7 @@ $balls-colors: (
     }
   }
 
-  &.animated {
+  &.active {
     animation: jump 700ms infinite ease;
   }
 

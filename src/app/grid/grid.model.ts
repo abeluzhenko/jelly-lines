@@ -1,9 +1,10 @@
-import { Cell } from '../cell/cell.model';
-import { Ball, BallColors, BallColor } from '../ball/ball.model';
+import { Cell, CellState } from '../cell/cell.model';
+import { Ball, BallColors, BallColor, BallState } from '../ball/ball.model';
 
 export class Grid {
   private _cells: Cell[][];
   private _size: number;
+  private _currentBall: Ball;
   constructor(size: number = 9) {
     this._size = size;
     this._cells = this.generateCells(size);
