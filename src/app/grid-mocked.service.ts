@@ -8,4 +8,8 @@ export class GridServiceMocked extends GridService {
   constructor() {
     super();
   }
+
+  public setCurrentBall(ball: Ball): Ball {
+    return super.setCurrentBall(ball);
+  }
 }

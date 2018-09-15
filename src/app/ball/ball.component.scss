@@ -63,7 +63,7 @@ $balls-colors: (
   }
 
   &.active {
-    animation: jump 700ms infinite ease;
+    animation: jump 600ms infinite ease;
   }
 
   @each $name, $value in $balls-colors {
@@ -92,7 +92,7 @@ $balls-colors: (
     transform: translate(-50%, -50%) scale(1);
   }
   70% {
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.2);
   }
   100% {
     transform: translate(-50%, -50%) scale(1);

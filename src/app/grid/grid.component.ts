@@ -27,6 +27,7 @@ export class GridComponent implements OnInit {
   }
 
   ballClicked(ball: Ball) {
+    this._gridService.setCurrentBall(ball);
   }
 
 }
