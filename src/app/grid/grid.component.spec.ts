@@ -40,6 +40,9 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch ball click', () => {
+    component.randomize();
+    fixture.detectChanges();
+
     const cellClickedSpy = spyOn(component, 'cellClicked').and.callThrough();
     const buttonClickedSpy = spyOn(component, 'ballClicked').and.callThrough();
     const setCurrentBallSpy = spyOn(gridServiceMockup, 'setCurrentBall').and.callThrough();
@@ -49,10 +52,12 @@ describe('GridComponent', () => {
     for (let i = 0; i < ballEls.length; i++) {
       ballEls[i].nativeElement.click();
       fixture.detectChanges();
+      cellEls[i].nativeElement.click();
+      fixture.detectChanges();
     }
     expect(setCurrentBallSpy).toHaveBeenCalledTimes(ballEls.length);
     expect(buttonClickedSpy).toHaveBeenCalledTimes(ballEls.length);
 
-    expect(cellClickedSpy).toHaveBeenCalledTimes(cellEls.length);
+    expect(cellClickedSpy).toHaveBeenCalledTimes(cellEls.length * 2);
   });
 });

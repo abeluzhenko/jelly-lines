@@ -15,6 +15,7 @@ describe('GridService', () => {
   }));
 
   it('should properly set current ball', inject([GridService], (service: GridService) => {
+    service.randomize();
     const cells = service.cells;
     for (let i = 0; i < cells.length; i++) {
       for (let j = 0; j < cells[i].length; j++) {
@@ -26,8 +27,15 @@ describe('GridService', () => {
     }
   }));
 
-  it('should properly add new items to the grid', inject([GridService], (service: GridService) => {
-    const cells = service.cells;
+  it('should properly add new items to the grid on new step', inject([GridService], (service: GridService) => {
     service.next();
+    const cellsFlat =
+      service.cells.reduce((result, row) => result.concat(row), []);
+    expect(cellsFlat).toBeTruthy();
+    expect(cellsFlat.length).toBe(81);
+    const ballsFlat = cellsFlat
+      .filter(cell => cell.ball)
+      .map(cell => cell.ball);
+    expect(ballsFlat.length).toBe(0);
   }));
 });

@@ -15,7 +15,6 @@ export class GridService {
 
   constructor() {
     this._data = new Grid();
-    this._data.randomize();
     this._cells = this._data.snapshot;
   }
 
@@ -37,5 +36,10 @@ export class GridService {
 
   public next() {
     this._history.push(this._cells);
+  }
+
+  public randomize() {
+    this._data.randomize();
+    this._cells = this._data.snapshot;
   }
 }

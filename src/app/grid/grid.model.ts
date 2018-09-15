@@ -4,7 +4,6 @@ import { Ball, BallColors, BallColor, BallState } from '../ball/ball.model';
 export class Grid {
   private _cells: Cell[][];
   private _size: number;
-  private _currentBall: Ball;
   constructor(size: number = 9) {
     this._size = size;
     this._cells = this.generateCells(size);
@@ -43,11 +42,14 @@ export class Grid {
     for (let i = 0; i < this._cells.length; i++) {
       result.push([]);
       for (let j = 0; j < this._cells[i].length; j++) {
-        const ball = new Ball(
-          this._cells[i][j].ball.id,
-          this._cells[i][j].ball.color,
-          this._cells[i][j].ball.state
-        );
+        let ball = null;
+        if (this._cells[i][j].ball) {
+          ball = new Ball(
+            this._cells[i][j].ball.id,
+            this._cells[i][j].ball.color,
+            this._cells[i][j].ball.state
+          );
+        }
         result[i].push(
           new Cell(
             this._cells[i][j].id,
