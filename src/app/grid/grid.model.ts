@@ -34,15 +34,24 @@ export class Grid {
     return result;
   }
 
-  public getCell(col: number, row: number): Cell {
-    if (Math.max(col, row, -1) === -1 || Math.min(col, row, this._size) === this._size) {
-      throw new Error('Column or row index is within array\'s bounds');
+  public get snapshot(): Cell[][] {
+    const result = [];
+    for (let i = 0; i < this._cells.length; i++) {
+      result.push([]);
+      for (let j = 0; j < this._cells[i].length; j++) {
+        const ball = new Ball(
+          this._cells[i][j].ball.color,
+          this._cells[i][j].ball.state
+        );
+        result[i].push(
+          new Cell(
+            ball,
+            this._cells[i][j].state
+          )
+        );
+      }
     }
-    return this._cells[col][row];
-  }
-
-  public get cells(): Cell[][] {
-    return this._cells;
+    return result;
   }
 
   public randomize() {

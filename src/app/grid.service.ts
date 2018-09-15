@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Grid } from './grid/grid.model';
 import { Ball, BallState } from './ball/ball.model';
+import { Cell } from './cell/cell.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class GridService {
     this._data.randomize();
   }
 
-  public get data(): Grid {
-    return this._data;
+  public get data(): Cell[][] {
+    return this._data.snapshot;
   }
 
   public setCurrentBall(ball: Ball): Ball {

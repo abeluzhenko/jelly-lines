@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Grid } from './grid.model';
 import { GridService } from '../grid.service';
 import { Cell } from '../cell/cell.model';
 import { Ball } from '../ball/ball.model';
@@ -12,12 +11,12 @@ import { Ball } from '../ball/ball.model';
 export class GridComponent implements OnInit {
 
   public GRID_SIZE = 5;
-  public grid: Grid;
+  public cells: Cell[][];
 
   constructor(
     private _gridService: GridService
   ) {
-    this.grid = this._gridService.data;
+    this.cells = this._gridService.data;
   }
 
   ngOnInit() {
