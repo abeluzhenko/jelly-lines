@@ -24,14 +24,15 @@ export class GridService {
   }
 
   public set currentBall(ball: Ball) {
-    if (this._currentBall === ball) {
-      return;
-    }
     if (this._currentBall) {
       this._currentBall.state = BallState.idle;
     }
-    this._currentBall = ball;
-    this._currentBall.state = BallState.active;
+    if (this._currentBall !== ball) {
+      this._currentBall = ball;
+      this._currentBall.state = BallState.active;
+    } else {
+      this._currentBall = null;
+    }
     this._currentCell = null;
   }
 
