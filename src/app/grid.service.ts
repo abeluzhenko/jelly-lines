@@ -2,6 +2,23 @@ import { Injectable } from '@angular/core';
 import { Grid } from './grid/grid.model';
 import { Ball, BallState, BallColors, BallColor } from './ball/ball.model';
 import { Cell } from './cell/cell.model';
+import { Subject, Observable } from 'rxjs';
+
+export enum MoveAnimationState {
+  start = 'start',
+  end = 'end'
+}
+
+export interface MoveAnimationData {
+  state: MoveAnimationState;
+  ball: Ball;
+  cell: Cell;
+}
+
+export interface Path {
+  ball: Ball;
+  cell: Cell;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +30,19 @@ export class GridService {
   private _cells: Cell[][];
   private _currentBall: Ball;
   private _currentCell: Cell;
+  private _moveAnimationSubject: Subject<MoveAnimationData>;
+
+  public moveAnimation: Observable<MoveAnimationData>;
 
   constructor() {
     this._data = new Grid();
     this._cells = this._data.snapshot;
+    this._moveAnimationSubject = new Subject<MoveAnimationData>();
+    this.moveAnimation = this._moveAnimationSubject.asObservable();
+  }
+
+  private getPath(ball: Ball, cell: Cell): Path {
+    return { ball, cell };
   }
 
   public get cells(): Cell[][] {
@@ -42,6 +68,16 @@ export class GridService {
 
   public set currentCell(cell: Cell) {
     this._currentCell = cell;
+    if (this._currentCell && this._currentBall) {
+      const path = this.getPath(this._currentBall, this.currentCell);
+      if (path) {
+        this._moveAnimationSubject.next({
+          ball: this.currentBall,
+          cell: this.currentCell,
+          state: MoveAnimationState.start
+        });
+      }
+    }
   }
 
   public get currentCell(): Cell {

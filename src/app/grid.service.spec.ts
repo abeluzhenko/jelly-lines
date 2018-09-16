@@ -50,17 +50,25 @@ describe('GridService', () => {
     expect(cellsFlat.length).toBe(81);
   }));
 
-  it('should properly move the current ball', inject([GridService], (service: GridService) => {
+  fit('should properly move the current ball', done => inject([GridService], (service: GridService) => {
     service.next();
-    const fullCellsFlat = service.cells
-      .reduce((result, row) => result.concat(row), [])
-      .filter(c => c.ball);
-    expect(fullCellsFlat.length);
+    const cellsFlat = service.cells
+      .reduce((result, row) => result.concat(row), []);
+    const fullCellsFlat = cellsFlat.filter(c => c.ball);
+    const emptyCellsFlat = cellsFlat.filter(c => !c.ball);
+    expect(fullCellsFlat.length).toBeTruthy();
+    expect(emptyCellsFlat.length).toBeTruthy();
     const cell = fullCellsFlat.pop();
     expect(cell).toBeTruthy();
     expect(cell.ball).toBeTruthy();
-
     service.currentBall = cell.ball;
-    service.currentCell = cell;
-  }));
+    const emptyCell = emptyCellsFlat.pop();
+    service.moveAnimation.subscribe(data => {
+      expect(data.state).toBe('start');
+      expect(data.ball).toBe(cell.ball);
+      expect(data.cell).toBe(emptyCell);
+      done();
+    });
+    service.currentCell = emptyCell;
+  })());
 });
