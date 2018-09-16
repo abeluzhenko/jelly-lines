@@ -5,6 +5,7 @@ import { BallComponent } from '../ball/ball.component';
 import { Cell } from './cell.model';
 import { Ball } from '../ball/ball.model';
 import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CellComponent', () => {
   let component: CellComponent;
@@ -12,6 +13,9 @@ describe('CellComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule
+      ],
       declarations: [ CellComponent, BallComponent ]
     })
     .compileComponents();

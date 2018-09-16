@@ -6,6 +6,7 @@ import { BallComponent } from '../ball/ball.component';
 import { By } from '@angular/platform-browser';
 import { GridServiceMocked } from '../grid-mocked.service';
 import { GridService } from '../grid.service';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -14,6 +15,9 @@ describe('GridComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule
+      ],
       declarations: [
         GridComponent,
         CellComponent,
@@ -45,7 +49,6 @@ describe('GridComponent', () => {
 
     const cellClickedSpy = spyOn(component, 'cellClicked').and.callThrough();
     const buttonClickedSpy = spyOn(component, 'ballClicked').and.callThrough();
-    const setCurrentBallSpy = spyOn(gridServiceMockup, 'setCurrentBall').and.callThrough();
 
     const ballEls = fixture.debugElement.queryAll(By.css('.ball'));
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
@@ -55,9 +58,7 @@ describe('GridComponent', () => {
       cellEls[i].nativeElement.click();
       fixture.detectChanges();
     }
-    expect(setCurrentBallSpy).toHaveBeenCalledTimes(ballEls.length);
     expect(buttonClickedSpy).toHaveBeenCalledTimes(ballEls.length);
-
-    expect(cellClickedSpy).toHaveBeenCalledTimes(cellEls.length * 2);
+    expect(cellClickedSpy).toHaveBeenCalledTimes(cellEls.length);
   });
 });

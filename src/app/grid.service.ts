@@ -10,8 +10,9 @@ export class GridService {
 
   private _data: Grid;
   private _history: Cell[][][] = [];
-  private _currentBall: Ball;
   private _cells: Cell[][];
+  private _currentBall: Ball;
+  private _currentCell: Cell;
 
   constructor() {
     this._data = new Grid();
@@ -22,16 +23,28 @@ export class GridService {
     return this._cells;
   }
 
-  public setCurrentBall(ball: Ball): Ball {
+  public set currentBall(ball: Ball) {
     if (this._currentBall === ball) {
-      return null;
+      return;
     }
     if (this._currentBall) {
       this._currentBall.state = BallState.idle;
     }
     this._currentBall = ball;
     this._currentBall.state = BallState.active;
+    this._currentCell = null;
+  }
+
+  public get currentBall(): Ball {
     return this._currentBall;
+  }
+
+  public set currentCell(cell: Cell) {
+    this._currentCell = cell;
+  }
+
+  public get currentCell(): Cell {
+    return this._currentCell;
   }
 
   public next(): boolean {

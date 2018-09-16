@@ -32,12 +32,7 @@ export class GridComponent implements OnInit {
   }
 
   ballClicked(ball: Ball) {
-    this._gridService.setCurrentBall(ball);
-  }
-
-  @HostListener('click')
-  onClick() {
-    this._gridService.next();
+    this._gridService.currentBall = ball;
   }
 
 }

@@ -16,9 +16,12 @@ export class BallComponent implements OnInit {
 
   constructor() { }
 
-  @HostListener('click')
-  onClick() {
+  @HostListener('click', [ '$event' ])
+  onClick(event: Event) {
     this.clicked.emit(this.data);
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
   }
 
   ngOnInit() {

@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BallComponent } from './ball.component';
 import { Ball, BallColors, BallColor, BallState } from './ball.model';
 import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('BallComponent', () => {
   let component: BallComponent;
@@ -10,6 +11,9 @@ describe('BallComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule
+      ],
       declarations: [ BallComponent ]
     })
     .compileComponents();
@@ -38,10 +42,13 @@ describe('BallComponent', () => {
     component.data = new Ball(0);
     fixture.detectChanges();
     const ballEl = fixture.debugElement.query(By.css('.ball'));
+    const shadowEl = fixture.debugElement.query(By.css('.ball'));
     expect(ballEl.classes['active']).toBeFalsy();
+    expect(shadowEl.classes['active']).toBeFalsy();
     component.data.state = BallState.active;
     fixture.detectChanges();
     expect(ballEl.classes['active']).toBeTruthy();
+    expect(shadowEl.classes['active']).toBeTruthy();
   });
 
   it('should emit an event when clicked', done => {
