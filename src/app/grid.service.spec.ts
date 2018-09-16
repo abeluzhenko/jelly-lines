@@ -28,14 +28,20 @@ describe('GridService', () => {
   }));
 
   it('should properly add new items to the grid on new step', inject([GridService], (service: GridService) => {
-    service.next();
-    const cellsFlat =
-      service.cells.reduce((result, row) => result.concat(row), []);
-    expect(cellsFlat).toBeTruthy();
-    expect(cellsFlat.length).toBe(81);
-    const ballsFlat = cellsFlat
-      .filter(cell => cell.ball)
-      .map(cell => cell.ball);
-    expect(ballsFlat.length).toBe(0);
+    let next = service.next();
+    let i = 1;
+    while (next && i < 100) {
+      expect(next).toBeTruthy();
+      const cellsFlat =
+        service.cells.reduce((result, row) => result.concat(row), []);
+      expect(cellsFlat).toBeTruthy();
+      expect(cellsFlat.length).toBe(81);
+      const ballsFlat = cellsFlat
+        .filter(cell => cell.ball)
+        .map(cell => cell.ball);
+      expect(ballsFlat.length).toBe(3 * i);
+      next = service.next();
+      i++;
+    }
   }));
 });

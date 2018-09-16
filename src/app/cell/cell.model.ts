@@ -14,6 +14,7 @@ export class Cell {
     ball: Ball = null,
     state: CellState = CellState.empty
   ) {
+    this.id = id;
     this.state = state;
     this.ball = ball;
   }

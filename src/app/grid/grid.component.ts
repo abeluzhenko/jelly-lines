@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { GridService } from '../grid.service';
 import { Cell } from '../cell/cell.model';
 import { Ball } from '../ball/ball.model';
@@ -16,6 +16,7 @@ export class GridComponent implements OnInit {
   constructor(
     private _gridService: GridService
   ) {
+    this._gridService.next();
     this.cells = this._gridService.cells;
   }
 
@@ -32,6 +33,11 @@ export class GridComponent implements OnInit {
 
   ballClicked(ball: Ball) {
     this._gridService.setCurrentBall(ball);
+  }
+
+  @HostListener('click')
+  onClick() {
+    this._gridService.next();
   }
 
 }

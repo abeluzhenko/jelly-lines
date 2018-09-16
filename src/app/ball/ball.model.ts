@@ -30,6 +30,7 @@ export class Ball {
     color: BallColor = BallColor.red,
     state: BallState = BallState.idle
   ) {
+    this.id = id;
     this.state = state;
     this.color = color;
   }
