@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Ball } from '../ball/ball.model';
 import { Cell } from './cell.model';
+import { cellBallAnimation } from './cell.animations';
 
 @Component({
   selector: 'app-cell',
   templateUrl: './cell.component.html',
-  styleUrls: ['./cell.component.scss']
+  styleUrls: ['./cell.component.scss'],
+  animations: [ cellBallAnimation ]
 })
 export class CellComponent implements OnInit {
 

@@ -1,4 +1,5 @@
 <app-ball
   *ngIf="data?.ball"
+  [@cellBallAnimation]="'visible'"
   [data]="data?.ball" 
   (clicked)="ballClick($event)"></app-ball>
