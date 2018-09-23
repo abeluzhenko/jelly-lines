@@ -1,8 +1,9 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService } from './grid.service';
+import { GridService, DEFAULT_NEW_BALLS_COUNT } from './grid.service';
 import { BallState, BallColor } from './ball/ball.model';
 import { GridServiceMocked } from './grid-mocked.service';
+import { Cell } from './cell/cell.model';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -83,10 +84,59 @@ describe('GridService', () => {
     service.input.next({ cells, cell: cell2 });
   })());
 
-  it('should properly add new items to the grid on a new step', inject([GridService], (service: GridService) => {
-  }));
+  it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
+    const cells = service.getGrid(9);
+
+    let count = 0;
+    service.output.subscribe(data => {
+      expect(data).toBeDefined();
+      expect(data.length).toBe(cells.length);
+
+      // There should be n new balls on the grid
+      const fullCells = data.filter(c => c.ball !== undefined);
+      count += DEFAULT_NEW_BALLS_COUNT;
+      expect(fullCells.length).toBe(count);
+      if (fullCells.length === 81) {
+        done();
+      }
+    });
+
+    for (let i = 0; i < 81 / 3; i++) {
+      service.input.next({ cells });
+    }
+  })());
 
   it('should properly move the current ball', done => inject([GridService], (service: GridService) => {
-    done();
+    const cells = service.getGrid(10);
+    let step = 0;
+    let cell1: Cell;
+    let cell2: Cell;
+    service.output.subscribe(data => {
+      if (step === 0) {
+        cell1 = data
+          .filter(c => c.ball !== undefined)
+          .pop();
+        expect(cell1).toBeTruthy();
+        step++;
+        return service.input.next({ cells, cell: cell1 });
+      }
+      if (step === 1) {
+        expect(data[cell1.id].ball).toBeDefined();
+        expect(data[cell1.id].ball.state).toBe(BallState.active);
+        cell2 = data
+          .filter(c => c.ball === undefined)
+          .pop();
+        expect(cell2).toBeTruthy();
+        step++;
+        return service.input.next({ cells, cell: cell2 });
+      }
+      if (step === 2) {
+        expect(data[cell1.id].ball).toBeUndefined();
+        expect(data[cell2.id].ball).toBeDefined();
+        expect(data[cell2.id].ball.state).toBe(BallState.idle);
+        return done();
+      }
+    });
+    service.input.next({ cells });
   })());
 });
