@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BallComponent } from './ball.component';
-import { Ball, BallColors, BallColor, BallState } from './ball.model';
+import { BallColors, BallColor, BallState } from './ball.model';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -31,7 +31,7 @@ describe('BallComponent', () => {
 
   it('should render proper color', () => {
     for (const color of BallColors) {
-      component.data = new Ball(0, color as BallColor);
+      component.data = { id: 0, state: BallState.idle, color: color as BallColor };
       fixture.detectChanges();
       const ballEl = fixture.debugElement.query(By.css('.ball'));
       expect(ballEl.classes['color--' + color]).toBeTruthy();
@@ -39,7 +39,7 @@ describe('BallComponent', () => {
   });
 
   it('should render proper class', () => {
-    component.data = new Ball(0);
+    component.data = { id: 0, state: BallState.idle, color: BallColor.red };
     fixture.detectChanges();
     const ballEl = fixture.debugElement.query(By.css('.ball'));
     const shadowEl = fixture.debugElement.query(By.css('.ball'));

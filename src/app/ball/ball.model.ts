@@ -21,17 +21,8 @@ export enum BallState {
   disabled = 3
 }
 
-export class Ball {
+export interface Ball {
   id: number;
   state: BallState;
   color: BallColor;
-  constructor(
-    id: number,
-    color: BallColor = BallColor.red,
-    state: BallState = BallState.idle
-  ) {
-    this.id = id;
-    this.state = state;
-    this.color = color;
-  }
 }
