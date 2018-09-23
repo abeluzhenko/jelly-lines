@@ -50,15 +50,8 @@ export class GridService {
 
   public getGrid(size: number = DEFAULT_GRID_SIZE): Cell[] {
     const result: Cell[] = [];
-    for (let i = 0; i < size * 2; i++) {
-      result.push({
-        id: i,
-        ball: {
-          id: i,
-          color: BallColor.red,
-          state: BallState.idle
-        }
-      });
+    for (let i = 0; i < size * size; i++) {
+      result.push({ id: i });
     }
     return result;
   }

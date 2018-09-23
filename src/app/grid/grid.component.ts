@@ -16,12 +16,14 @@ export class GridComponent implements OnInit {
   constructor(
     private _gridService: GridService
   ) {
+    this._gridService.output.subscribe(data => this.cells = data);
+    this._gridService.input.next({ cells: this._gridService.getGrid() });
   }
 
   ngOnInit() {
   }
 
   cellClicked(cell: Cell) {
+    this._gridService.input.next({ cells: this.cells, cell });
   }
-
 }
