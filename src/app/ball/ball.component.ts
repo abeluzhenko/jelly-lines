@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BallColor, BallState, Ball } from './ball.model';
 
 @Component({
@@ -15,14 +15,6 @@ export class BallComponent implements OnInit {
   public BALL_COLOR = BallColor;
 
   constructor() { }
-
-  @HostListener('click', [ '$event' ])
-  onClick(event: Event) {
-    this.clicked.emit(this.data);
-    if (event.stopPropagation) {
-      event.stopPropagation();
-    }
-  }
 
   ngOnInit() {
   }

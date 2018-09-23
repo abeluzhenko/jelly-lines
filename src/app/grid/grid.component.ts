@@ -16,23 +16,12 @@ export class GridComponent implements OnInit {
   constructor(
     private _gridService: GridService
   ) {
-    this._gridService.next();
-    this.cells = this._gridService.cells;
   }
 
   ngOnInit() {
   }
 
-  randomize() {
-    this._gridService.randomize();
-    this.cells = this._gridService.cells;
-  }
-
   cellClicked(cell: Cell) {
-  }
-
-  ballClicked(ball: Ball) {
-    this._gridService.currentBall = ball;
   }
 
 }

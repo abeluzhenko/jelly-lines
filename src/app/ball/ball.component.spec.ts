@@ -50,13 +50,4 @@ describe('BallComponent', () => {
     expect(ballEl.classes['active']).toBeTruthy();
     expect(shadowEl.classes['active']).toBeTruthy();
   });
-
-  it('should emit an event when clicked', done => {
-    expect(component).toBeTruthy();
-    component.clicked.subscribe(ball => {
-      expect(ball).toBe(component.data);
-      done();
-    });
-    fixture.debugElement.triggerEventHandler('click', {});
-  });
 });

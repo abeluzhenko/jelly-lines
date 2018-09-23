@@ -12,6 +12,7 @@ $balls-colors: (
   height: 100%;
   display: block;
   overflow: visible;
+  pointer-events: none;
 }
 
 .ball {

@@ -24,12 +24,4 @@ export class CellComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  cellClick(cell: Cell) {
-    this.clicked.emit(cell);
-  }
-
-  ballClick(ball: Ball) {
-    this.ballClicked.emit(ball);
-  }
 }

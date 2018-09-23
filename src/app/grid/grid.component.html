@@ -1,7 +1,5 @@
-<ng-container *ngFor="let row of cells">
-  <app-cell 
-    *ngFor="let cell of row"
-    [data]="cell" 
-    (clicked)="cellClicked($event)"
-    (ballClicked)="ballClicked($event)"></app-cell>
-</ng-container>
+<app-cell 
+  *ngFor="let cell of cells"
+  [data]="cell" 
+  (clicked)="cellClicked($event)"
+  (ballClicked)="ballClicked($event)"></app-cell>
