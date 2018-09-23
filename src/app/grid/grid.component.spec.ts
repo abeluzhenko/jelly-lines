@@ -43,7 +43,19 @@ describe('GridComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should properly dispatch ball click', () => {
+  it('should properly dispatch cell click', () => {
+    component.cells = gridServiceMockup.getRandomGrid();
+    fixture.detectChanges();
+    const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
+    expect(cellEls.length).toBe(component.cells.length);
 
+    const onClickSpy = spyOn(component, 'cellClicked').and.callThrough();
+
+    for (let i = 0; i < cellEls.length; i++) {
+      const cellEl = cellEls[i];
+      cellEl.nativeElement.click();
+      fixture.detectChanges();
+    }
+    expect(onClickSpy).toHaveBeenCalledTimes(component.cells.length);
   });
 });

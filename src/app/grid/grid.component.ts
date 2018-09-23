@@ -11,7 +11,7 @@ import { Ball } from '../ball/ball.model';
 export class GridComponent implements OnInit {
 
   public GRID_SIZE = 5;
-  public cells: Cell[][];
+  public cells: Cell[];
 
   constructor(
     private _gridService: GridService

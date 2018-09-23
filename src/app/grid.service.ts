@@ -19,11 +19,28 @@ export interface Path {
   cell: Cell;
 }
 
+export const DEFAULT_GRID_SIZE = 9;
+
 @Injectable({
   providedIn: 'root'
 })
 export class GridService {
 
   constructor() {
+  }
+
+  public getGrid(size: number = DEFAULT_GRID_SIZE): Cell[] {
+    const result: Cell[] = [];
+    for (let i = 0; i < size * 2; i++) {
+      result.push({
+        id: i,
+        ball: {
+          id: i,
+          color: BallColor.red,
+          state: BallState.idle
+        }
+      });
+    }
+    return result;
   }
 }

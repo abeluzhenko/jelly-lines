@@ -6,12 +6,12 @@ export enum BallColor {
   purple = 'purple'
 }
 
-export const BallColors = [
-  'red',
-  'green',
-  'blue',
-  'yellow',
-  'purple'
+export const BallColors: BallColor[] = [
+  BallColor.red,
+  BallColor.green,
+  BallColor.blue,
+  BallColor.yellow,
+  BallColor.purple
 ];
 
 export enum BallState {
@@ -20,6 +20,13 @@ export enum BallState {
   animated = 2,
   disabled = 3
 }
+
+export const BallStates = [
+  BallState.idle,
+  BallState.active,
+  BallState.animated,
+  BallState.disabled
+];
 
 export interface Ball {
   id: number;
