@@ -3,6 +3,7 @@ import { Ball, BallState, BallColors, BallColor } from './ball/ball.model';
 import { Cell } from './cell/cell.model';
 import { Subject, Observable, merge } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { getPath, PathCell } from './path.model';
 
 export interface GridInput {
   cells: Cell[];
@@ -27,16 +28,15 @@ export class GridService {
 
   private _outputSubject: Subject<Cell[]> = new Subject<Cell[]>();
 
-  public input: Subject<GridInput> = new Subject<GridInput>();
-  public output: Observable<Cell[]>;
+  public input$: Subject<GridInput> = new Subject<GridInput>();
+  public output$: Observable<Cell[]>;
 
   constructor() {
-    this.output = this._outputSubject.asObservable();
+    this.output$ = this._outputSubject.asObservable();
     const getRandomColor = () => BallColors[Math.floor(BallColors.length * Math.random())];
-    const getPath = (from: number, to: number, grid: Cell[]) => [ true ];
 
     // If the cell field is empty then there is a new turn
-    const turn$ = this.input
+    const turn$ = this.input$
       .pipe(filter(data => data.cell === undefined))
       .pipe(map((data: GridInput) => {
         const cells: Cell[] = data.cells;
@@ -57,7 +57,7 @@ export class GridService {
       }));
 
     // There is a cell stream otherwise
-    const move$ = this.input
+    const move$ = this.input$
       .pipe(filter(data => data.cell !== undefined && data.cell.ball === undefined))
       .pipe(map(data => {
         const activeCell = data.cells
@@ -69,7 +69,11 @@ export class GridService {
         if (!activeCell) {
           return data;
         }
-        const path = getPath(activeCell.id, data.cell.id, data.cells);
+        const path = getPath(
+          { index: activeCell.id } as PathCell,
+          { index: data.cell.id } as PathCell,
+          data.cells.map(cell => ({ index: cell.id } as PathCell))
+        );
         // No path - return the current cell
         if (!path.length) {
           return data;
@@ -82,7 +86,7 @@ export class GridService {
         return data;
       }));
 
-    const activate$ = this.input
+    const activate$ = this.input$
       .pipe(filter(data => data.cell !== undefined && data.cell.ball !== undefined))
       .pipe(map(data => {
         const cells = data.cells.map(cell => {

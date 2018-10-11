@@ -19,7 +19,7 @@ describe('GridService', () => {
   it('should properly generate a grid', done => inject([GridService], (service: GridService) => {
     const cells = service.getGrid(10);
 
-    service.output.subscribe(data => {
+    service.output$.subscribe(data => {
       expect(data).toBeDefined();
       expect(data.length).toBe(cells.length);
 
@@ -29,7 +29,7 @@ describe('GridService', () => {
 
       done();
     });
-    service.input.next({ cells });
+    service.input$.next({ cells });
   })());
 
   it('should properly set the current ball', done => inject([GridService], (service: GridService) => {
@@ -53,7 +53,7 @@ describe('GridService', () => {
     cells[0] = cell1;
     cells[10] = cell2;
     let step = 0;
-    service.output.subscribe(data => {
+    service.output$.subscribe(data => {
       expect(data[0]).toBeDefined();
       expect(data[0].id).toBe(cell1.id);
       expect(data[10]).toBeDefined();
@@ -79,16 +79,16 @@ describe('GridService', () => {
       }
       step++;
     });
-    service.input.next({ cells });
-    service.input.next({ cells, cell: cell1 });
-    service.input.next({ cells, cell: cell2 });
+    service.input$.next({ cells });
+    service.input$.next({ cells, cell: cell1 });
+    service.input$.next({ cells, cell: cell2 });
   })());
 
   it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
     const cells = service.getGrid(9);
 
     let count = 0;
-    service.output.subscribe(data => {
+    service.output$.subscribe(data => {
       expect(data).toBeDefined();
       expect(data.length).toBe(cells.length);
 
@@ -102,7 +102,7 @@ describe('GridService', () => {
     });
 
     for (let i = 0; i < 81 / 3; i++) {
-      service.input.next({ cells });
+      service.input$.next({ cells });
     }
   })());
 
@@ -111,14 +111,14 @@ describe('GridService', () => {
     let step = 0;
     let cell1: Cell;
     let cell2: Cell;
-    service.output.subscribe(data => {
+    service.output$.subscribe(data => {
       if (step === 0) {
         cell1 = data
           .filter(c => c.ball !== undefined)
           .pop();
         expect(cell1).toBeTruthy();
         step++;
-        return service.input.next({ cells, cell: cell1 });
+        return service.input$.next({ cells, cell: cell1 });
       }
       if (step === 1) {
         expect(data[cell1.id].ball).toBeDefined();
@@ -128,7 +128,7 @@ describe('GridService', () => {
           .pop();
         expect(cell2).toBeTruthy();
         step++;
-        return service.input.next({ cells, cell: cell2 });
+        return service.input$.next({ cells, cell: cell2 });
       }
       if (step === 2) {
         expect(data[cell1.id].ball).toBeUndefined();
@@ -137,6 +137,6 @@ describe('GridService', () => {
         return done();
       }
     });
-    service.input.next({ cells });
+    service.input$.next({ cells });
   })());
 });
