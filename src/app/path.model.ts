@@ -1,3 +1,5 @@
+export const GRID_SIZE = 10;
+
 export interface PathCell {
   index: number;
   cost?: number;
@@ -5,6 +7,7 @@ export interface PathCell {
   isStart?: boolean;
   isEnd?: boolean;
 }
+
 
 export const getClosestCell = (cells: Set<PathCell>): PathCell => Array
   .from(cells)
@@ -31,6 +34,12 @@ export const getAdjacent = (cell: PathCell, grid: PathCell[]): PathCell[] => {
     result.push(grid[x * 10 + (y + 1)]);
   }
   return result.filter(el => el !== undefined);
+};
+
+const getDistance = (cell0: PathCell, cell1: PathCell): number => {
+  const [x0, y0] = [Math.floor(cell0.index / 10), cell0.index % 10];
+  const [x1, y1] = [Math.floor(cell1.index / 10), cell1.index % 10];
+  return Math.abs(x0 - x1) + Math.abs(y0 - y1);
 };
 
 const makePath = (to: PathCell, grid: PathCell[], emptyCellValue = 0) => {
@@ -67,7 +76,7 @@ export const getPath = (from: PathCell, to: PathCell, grid: PathCell[]) => {
         opened.add(cell);
         // If the current cell cost is higher
         // than the new one then return
-        const cost = openedCell.order + 1 + this.getDistance(cell, to);
+        const cost = openedCell.order + 1 + getDistance(cell, to);
         if (cost <= cell.cost) {
           return;
         }
