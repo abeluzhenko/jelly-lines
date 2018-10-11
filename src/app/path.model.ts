@@ -1,17 +1,17 @@
 export interface PathCell {
   index: number;
-  cost: number;
-  order: number;
-  isStart: boolean;
-  isEnd: boolean;
+  cost?: number;
+  order?: number;
+  isStart?: boolean;
+  isEnd?: boolean;
 }
 
-const getClosestCell = (cells: Set<PathCell>): PathCell => Array
+export const getClosestCell = (cells: Set<PathCell>): PathCell => Array
   .from(cells)
   .reduce((min, current) => current.cost < min.cost ? current : min,
     { cost: Number.MAX_VALUE } as PathCell);
 
-const getAdjacent = (cell: PathCell, grid: PathCell[]): PathCell[] => {
+export const getAdjacent = (cell: PathCell, grid: PathCell[]): PathCell[] => {
   const result = [];
   if (cell.index < 0 || cell.index >= 100) {
     return result;
