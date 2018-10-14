@@ -8,69 +8,87 @@ export interface PathCell {
   isEnd?: boolean;
 }
 
+export const getGrid = cells => cells.map((cell, index) => ({
+  index,
+  order: 0,
+  cost: cell.ball ? Number.POSITIVE_INFINITY : 1
+}));
 
 export const getClosestCell = (cells: Set<PathCell>): PathCell => Array
   .from(cells)
   .reduce((min, current) => current.cost < min.cost ? current : min,
-    { cost: Number.MAX_VALUE } as PathCell);
+    { cost: Number.POSITIVE_INFINITY } as PathCell);
 
-export const getAdjacent = (cell: PathCell, grid: PathCell[]): PathCell[] => {
+export const getAdjacent = (
+  cell: PathCell,
+  grid: PathCell[],
+  gridSize = GRID_SIZE
+): PathCell[] => {
   const result = [];
-  if (cell.index < 0 || cell.index >= 100) {
+  if (cell.index < 0 || cell.index >= gridSize * gridSize) {
     return result;
   }
-  const x = Math.floor(cell.index / 10);
-  const y = cell.index % 10;
+  const x = Math.floor(cell.index / gridSize);
+  const y = cell.index % gridSize;
   if (x - 1 >= 0) {
-    result.push(grid[(x - 1) * 10 + y]);
+    result.push(grid[(x - 1) * gridSize + y]);
   }
-  if (x + 1 < 10) {
-    result.push(grid[(x + 1) * 10 + y]);
+  if (x + 1 < gridSize) {
+    result.push(grid[(x + 1) * gridSize + y]);
   }
   if (y - 1 >= 0) {
-    result.push(grid[x * 10 + (y - 1)]);
+    result.push(grid[x * gridSize + (y - 1)]);
   }
-  if (y + 1 < 10) {
-    result.push(grid[x * 10 + (y + 1)]);
+  if (y + 1 < gridSize) {
+    result.push(grid[x * gridSize + (y + 1)]);
   }
   return result.filter(el => el !== undefined);
 };
 
-const getDistance = (cell0: PathCell, cell1: PathCell): number => {
-  const [x0, y0] = [Math.floor(cell0.index / 10), cell0.index % 10];
-  const [x1, y1] = [Math.floor(cell1.index / 10), cell1.index % 10];
+export const getDistance = (
+  cell0: PathCell,
+  cell1: PathCell,
+  gridSize = GRID_SIZE
+): number => {
+  const [x0, y0] = [Math.floor(cell0.index / gridSize), cell0.index % gridSize];
+  const [x1, y1] = [Math.floor(cell1.index / gridSize), cell1.index % gridSize];
   return Math.abs(x0 - x1) + Math.abs(y0 - y1);
 };
 
-const makePath = (to: PathCell, grid: PathCell[], emptyCellValue = 0) => {
-  const result = [];
-  const path = [to];
-  const index = to.order;
-  let current = to;
+export const makePath = (
+  from: PathCell,
+  grid: PathCell[],
+  adjacentFn: Function,
+  emptyCellValue = 0
+) => {
+  const path = [from];
+  const index = from.order;
+  let current = from;
   for (let i = index; i > 1; i--) {
-    const next = getAdjacent(current, grid)
+    const next = adjacentFn(current, grid)
       .filter(cell => cell.order !== emptyCellValue)
-      .filter(cell => cell.order <= i - 1)
-      .sort((a, b) => b.order - a.order)[0];
+      .filter(cell => cell.order === i - 1)[0];
+    if (!next) {
+      return [];
+    }
     path.push(next);
     current = next;
-    result.push(next.index);
   }
-  return result;
+  return path.reverse();
 };
 
 export const getPath = (from: PathCell, to: PathCell, grid: PathCell[]) => {
   const opened = new Set();
   const closed = new Set();
   opened.add(from);
-  from.cost = 0;
+  from.cost = 1;
   let done = false;
 
   while (opened.size && !done) {
     const openedCell = getClosestCell(opened);
     getAdjacent(openedCell, grid)
       .filter(cell => !closed.has(cell))
-      .filter(cell => cell.cost < Number.MAX_VALUE)
+      .filter(cell => cell.cost < Number.POSITIVE_INFINITY)
       .forEach(cell => {
         // Add cell to the new list
         opened.add(cell);
@@ -95,7 +113,7 @@ export const getPath = (from: PathCell, to: PathCell, grid: PathCell[]) => {
     opened.delete(openedCell);
   }
   if (done) {
-    return makePath(to, grid);
+    return [from, ...makePath(to, grid, getAdjacent)];
   }
   return null;
 };
