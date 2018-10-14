@@ -1,4 +1,4 @@
-export const GRID_SIZE = 10;
+export const GRID_SIZE = 9;
 
 export interface PathCell {
   index: number;
@@ -8,7 +8,7 @@ export interface PathCell {
   isEnd?: boolean;
 }
 
-export const getGrid = cells => cells.map((cell, index) => ({
+export const getPathGrid = cells => cells.map((cell, index) => ({
   index,
   order: 0,
   cost: cell.ball ? Number.POSITIVE_INFINITY : 1
@@ -59,13 +59,14 @@ export const makePath = (
   from: PathCell,
   grid: PathCell[],
   adjacentFn: Function,
-  emptyCellValue = 0
+  emptyCellValue = 0,
+  gridSize = GRID_SIZE
 ) => {
   const path = [from];
   const index = from.order;
   let current = from;
   for (let i = index; i > 1; i--) {
-    const next = adjacentFn(current, grid)
+    const next = adjacentFn(current, grid, gridSize)
       .filter(cell => cell.order !== emptyCellValue)
       .filter(cell => cell.order === i - 1)[0];
     if (!next) {
@@ -77,24 +78,36 @@ export const makePath = (
   return path.reverse();
 };
 
-export const getPath = (from: PathCell, to: PathCell, grid: PathCell[]) => {
+export const getPath = (
+  from: PathCell,
+  to: PathCell,
+  grid: PathCell[],
+  emptyValue = 0,
+  gridSize = GRID_SIZE
+) => {
+
+  if (getDistance(from, to, gridSize) === 1) {
+    return [from, to];
+  }
+
   const opened = new Set();
   const closed = new Set();
   opened.add(from);
   from.cost = 1;
   let done = false;
 
+  const filterCell = cell => !closed.has(cell) && cell.cost < Number.POSITIVE_INFINITY;
+
   while (opened.size && !done) {
     const openedCell = getClosestCell(opened);
-    getAdjacent(openedCell, grid)
-      .filter(cell => !closed.has(cell))
-      .filter(cell => cell.cost < Number.POSITIVE_INFINITY)
+    getAdjacent(openedCell, grid, gridSize)
+      .filter(cell => filterCell(cell))
       .forEach(cell => {
         // Add cell to the new list
         opened.add(cell);
         // If the current cell cost is higher
         // than the new one then return
-        const cost = openedCell.order + 1 + getDistance(cell, to);
+        const cost = openedCell.order + 1 + getDistance(cell, to, gridSize);
         if (cost <= cell.cost) {
           return;
         }
@@ -113,7 +126,7 @@ export const getPath = (from: PathCell, to: PathCell, grid: PathCell[]) => {
     opened.delete(openedCell);
   }
   if (done) {
-    return [from, ...makePath(to, grid, getAdjacent)];
+    return [from, ...makePath(to, grid, getAdjacent, emptyValue, gridSize)];
   }
-  return null;
+  return [];
 };

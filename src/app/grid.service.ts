@@ -3,7 +3,7 @@ import { Ball, BallState, BallColors, BallColor } from './ball/ball.model';
 import { Cell } from './cell/cell.model';
 import { Subject, Observable, merge } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { getPath, PathCell } from './path.model';
+import { getPath, PathCell, getPathGrid } from './path.model';
 
 export interface GridInput {
   cells: Cell[];
@@ -69,11 +69,12 @@ export class GridService {
         if (!activeCell) {
           return data;
         }
+        const pathGrid = getPathGrid(data.cells);
         const path = getPath(
-          { index: activeCell.id } as PathCell,
-          { index: data.cell.id } as PathCell,
-          data.cells.map(cell => ({ index: cell.id } as PathCell))
-        );
+          pathGrid[activeCell.id],
+          pathGrid[data.cell.id],
+          pathGrid
+        ).map(pathEl => data.cells[pathEl.index]);
         // No path - return the current cell
         if (!path.length) {
           return data;
