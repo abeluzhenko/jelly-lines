@@ -3,7 +3,7 @@ import { Ball, BallState, BallColors, BallColor } from './ball/ball.model';
 import { Cell } from './cell/cell.model';
 import { Subject, Observable, merge } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { getPath, PathCell, getPathGrid } from './path.model';
+import { getPath, PathCell, getPathGrid, GRID_SIZE } from './path.model';
 
 export interface GridInput {
   cells: Cell[];
@@ -18,7 +18,6 @@ export interface GridOutput {
   state: GridState;
 }
 
-export const DEFAULT_GRID_SIZE = 9;
 export const DEFAULT_NEW_BALLS_COUNT = 3;
 
 @Injectable({
@@ -119,7 +118,7 @@ export class GridService {
     ).subscribe(data => this._outputSubject.next(data.cells));
   }
 
-  public getGrid(size: number = DEFAULT_GRID_SIZE): Cell[] {
+  public getGrid(size: number = GRID_SIZE): Cell[] {
     const result: Cell[] = [];
     for (let i = 0; i < size * size; i++) {
       result.push({ id: i });

@@ -3,7 +3,7 @@ import { getClosestCell, PathCell, getAdjacent, getDistance, makePath, getPathGr
 import { Cell } from './cell/cell.model';
 import { BallState, BallColor } from './ball/ball.model';
 
-fdescribe('Path module', () => {
+describe('Path module', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
   });
