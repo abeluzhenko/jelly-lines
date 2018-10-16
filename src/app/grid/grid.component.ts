@@ -1,8 +1,6 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GridService } from '../grid.service';
-import { Cell } from '../cell/cell.model';
-import { Ball } from '../ball/ball.model';
-import { Observable } from 'rxjs';
+import { ICell } from '../cell/cell.model';
 
 @Component({
   selector: 'app-grid',
@@ -17,7 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class GridComponent implements OnInit {
 
-  public cells: Cell[];
+  public cells: ICell[];
 
   constructor(
     private _gridService: GridService
@@ -29,7 +27,7 @@ export class GridComponent implements OnInit {
   ngOnInit() {
   }
 
-  cellClicked(cell: Cell) {
+  cellClicked(cell: ICell) {
     this._gridService.input$.next({ cells: this.cells, cell });
   }
 }
