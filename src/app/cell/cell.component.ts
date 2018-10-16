@@ -5,7 +5,12 @@ import { cellBallAnimation } from './cell.animations';
 
 @Component({
   selector: 'app-cell',
-  templateUrl: './cell.component.html',
+  template: `
+  <app-ball
+    *ngIf="data?.ball"
+    [@cellBallAnimation]="'visible'"
+    [data]="data?.ball"></app-ball>
+  `,
   styleUrls: ['./cell.component.scss'],
   animations: [ cellBallAnimation ]
 })
