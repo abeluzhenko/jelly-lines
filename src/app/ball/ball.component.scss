@@ -70,7 +70,7 @@ $balls-colors: (
   }
 
   @each $name, $value in $balls-colors {
-    &.color--#{$name} {
+    &.#{$name} {
       background: $value;
       --color-dark: #{ rgba(darken(adjust-hue($value, -10%), 50%), 0.6) };
       --color-light: #{ rgba(lighten(adjust-hue($value, 10%), 50%), 0.3) };

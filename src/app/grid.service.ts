@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BallState, BallColors } from './ball/ball.model';
-import { Cell } from './cell/cell.model';
+import { ICell } from './cell/cell.model';
 import { Subject, Observable, merge } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { getPath, getPathGrid, GRID_SIZE } from './path.model';
 
 export interface GridInput {
-  cells: Cell[];
-  cell?: Cell;
+  cells: ICell[];
+  cell?: ICell;
 }
 
 export enum GridState {
 }
 
 export interface GridOutput {
-  cells: Cell[];
+  cells: ICell[];
   state: GridState;
 }
 
@@ -25,10 +25,10 @@ export const DEFAULT_NEW_BALLS_COUNT = 3;
 })
 export class GridService {
 
-  private _outputSubject: Subject<Cell[]> = new Subject<Cell[]>();
+  private _outputSubject: Subject<ICell[]> = new Subject<ICell[]>();
 
   public input$: Subject<GridInput> = new Subject<GridInput>();
-  public output$: Observable<Cell[]>;
+  public output$: Observable<ICell[]>;
 
   constructor() {
     this.output$ = this._outputSubject.asObservable();
@@ -38,7 +38,7 @@ export class GridService {
     const turn$ = this.input$.pipe(
       filter(data => data.cell === undefined),
       map((data: GridInput) => {
-        const cells: Cell[] = data.cells;
+        const cells: ICell[] = data.cells;
         const openCells = cells
           .filter(c => c.ball === undefined);
         if (openCells.length >= DEFAULT_NEW_BALLS_COUNT) {
@@ -119,8 +119,8 @@ export class GridService {
     ).subscribe(data => this._outputSubject.next(data.cells));
   }
 
-  public getGrid(size: number = GRID_SIZE): Cell[] {
-    const result: Cell[] = [];
+  public getGrid(size: number = GRID_SIZE): ICell[] {
+    const result: ICell[] = [];
     for (let i = 0; i < size * size; i++) {
       result.push({ id: i });
     }

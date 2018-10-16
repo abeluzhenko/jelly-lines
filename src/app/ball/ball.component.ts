@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { BallState, Ball } from './ball.model';
+import { Component, Input } from '@angular/core';
+import { BallState, IBall } from './ball.model';
 
 interface ISpriteClass {
   active: boolean;
@@ -8,24 +8,26 @@ interface ISpriteClass {
 @Component({
   selector: 'app-ball',
   template: `
-  <div class="shadow" [ngClass]="ballClass"></div>
-  <div class="ball" [ngClass]="ballClass"></div>
+  <div class="shadow" [ngClass]="spriteClass"></div>
+  <div class="ball" [ngClass]="spriteClass"></div>
   `,
   styleUrls: ['./ball.component.scss']
 })
-export class BallComponent implements OnInit {
+export class BallComponent {
 
-  @Input() set data(value: Ball) {
+  private _data: IBall;
+
+  @Input() public set data(value: IBall) {
     this.spriteClass = {
       active: value.state === BallState.active
     };
-    this.spriteClass['color--' + value.state] = true;
+    this.spriteClass[value.color] = true;
+    this._data = value;
+  }
+  public get data(): IBall {
+    return this._data;
   }
 
   public spriteClass: ISpriteClass;
 
-  constructor() { }
-
-  ngOnInit() {
-  }
 }

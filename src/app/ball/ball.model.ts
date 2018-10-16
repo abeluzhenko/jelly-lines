@@ -28,7 +28,7 @@ export const BallStates = [
   BallState.disabled
 ];
 
-export interface Ball {
+export interface IBall {
   id: number;
   state: BallState;
   color: BallColor;

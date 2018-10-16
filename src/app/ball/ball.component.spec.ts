@@ -34,7 +34,7 @@ describe('BallComponent', () => {
       component.data = { id: 0, state: BallState.idle, color: color as BallColor };
       fixture.detectChanges();
       const ballEl = fixture.debugElement.query(By.css('.ball'));
-      expect(ballEl.classes['color--' + color]).toBeTruthy();
+      expect(ballEl.classes[color]).toBeTruthy();
     }
   });
 
@@ -45,7 +45,7 @@ describe('BallComponent', () => {
     const shadowEl = fixture.debugElement.query(By.css('.ball'));
     expect(ballEl.classes['active']).toBeFalsy();
     expect(shadowEl.classes['active']).toBeFalsy();
-    component.data.state = BallState.active;
+    component.data = { id: 0, state: BallState.active, color: BallColor.red };
     fixture.detectChanges();
     expect(ballEl.classes['active']).toBeTruthy();
     expect(shadowEl.classes['active']).toBeTruthy();

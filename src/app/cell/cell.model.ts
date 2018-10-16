@@ -1,6 +1,6 @@
-import { Ball } from '../ball/ball.model';
+import { IBall } from '../ball/ball.model';
 
-export interface Cell {
+export interface ICell {
   id: number;
-  ball?: Ball;
+  ball?: IBall;
 }

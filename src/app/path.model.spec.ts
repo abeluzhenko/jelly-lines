@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { getClosestCell, PathCell, getAdjacent, getDistance, makePath, getPathGrid, getPath } from './path.model';
-import { Cell } from './cell/cell.model';
+import { ICell } from './cell/cell.model';
 import { BallState, BallColor } from './ball/ball.model';
 
 describe('Path module', () => {
@@ -9,7 +9,7 @@ describe('Path module', () => {
   });
 
   it('getGrid should return a proper grid', () => {
-    const cells: Cell[] = [];
+    const cells: ICell[] = [];
     for (let i = 0; i < 100; i++) {
       cells.push({ id: i });
     }

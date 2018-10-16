@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { Ball } from '../ball/ball.model';
-import { Cell } from './cell.model';
+import { IBall } from '../ball/ball.model';
+import { ICell } from './cell.model';
 import { cellBallAnimation } from './cell.animations';
 
 @Component({
@@ -16,9 +16,9 @@ import { cellBallAnimation } from './cell.animations';
 })
 export class CellComponent implements OnInit {
 
-  @Input() data: Cell;
-  @Output() clicked: EventEmitter<Cell> = new EventEmitter<Cell>();
-  @Output() ballClicked: EventEmitter<Ball> = new EventEmitter<Ball>();
+  @Input() data: ICell;
+  @Output() clicked: EventEmitter<ICell> = new EventEmitter<ICell>();
+  @Output() ballClicked: EventEmitter<IBall> = new EventEmitter<IBall>();
 
   @HostListener('click')
   onClick() {
