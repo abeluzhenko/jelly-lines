@@ -1,27 +1,28 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { BallColor, BallState, Ball } from './ball.model';
+import { Component, OnInit, Input } from '@angular/core';
+import { BallState, Ball } from './ball.model';
+
+interface ISpriteClass {
+  active: boolean;
+}
 
 @Component({
   selector: 'app-ball',
   template: `
-  <div class="shadow" [ngClass]="{
-    'active': data?.state === BALL_STATE.active
-  }"></div>
-  <div class="ball" [ngClass]="{
-    'color--red': data?.color === ${ BallColor.red },
-    'color--green': data?.color === ${ BallColor.green },
-    'color--yellow': data?.color === ${ BallColor.yellow },
-    'color--blue': data?.color === ${ BallColor.blue },
-    'color--purple': data?.color === ${ BallColor.purple },
-    'active': data?.state === ${ BallState.active }
-  }"></div>
+  <div class="shadow" [ngClass]="ballClass"></div>
+  <div class="ball" [ngClass]="ballClass"></div>
   `,
   styleUrls: ['./ball.component.scss']
 })
 export class BallComponent implements OnInit {
 
-  @Input() data: Ball;
-  @Output() clicked: EventEmitter<Ball> = new EventEmitter<Ball>();
+  @Input() set data(value: Ball) {
+    this.spriteClass = {
+      active: value.state === BallState.active
+    };
+    this.spriteClass['color--' + value.state] = true;
+  }
+
+  public spriteClass: ISpriteClass;
 
   constructor() { }
 

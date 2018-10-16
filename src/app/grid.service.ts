@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Ball, BallState, BallColors, BallColor } from './ball/ball.model';
+import { BallState, BallColors } from './ball/ball.model';
 import { Cell } from './cell/cell.model';
 import { Subject, Observable, merge } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { getPath, PathCell, getPathGrid, GRID_SIZE } from './path.model';
+import { getPath, getPathGrid, GRID_SIZE } from './path.model';
 
 export interface GridInput {
   cells: Cell[];
@@ -35,9 +35,9 @@ export class GridService {
     const getRandomColor = () => BallColors[Math.floor(BallColors.length * Math.random())];
 
     // If the cell field is empty then there is a new turn
-    const turn$ = this.input$
-      .pipe(filter(data => data.cell === undefined))
-      .pipe(map((data: GridInput) => {
+    const turn$ = this.input$.pipe(
+      filter(data => data.cell === undefined),
+      map((data: GridInput) => {
         const cells: Cell[] = data.cells;
         const openCells = cells
           .filter(c => c.ball === undefined);
@@ -53,7 +53,8 @@ export class GridService {
           }
         }
         return { cells };
-      }));
+      })
+    );
 
     // There is a cell stream otherwise
     const move$ = this.input$
@@ -124,5 +125,9 @@ export class GridService {
       result.push({ id: i });
     }
     return result;
+  }
+
+  private getTurnObservable() {
+
   }
 }
