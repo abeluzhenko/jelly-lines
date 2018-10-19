@@ -13,6 +13,7 @@ export interface IGridInput {
 export enum GridAnimationType {
   Move = 0,
   Match = 1,
+  Wrong = 2,
 }
 
 export interface IGridAnimation {
@@ -69,7 +70,14 @@ export class GridService {
     ).subscribe(data => this._outputSubject.next(data.cells));
   }
 
-  private getTurnObservable(input$: Observable<IGridInput>) {
+  private getCheckObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
+    return input$.pipe(
+      filter(data => !data.cell),
+      map(data => data)
+    );
+  }
+
+  private getTurnObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
     return input$.pipe(
       filter(data => !data.cell),
       map((data: IGridInput) => {
@@ -126,10 +134,10 @@ export class GridService {
       }),
       tap((data: { data: IGridInput, path: ICell[] }) =>
         animationSubject.next({
-          type: GridAnimationType.Move,
+          type: data.path ? GridAnimationType.Move : GridAnimationType.Wrong,
           cells: data.path
-        }
-      )),
+        })
+      ),
       map((data: { data: IGridInput, path: ICell[] }) => data.data)
     );
   }

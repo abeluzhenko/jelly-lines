@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GridService } from '../grid.service';
+import { GridService, IGridAnimation } from '../grid.service';
 import { ICell } from '../cell/cell.model';
 
 @Component({
@@ -22,6 +22,7 @@ export class GridComponent implements OnInit {
   ) {
     this._gridService.output$.subscribe(cells => this.cells = cells);
     this._gridService.input$.next({ cells: GridService.getGrid() });
+    this._gridService.animation$.subscribe(data => this.processAnimation(data));
   }
 
   ngOnInit() {
@@ -29,5 +30,9 @@ export class GridComponent implements OnInit {
 
   cellClicked(cell: ICell) {
     this._gridService.input$.next({ cells: this.cells, cell });
+  }
+
+  private processAnimation(data: IGridAnimation) {
+    console.log(data);
   }
 }

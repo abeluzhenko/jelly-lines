@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService, DEFAULT_NEW_BALLS_COUNT } from './grid.service';
+import { GridService, DEFAULT_NEW_BALLS_COUNT, GridAnimationType } from './grid.service';
 import { BallState, BallColor, BallColors } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Path } from './path.model';
@@ -111,7 +111,13 @@ describe('GridService', () => {
     let step = 0;
     let cell1: ICell;
     let cell2: ICell;
-    service.output$.subscribe(data => {
+    const animationSubscription = service.animation$.subscribe(data => {
+      expect(data).toBeDefined();
+      expect(data.type).toBe(GridAnimationType.Move);
+      expect(data.cells.length).toBeTruthy();
+      animationSubscription.unsubscribe();
+    });
+    const dataSubscription = service.output$.subscribe(data => {
       if (step === 0) {
         cell1 = data
           .filter(c => c.ball !== undefined)
@@ -136,6 +142,7 @@ describe('GridService', () => {
         expect(data[cell1.id].ball).toBeUndefined();
         expect(data[cell2.id].ball).toBeDefined();
         expect(data[cell2.id].ball.state).toBe(BallState.idle);
+        dataSubscription.unsubscribe();
         return done();
       }
     });
@@ -149,7 +156,13 @@ describe('GridService', () => {
     cells[9] = { id: 0, ball: { id: 0, color: BallColor.red, state: BallState.idle }};
     let step = 0;
     let targetCell: ICell;
-    service.output$.subscribe(data => {
+    const animationSubscription = service.animation$.subscribe(data => {
+      expect(data).toBeDefined();
+      expect(data.type).toBe(GridAnimationType.Wrong);
+      expect(data.cells).toBeNull();
+      animationSubscription.unsubscribe();
+    });
+    const dataSubscription = service.output$.subscribe(data => {
       if (step === 0) {
         expect(data[0].ball).toBeDefined();
         expect(data[0].ball.state).toBe(BallState.active);
@@ -164,6 +177,7 @@ describe('GridService', () => {
         expect(data[0].ball).toBeDefined();
         expect(data[0].ball.state).toBe(BallState.active);
         expect(data[targetCell.id].ball).toBeUndefined();
+        dataSubscription.unsubscribe();
         return done();
       }
     });
