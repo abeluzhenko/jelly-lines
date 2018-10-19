@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BallState, BallColors } from './ball/ball.model';
+import { BallState, BallColors, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
-import { Subject, Observable, merge } from 'rxjs';
+import { Subject, Observable, merge, pipe } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { getPath, getPathGrid, GRID_SIZE } from './path.model';
+import { Path } from './path.model';
 
-export interface GridInput {
+export interface IGridInput {
   cells: ICell[];
   cell?: ICell;
-}
-
-export enum GridState {
-}
-
-export interface GridOutput {
-  cells: ICell[];
-  state: GridState;
 }
 
 export const DEFAULT_NEW_BALLS_COUNT = 3;
@@ -27,17 +19,47 @@ export class GridService {
 
   private _outputSubject: Subject<ICell[]> = new Subject<ICell[]>();
 
-  public input$: Subject<GridInput> = new Subject<GridInput>();
+  public input$: Subject<IGridInput> = new Subject<IGridInput>();
   public output$: Observable<ICell[]>;
+
+  public static getRandomColor(): BallColor {
+    return BallColors[Math.floor(BallColors.length * Math.random())];
+  }
+
+  public static getGrid(size: number = Path.GRID_SIZE): ICell[] {
+    const result: ICell[] = [];
+    for (let i = 0; i < size * size; i++) {
+      result.push({ id: i });
+    }
+    return result;
+  }
+
+  public static getRandomGrid(size: number = Path.GRID_SIZE): ICell[] {
+    const result: ICell[] = [];
+    for (let i = 0; i < size * size; i++) {
+      result.push({ id: i, ball: { id: i, color: GridService.getRandomColor(), state: BallState.idle} });
+    }
+    return result;
+  }
 
   constructor() {
     this.output$ = this._outputSubject.asObservable();
-    const getRandomColor = () => BallColors[Math.floor(BallColors.length * Math.random())];
 
-    // If the cell field is empty then there is a new turn
-    const turn$ = this.input$.pipe(
-      filter(data => data.cell === undefined),
-      map((data: GridInput) => {
+    const turn$ = this.getTurnObservable(this.input$);
+    const move$ = this.getMoveObservable(this.input$);
+    const activate$ = this.getActivateObservable(this.input$);
+
+    merge(
+      turn$,
+      activate$,
+      move$
+    ).subscribe(data => this._outputSubject.next(data.cells));
+  }
+
+  private getTurnObservable(input$: Observable<IGridInput>) {
+    return input$
+      .pipe(filter(data => data.cell === undefined))
+      .pipe(map((data: IGridInput) => {
         const cells: ICell[] = data.cells;
         const openCells = cells
           .filter(c => c.ball === undefined);
@@ -46,7 +68,7 @@ export class GridService {
             const r = Math.floor(openCells.length * Math.random());
             cells[openCells[r].id].ball = {
               id: openCells[r].id,
-              color: getRandomColor(),
+              color: GridService.getRandomColor(),
               state: BallState.idle
             };
             openCells.splice(r, 1);
@@ -55,9 +77,10 @@ export class GridService {
         return { cells };
       })
     );
+  }
 
-    // There is a cell stream otherwise
-    const move$ = this.input$
+  private getMoveObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
+    return input$
       .pipe(filter(data => data.cell !== undefined && data.cell.ball === undefined))
       .pipe(map(data => {
         const activeCell = data.cells
@@ -69,12 +92,13 @@ export class GridService {
         if (!activeCell) {
           return data;
         }
-        const pathGrid = getPathGrid(data.cells);
-        const path = getPath(
+        const pathGrid = Path.getPathGrid(data.cells);
+        const path = Path.getPath(
           pathGrid[activeCell.id],
           pathGrid[data.cell.id],
           pathGrid
         ).map(pathEl => data.cells[pathEl.index]);
+
         // No path - return the current cell
         if (!path.length) {
           return data;
@@ -83,11 +107,13 @@ export class GridService {
         const ballToMove = Object.assign(activeCell.ball,
           { id: data.cell.id, state: BallState.idle });
         delete data.cells[activeCell.id].ball;
-        Object.assign(data.cells[data.cell.id], { ball: ballToMove });
+        data.cells[data.cell.id].ball = ballToMove;
         return data;
       }));
+  }
 
-    const activate$ = this.input$
+  private getActivateObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
+    return input$
       .pipe(filter(data => data.cell !== undefined && data.cell.ball !== undefined))
       .pipe(map(data => {
         const cells = data.cells.map(cell => {
@@ -111,23 +137,5 @@ export class GridService {
           cells
         };
     }));
-
-    merge(
-      turn$,
-      activate$,
-      move$
-    ).subscribe(data => this._outputSubject.next(data.cells));
-  }
-
-  public getGrid(size: number = GRID_SIZE): ICell[] {
-    const result: ICell[] = [];
-    for (let i = 0; i < size * size; i++) {
-      result.push({ id: i });
-    }
-    return result;
-  }
-
-  private getTurnObservable() {
-
   }
 }

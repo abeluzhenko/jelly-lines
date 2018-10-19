@@ -1,5 +1,3 @@
-export const GRID_SIZE = 9;
-
 export interface IPathCell {
   index: number;
   cost?: number;
@@ -9,6 +7,7 @@ export interface IPathCell {
 }
 
 export class Path {
+  public static GRID_SIZE = 9;
   public static getPathGrid(cells): IPathCell[] {
     return cells.map((cell, index) => ({
       index,
@@ -29,7 +28,7 @@ export class Path {
   public static getAdjacent(
     cell: IPathCell,
     grid: IPathCell[],
-    gridSize = GRID_SIZE
+    gridSize = Path.GRID_SIZE
   ): IPathCell[] {
     const result = [];
     if (cell.index < 0 || cell.index >= gridSize * gridSize) {
@@ -55,7 +54,7 @@ export class Path {
   public static getDistance(
     cell0: IPathCell,
     cell1: IPathCell,
-    gridSize = GRID_SIZE
+    gridSize = Path.GRID_SIZE
   ): number {
     const [x0, y0] = [Math.floor(cell0.index / gridSize), cell0.index % gridSize];
     const [x1, y1] = [Math.floor(cell1.index / gridSize), cell1.index % gridSize];
@@ -67,7 +66,7 @@ export class Path {
     grid: IPathCell[],
     adjacentFn: Function,
     emptyCellValue = 0,
-    gridSize = GRID_SIZE
+    gridSize = Path.GRID_SIZE
   ) {
     const path = [from];
     const index = from.order;
@@ -90,7 +89,7 @@ export class Path {
     to: IPathCell,
     grid: IPathCell[],
     emptyValue = 0,
-    gridSize = GRID_SIZE
+    gridSize = Path.GRID_SIZE
   ) {
 
     if (Path.getDistance(from, to, gridSize) === 1) {

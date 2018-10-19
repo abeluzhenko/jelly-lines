@@ -21,7 +21,7 @@ export class GridComponent implements OnInit {
     private _gridService: GridService
   ) {
     this._gridService.output$.subscribe(cells => this.cells = cells);
-    this._gridService.input$.next({ cells: this._gridService.getGrid() });
+    this._gridService.input$.next({ cells: GridService.getGrid() });
   }
 
   ngOnInit() {

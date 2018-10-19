@@ -4,14 +4,12 @@ import { GridComponent } from './grid.component';
 import { CellComponent } from '../cell/cell.component';
 import { BallComponent } from '../ball/ball.component';
 import { By } from '@angular/platform-browser';
-import { GridServiceMocked } from '../grid-mocked.service';
 import { GridService } from '../grid.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('GridComponent', () => {
   let component: GridComponent;
   let fixture: ComponentFixture<GridComponent>;
-  const gridServiceMockup: GridServiceMocked = new GridServiceMocked();
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -23,12 +21,7 @@ describe('GridComponent', () => {
         CellComponent,
         BallComponent
       ],
-      providers: [
-        {
-          provide: GridService,
-          useValue: gridServiceMockup
-        }
-      ]
+      providers: [ GridService ]
     })
     .compileComponents();
   }));
@@ -44,7 +37,7 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.cells = gridServiceMockup.getRandomGrid();
+    component.cells = GridService.getRandomGrid();
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
     expect(cellEls.length).toBe(component.cells.length);

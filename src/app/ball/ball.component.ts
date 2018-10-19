@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { BallState, IBall } from './ball.model';
 
 interface ISpriteClass {
@@ -8,26 +8,23 @@ interface ISpriteClass {
 @Component({
   selector: 'app-ball',
   template: `
-  <div class="shadow" [ngClass]="spriteClass"></div>
-  <div class="ball" [ngClass]="spriteClass"></div>
+  <div class="shadow" [ngClass]="getSpriteClass(data)"></div>
+  <div class="ball" [ngClass]="getSpriteClass(data)"></div>
   `,
   styleUrls: ['./ball.component.scss']
 })
 export class BallComponent {
 
-  private _data: IBall;
+  @Input() public data: IBall;
 
-  @Input() public set data(value: IBall) {
-    this.spriteClass = {
-      active: value.state === BallState.active
+  public getSpriteClass(value: IBall): ISpriteClass {
+    if (!value) {
+      return null;
+    }
+    const spriteClass = {
+      'active': value.state === BallState.active
     };
-    this.spriteClass[value.color] = true;
-    this._data = value;
+    spriteClass[value.color] = true;
+    return spriteClass;
   }
-  public get data(): IBall {
-    return this._data;
-  }
-
-  public spriteClass: ISpriteClass;
-
 }
