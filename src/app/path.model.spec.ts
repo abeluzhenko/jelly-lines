@@ -1,13 +1,8 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { Path, IPathCell } from './path.model';
 import { ICell } from './cell/cell.model';
 import { BallState, BallColor } from './ball/ball.model';
 
 describe('Path module', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-  });
-
   it('getGrid should return a proper grid', () => {
     const cells: ICell[] = [];
     for (let i = 0; i < 100; i++) {
