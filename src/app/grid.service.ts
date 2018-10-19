@@ -58,11 +58,11 @@ export class GridService {
 
   private getTurnObservable(input$: Observable<IGridInput>) {
     return input$.pipe(
-      filter(data => data.cell === undefined),
+      filter(data => !data.cell),
       map((data: IGridInput) => {
         const cells: ICell[] = data.cells;
         const openCells = cells
-          .filter(c => c.ball === undefined);
+          .filter(c => !c.ball);
         if (openCells.length >= DEFAULT_NEW_BALLS_COUNT) {
           for (let i = 0; i < DEFAULT_NEW_BALLS_COUNT; i++) {
             const r = Math.floor(openCells.length * Math.random());
@@ -81,10 +81,10 @@ export class GridService {
 
   private getMoveObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
     return input$.pipe(
-      filter(data => data.cell !== undefined && data.cell.ball === undefined),
+      filter(data => data.cell && !data.cell.ball),
       map(data => {
         const activeCell = data.cells
-          .filter(c => c.ball !== undefined)
+          .filter(c => c.ball)
           .filter(c => c.ball.state === BallState.active)
           .pop();
         // If we have an active ball
@@ -115,12 +115,12 @@ export class GridService {
   private getActivateObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
     return input$
       .pipe(
-        filter(data => data.cell !== undefined && data.cell.ball !== undefined),
+        filter(data => !!(data.cell && data.cell.ball)),
         map(data => {
         const cells = data.cells.map(cell => {
           // If the current cell doesn't contain a ball
           // then check if we have an active ball on the grid
-          if (cell.ball === undefined) {
+          if (!cell.ball) {
             return cell;
           }
           // If the current cell is the active one
