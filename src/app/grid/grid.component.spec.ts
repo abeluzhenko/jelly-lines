@@ -6,6 +6,7 @@ import { BallComponent } from '../ball/ball.component';
 import { By } from '@angular/platform-browser';
 import { GridService } from '../grid.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Grid } from '../grid.model';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -37,7 +38,7 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.cells = GridService.getRandomGrid();
+    component.cells = Grid.getRandomGrid();
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
     expect(cellEls.length).toBe(component.cells.length);

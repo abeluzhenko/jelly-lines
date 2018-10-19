@@ -1,27 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BallState, BallColors, BallColor } from './ball/ball.model';
+import { BallState } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
-import { Subject, Observable, merge, pipe } from 'rxjs';
+import { Subject, Observable, merge } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { Path, IPathCell } from './path.model';
-
-export interface IGridInput {
-  cells: ICell[];
-  cell?: ICell;
-}
-
-export enum GridAnimationType {
-  Move = 0,
-  Match = 1,
-  Wrong = 2,
-}
-
-export interface IGridAnimation {
-  type: GridAnimationType;
-  cells: ICell[];
-}
-
-export const DEFAULT_NEW_BALLS_COUNT = 3;
+import { Path } from './path.model';
+import { IGridInput, IGridAnimation, Grid, GridAnimationType } from './grid.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,26 +17,6 @@ export class GridService {
   public input$: Subject<IGridInput> = new Subject<IGridInput>();
   public output$: Observable<ICell[]>;
   public animation$: Observable<IGridAnimation>;
-
-  public static getRandomColor(): BallColor {
-    return BallColors[Math.floor(BallColors.length * Math.random())];
-  }
-
-  public static getGrid(size: number = Path.GRID_SIZE): ICell[] {
-    const result: ICell[] = [];
-    for (let i = 0; i < size * size; i++) {
-      result.push({ id: i });
-    }
-    return result;
-  }
-
-  public static getRandomGrid(size: number = Path.GRID_SIZE): ICell[] {
-    const result: ICell[] = [];
-    for (let i = 0; i < size * size; i++) {
-      result.push({ id: i, ball: { id: i, color: GridService.getRandomColor(), state: BallState.idle} });
-    }
-    return result;
-  }
 
   constructor() {
     this.output$ = this._outputSubject.asObservable();
@@ -84,12 +47,12 @@ export class GridService {
         const cells: ICell[] = data.cells;
         const openCells = cells
           .filter(c => !c.ball);
-        if (openCells.length >= DEFAULT_NEW_BALLS_COUNT) {
-          for (let i = 0; i < DEFAULT_NEW_BALLS_COUNT; i++) {
+        if (openCells.length >= Grid.ITEMS_PER_TURN) {
+          for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
             const r = Math.floor(openCells.length * Math.random());
             cells[openCells[r].id].ball = {
               id: openCells[r].id,
-              color: GridService.getRandomColor(),
+              color: Grid.getRandomColor(),
               state: BallState.idle
             };
             openCells.splice(r, 1);

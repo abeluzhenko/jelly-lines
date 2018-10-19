@@ -1,9 +1,10 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService, DEFAULT_NEW_BALLS_COUNT, GridAnimationType } from './grid.service';
-import { BallState, BallColor, BallColors } from './ball/ball.model';
+import { GridService } from './grid.service';
+import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Path } from './path.model';
+import { Grid, GridAnimationType } from './grid.model';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -17,7 +18,7 @@ describe('GridService', () => {
   }));
 
   it('should properly generate a grid', done => inject([GridService], (service: GridService) => {
-    const cells = GridService.getGrid(10);
+    const cells = Grid.getGrid(10);
 
     service.output$.subscribe(data => {
       expect(data).toBeDefined();
@@ -33,7 +34,7 @@ describe('GridService', () => {
   })());
 
   it('should properly set the current ball', done => inject([GridService], (service: GridService) => {
-    const cells = GridService.getGrid(10);
+    const cells = Grid.getGrid(10);
     const cell1 = {
       id: 0,
       ball: {
@@ -85,7 +86,7 @@ describe('GridService', () => {
   })());
 
   it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
-    const cells = GridService.getGrid(9);
+    const cells = Grid.getGrid(9);
 
     let count = 0;
     service.output$.subscribe(data => {
@@ -94,7 +95,7 @@ describe('GridService', () => {
 
       // There should be n new balls on the grid
       const fullCells = data.filter(c => c.ball !== undefined);
-      count += DEFAULT_NEW_BALLS_COUNT;
+      count += Grid.ITEMS_PER_TURN;
       expect(fullCells.length).toBe(count);
       if (fullCells.length === 81) {
         done();
@@ -107,7 +108,7 @@ describe('GridService', () => {
   })());
 
   it('should properly move the current ball (if there is a path to the target)', done => inject([GridService], (service: GridService) => {
-    const cells = GridService.getGrid(Path.GRID_SIZE);
+    const cells = Grid.getGrid(Path.GRID_SIZE);
     let step = 0;
     let cell1: ICell;
     let cell2: ICell;
@@ -150,7 +151,7 @@ describe('GridService', () => {
   })());
 
   it('should not move the current ball if there is no path to the target', done => inject([GridService], (service: GridService) => {
-    const cells = GridService.getGrid(Path.GRID_SIZE);
+    const cells = Grid.getGrid(Path.GRID_SIZE);
     cells[0] = { id: 0, ball: { id: 0, color: BallColor.green, state: BallState.idle }};
     cells[1] = { id: 0, ball: { id: 0, color: BallColor.red, state: BallState.idle }};
     cells[9] = { id: 0, ball: { id: 0, color: BallColor.red, state: BallState.idle }};
