@@ -42,6 +42,16 @@ export class Grid {
     return result;
   }
 
+  public static getPosition(
+    index: number,
+    gridSize = Grid.SIZE
+  ): { x: number, y: number } {
+    return {
+      x: Math.floor(index / gridSize),
+      y: index % gridSize,
+    };
+  }
+
   public static getMatches(grid: ICell[], length = 5): ICell[][] {
     return [];
   }
