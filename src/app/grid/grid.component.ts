@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChildren, AfterViewInit, QueryList, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AnimationBuilder, keyframes, animate, AnimationStyleMetadata, style } from '@angular/animations';
 import { GridService } from '../grid.service';
 import { ICell } from '../cell/cell.model';
 import { Grid, IGridAnimation, GridAnimationType } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
 import { IBall } from '../ball/ball.model';
+import { cellBallAnimation } from './grid.animations';
 
 @Component({
   selector: 'app-grid',
@@ -14,13 +15,18 @@ import { IBall } from '../ball/ball.model';
       [data]="cell"
       (clicked)="cellClicked($event)"
       (ballClicked)="ballClicked($event)">
+      <app-ball
+        *ngIf="cell.ball"
+        [@cellBallAnimation]="'visible'"
+        [data]="cell.ball"></app-ball>
     </app-cell>
     <app-ball
       class="animation"
       #animatedBall
       [data]="animatedData"></app-ball>
   `,
-  styleUrls: ['./grid.component.scss']
+  styleUrls: ['./grid.component.scss'],
+  animations: [ cellBallAnimation ]
 })
 export class GridComponent implements OnInit, AfterViewInit {
 

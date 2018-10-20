@@ -1,21 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { IBall } from '../ball/ball.model';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { ICell } from './cell.model';
-import { cellBallAnimation } from './cell.animations';
 
 @Component({
   selector: 'app-cell',
-  template: `
-  <app-ball
-    *ngIf="data?.ball"
-    [@cellBallAnimation]="'visible'"
-    [data]="data?.ball">
-  </app-ball>
-  `,
-  styleUrls: ['./cell.component.scss'],
-  animations: [ cellBallAnimation ]
+  template: `<ng-content></ng-content>`,
+  styleUrls: ['./cell.component.scss']
 })
-export class CellComponent implements OnInit {
+export class CellComponent {
 
   @Input() data: ICell;
   @Output() clicked: EventEmitter<ICell> = new EventEmitter<ICell>();
@@ -23,10 +14,5 @@ export class CellComponent implements OnInit {
   @HostListener('click')
   onClick() {
     this.clicked.emit(this.data);
-  }
-
-  constructor() { }
-
-  ngOnInit() {
   }
 }
