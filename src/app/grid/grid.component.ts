@@ -23,6 +23,7 @@ import { cellBallAnimation } from './grid.animations';
     <app-ball
       class="animation"
       #animatedBall
+      [style.visibility]="animatedData ? 'visible' : 'hidden'"
       [data]="animatedData"></app-ball>
   `,
   styleUrls: ['./grid.component.scss'],
@@ -56,8 +57,9 @@ export class GridComponent implements OnInit {
       const ballData = data.cells[data.cells.length - 1].ball;
       const animation = this.buildMoveAnimation(data.cells);
       const player = animation.create(this.animatedBall.elementRef.nativeElement);
-      player.play();
       this.animatedData = ballData;
+      player.onDone(() => this.animatedData = null);
+      player.play();
     }
   }
 
