@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { BallState, IBall } from './ball.model';
 
 interface ISpriteClass {
@@ -27,4 +27,8 @@ export class BallComponent {
     spriteClass[value.color] = true;
     return spriteClass;
   }
+
+  constructor(
+    public elementRef: ElementRef
+  ) {}
 }

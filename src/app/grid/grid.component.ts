@@ -26,7 +26,7 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   public cells: ICell[];
 
-  @ViewChild('animatedBall') animatedBall: any;
+  @ViewChild('animatedBall') animatedBall: BallComponent;
   public animatedData: IBall;
 
   constructor(
@@ -42,6 +42,7 @@ export class GridComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    console.log(this.animatedBall);
   }
 
   cellClicked(cell: ICell) {
@@ -50,27 +51,26 @@ export class GridComponent implements OnInit, AfterViewInit {
 
   private processAnimation(data: IGridAnimation) {
     if (data.type === GridAnimationType.Move) {
-      const path = data.cells;
-      const last = path[path.length - 1];
+      const ballData = data.cells[data.cells.length - 1].ball;
       const animation = this.buildMoveAnimation(data.cells);
-      console.log(this.animatedBall, animation);
-      // const player = animation.create(element.elementRef.nativeElement);
-      // player.play();
+      const player = animation.create(this.animatedBall.elementRef.nativeElement);
+      player.play();
+      this.animatedBall.data = ballData;
     }
   }
 
-  private buildMoveAnimation(data: ICell[]) {
-    const from = Grid.getPosition(data[0].id);
-    const delta = 1 / data.length;
-    const steps: AnimationStyleMetadata[] = data.map((cell, i) => {
-      const to = Grid.getPosition(cell.id);
-      return style({
-        transform: `translate(${ (to.x - from.x) * 100 }%, ${ (to.y - from.y) * 100 }%)`,
-        offset: delta * i
+  private buildMoveAnimation(data: ICell[], duration = 1) {
+    const delta = duration / data.length;
+    const steps: AnimationStyleMetadata[] = data
+      .map((cell, i) => {
+        const position = Grid.getPosition(cell.id);
+        return style({
+          transform: `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`,
+          offset: delta * i
+        });
       });
-    });
     return this._animationBuilder.build([
-      animate('1s', keyframes(steps))
+      animate('1s ease', keyframes(steps))
     ]);
   }
 

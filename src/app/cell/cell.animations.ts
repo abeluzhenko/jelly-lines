@@ -9,19 +9,17 @@ import {
 
 export const cellBallAnimation = trigger('cellBallAnimation', [
   state(
-    'visible',
-    style({
-      transform: 'scale(1)'
-    }),
+    'active',
+    style({ transform: 'scale(1)' }),
+  ),
+  state(
+    'animated',
+    style({ transform: 'scale(1)' }),
   ),
   state(
     'void',
-    style({
-      transform: 'scale(0)'
-    }),
+    style({ transform: 'scale(0)' }),
   ),
-  transition(
-    'visible <=> void',
-    animate('320ms ease')
-  )
+  transition('active <=> void', animate('320ms ease')),
+  transition('animated <=> void', animate('1000ms 0ms'))
 ]);
