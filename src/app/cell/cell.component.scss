@@ -1,7 +1,7 @@
 :host {
   background: var(--color-grid);
-  width: 60px;
-  height: 60px;
+  width: var(--ball-size);
+  height: var(--ball-size);
   position: relative;
   display: block;
   overflow: visible;

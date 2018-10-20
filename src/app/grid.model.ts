@@ -47,8 +47,8 @@ export class Grid {
     gridSize = Grid.SIZE
   ): { x: number, y: number } {
     return {
-      x: Math.floor(index / gridSize),
-      y: index % gridSize,
+      y: Math.floor(index / gridSize),
+      x: index % gridSize,
     };
   }
 

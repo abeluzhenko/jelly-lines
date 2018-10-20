@@ -1,6 +1,16 @@
 :host {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
   background: var(--color-grid);
+}
+
+.animation {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: var(--ball-size);
+  height: var(--ball-size);
 }
