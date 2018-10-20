@@ -5,7 +5,7 @@ import { ICell } from '../cell/cell.model';
 import { Grid, IGridAnimation, GridAnimationType } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
 import { IBall } from '../ball/ball.model';
-import { cellBallAnimation } from './grid.animations';
+import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({
   selector: 'app-grid',
@@ -63,18 +63,18 @@ export class GridComponent implements OnInit {
     }
   }
 
-  private buildMoveAnimation(data: ICell[], duration = 1) {
+  private buildMoveAnimation(data: ICell[], duration = MOVING_DURATION) {
     const delta = duration / data.length;
     const steps: AnimationStyleMetadata[] = data
       .map((cell, i) => {
         const position = Grid.getPosition(cell.id);
         return style({
           transform: `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`,
-          offset: delta * i
+          offset: delta * i / 1000
         });
       });
     return this._animationBuilder.build([
-      animate('1s ease', keyframes(steps))
+      animate(`${ duration }ms ease`, keyframes(steps))
     ]);
   }
 
