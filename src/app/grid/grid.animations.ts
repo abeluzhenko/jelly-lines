@@ -20,6 +20,7 @@ export const cellBallAnimation = trigger('cellBallAnimation', [
     'void',
     style({ transform: 'scale(0)' }),
   ),
-  transition('active <=> void', animate('320ms ease')),
-  transition('animated <=> void', animate('1000ms 0ms'))
+  transition('void => active', animate('320ms ease')),
+  transition('animated => void', animate('1ms')),
+  transition('void => animated', animate('1ms 1000ms'))
 ]);

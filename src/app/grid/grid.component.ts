@@ -17,7 +17,7 @@ import { cellBallAnimation } from './grid.animations';
       (ballClicked)="ballClicked($event)">
       <app-ball
         *ngIf="cell.ball"
-        [@cellBallAnimation]="'visible'"
+        [@cellBallAnimation]="animatedData === cell.ball ? 'animated' : 'active'"
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-ball
@@ -28,7 +28,7 @@ import { cellBallAnimation } from './grid.animations';
   styleUrls: ['./grid.component.scss'],
   animations: [ cellBallAnimation ]
 })
-export class GridComponent implements OnInit, AfterViewInit {
+export class GridComponent implements OnInit {
 
   public cells: ICell[];
 
@@ -47,10 +47,6 @@ export class GridComponent implements OnInit, AfterViewInit {
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
-    console.log(this.animatedBall);
-  }
-
   cellClicked(cell: ICell) {
     this._gridService.input$.next({ cells: this.cells, cell });
   }
@@ -61,7 +57,7 @@ export class GridComponent implements OnInit, AfterViewInit {
       const animation = this.buildMoveAnimation(data.cells);
       const player = animation.create(this.animatedBall.elementRef.nativeElement);
       player.play();
-      this.animatedBall.data = ballData;
+      this.animatedData = ballData;
     }
   }
 
