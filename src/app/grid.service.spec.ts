@@ -196,6 +196,10 @@ describe('GridService', () => {
       expect(data).toBeDefined();
       matches = Grid.getMatches(data);
       expect(matches.length).toBe(0);
+
+      // No new items should be added after the match
+      expect(data.some(cell => !!cell.ball)).toBeFalsy();
+
       dataSubscription.unsubscribe();
       return done();
     });

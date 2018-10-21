@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BallState } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
-import { Subject, Observable, merge } from 'rxjs';
+import { Subject, Observable, merge, pipe } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './path.model';
 import { IGridInput, IGridAnimation, Grid, GridAnimationType } from './grid.model';
+
+interface ITurnData {
+  data: IGridInput;
+  matches: ICell[][];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -41,24 +46,35 @@ export class GridService {
       filter(data => !data.cell),
       // Process matches
       map((data: IGridInput) => ({ data, matches: Grid.getMatches(data.cells) })),
-      tap((data: { data: IGridInput, matches: ICell[][]}) =>
+      // Start animation
+      tap((data: ITurnData) =>
         data.matches.forEach(cells => animationSubject.next({
           type: GridAnimationType.Match,
           cells
         }))
       ),
-      map((data: { data: IGridInput, matches: ICell[][]}) => ({
-        cells: data.data.cells.map(cell => {
-          const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
-          return isMatch ? { id: cell.id } : cell;
-        }),
-        cell: data.data.cell
+      // Remove matching ball from the grid
+      map((data: ITurnData) => ({
+        data: {
+          cells: data.data.cells.map(cell => {
+            const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
+            return isMatch ? { id: cell.id } : cell;
+          }),
+          cell: data.data.cell
+        },
+        matches: data.matches
       })),
-      // New turn
-      map((data: IGridInput) => {
-        const cells: ICell[] = data.cells;
-        const openCells = cells
-          .filter(c => !c.ball);
+      // Process new turn
+      map((data: ITurnData) => {
+        if (data.matches.length) {
+          return {
+            cells: data.data.cells,
+            cell: data.data.cell
+          };
+        }
+        const cells: ICell[] = data.data.cells;
+        const openCells = cells.filter(c => !c.ball);
+
         if (openCells.length >= Grid.ITEMS_PER_TURN) {
           for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
             const r = Math.floor(openCells.length * Math.random());
@@ -70,7 +86,11 @@ export class GridService {
             openCells.splice(r, 1);
           }
         }
-        return { cells };
+
+        return {
+          cells: data.data.cells,
+          cell: data.data.cell
+        };
       })
     );
   }
