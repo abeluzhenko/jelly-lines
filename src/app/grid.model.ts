@@ -71,6 +71,7 @@ export class Grid {
         const currentItem = flatGrid[i];
         if ((lastItem.cell.ball && currentItem.cell.ball)
           && (lastItem.slope === currentItem.slope)
+          && (currentItem.cell.ball.color === firstItem.cell.ball.color)
           && (currentItem.cell.ball.color === lastItem.cell.ball.color)) {
           sequenceLength++;
           continue;

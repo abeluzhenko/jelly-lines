@@ -94,17 +94,13 @@ describe('GridService', () => {
       expect(data.length).toBe(cells.length);
 
       // There should be n new balls on the grid
-      const fullCells = data.filter(c => c.ball !== undefined);
+      const fullCells = data.filter(c => c.ball);
       count += Grid.ITEMS_PER_TURN;
       expect(fullCells.length).toBe(count);
-      if (fullCells.length === 81) {
-        done();
-      }
+      done();
     });
 
-    for (let i = 0; i < 81 / 3; i++) {
-      service.input$.next({ cells });
-    }
+    service.input$.next({ cells });
   })());
 
   it('should properly move the current ball (if there is a path to the target)', done => inject([GridService], (service: GridService) => {
@@ -183,5 +179,26 @@ describe('GridService', () => {
       }
     });
     service.input$.next({ cells, cell: cells[0] });
+  })());
+
+  it('should properly process matches', done => inject([GridService], (service: GridService) => {
+    const cells = Grid.getGrid(Path.GRID_SIZE);
+    for (let i = 0; i < 6; i++) {
+      cells[i * 10].ball = { id: i * 10, state: BallState.idle, color: BallColor.blue };
+    }
+    let matches = Grid.getMatches(cells);
+    expect(matches.length).toBe(1);
+    const animationSubscription = service.animation$.subscribe(data => {
+      expect(data).toBeDefined();
+      animationSubscription.unsubscribe();
+    });
+    const dataSubscription = service.output$.subscribe(data => {
+      expect(data).toBeDefined();
+      matches = Grid.getMatches(data);
+      expect(matches.length).toBe(0);
+      dataSubscription.unsubscribe();
+      return done();
+    });
+    service.input$.next({ cells });
   })());
 });

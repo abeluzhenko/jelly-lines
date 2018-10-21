@@ -22,7 +22,7 @@ export class GridService {
     this.output$ = this._outputSubject.asObservable();
     this.animation$ = this._animationSubject.asObservable();
 
-    const turn$ = this.getTurnObservable(this.input$);
+    const turn$ = this.getTurnObservable(this.input$, this._animationSubject);
     const move$ = this.getMoveObservable(this.input$, this._animationSubject);
     const activate$ = this.getActivateObservable(this.input$);
 
@@ -33,16 +33,28 @@ export class GridService {
     ).subscribe(data => this._outputSubject.next(data.cells));
   }
 
-  private getCheckObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
+  private getTurnObservable(
+    input$: Observable<IGridInput>,
+    animationSubject: Subject<IGridAnimation>
+  ): Observable<IGridInput> {
     return input$.pipe(
       filter(data => !data.cell),
-      map(data => data)
-    );
-  }
-
-  private getTurnObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
-    return input$.pipe(
-      filter(data => !data.cell),
+      // Process matches
+      map((data: IGridInput) => ({ data, matches: Grid.getMatches(data.cells) })),
+      tap((data: { data: IGridInput, matches: ICell[][]}) =>
+        data.matches.forEach(cells => animationSubject.next({
+          type: GridAnimationType.Match,
+          cells
+        }))
+      ),
+      map((data: { data: IGridInput, matches: ICell[][]}) => ({
+        cells: data.data.cells.map(cell => {
+          const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
+          return isMatch ? { id: cell.id } : cell;
+        }),
+        cell: data.data.cell
+      })),
+      // New turn
       map((data: IGridInput) => {
         const cells: ICell[] = data.cells;
         const openCells = cells
