@@ -1,4 +1,4 @@
-import { BallColors, BallColor, BallState } from './ball/ball.model';
+import { BallColors, BallColor, BallState, IBall } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 
 export interface IGridInput {
@@ -52,7 +52,70 @@ export class Grid {
     };
   }
 
-  public static getMatches(grid: ICell[], length = 5): ICell[][] {
-    return [];
+  public static getMatches(grid: ICell[], length = 5, gridSize = Grid.SIZE): ICell[][] {
+    const ROW = 1000;
+    const COLUMN = -1000;
+    const CURRENT = -2000;
+    let result = [];
+
+    const getSequences = (
+      cells: ICell[],
+      flatGrid: { cell: ICell, slope: number }[],
+      tempResult: ICell[][]
+    ) => {
+      const firstItem = flatGrid[0];
+      let sequenceLength = 1;
+      let lastItem: { cell: ICell, slope: number } = flatGrid[1];
+      const sequencies = [];
+      for (let i = 2; i < cells.length; i++) {
+        const currentItem = flatGrid[i];
+        if ((lastItem.cell.ball && currentItem.cell.ball)
+          && (lastItem.slope === currentItem.slope)
+          && (currentItem.cell.ball.color === lastItem.cell.ball.color)) {
+          sequenceLength++;
+          continue;
+        }
+        if (sequenceLength >= length - 1) {
+          const n = flatGrid
+            .slice(i - sequenceLength, i)
+            .map(data => data.cell);
+          n.unshift(firstItem.cell);
+          if (!tempResult.some(s => s.filter(el => n.indexOf(el) !== -1).length > 1)) {
+            sequencies.push(n);
+          }
+        }
+        sequenceLength = 1;
+        lastItem = flatGrid[i];
+      }
+      return sequencies;
+    };
+    for (let i = 0; i < grid.length; i++) {
+      const currItem = grid[i];
+      if (!currItem.ball) {
+        continue;
+      }
+      const currPos = Grid.getPosition(i, gridSize);
+      const sortedGrid = grid
+        .map(cell => {
+          const cellPos = Grid.getPosition(cell.id, gridSize);
+          let slope = 0;
+          if (cell.id === currItem.id) {
+            slope = CURRENT;
+          } else if (currPos.x === cellPos.x) {
+            slope = ROW;
+          } else if (currPos.y === cellPos.y) {
+            slope = COLUMN;
+          } else {
+            slope = (cellPos.y - currPos.y) / (cellPos.x - currPos.x);
+          }
+          return { cell, slope };
+        })
+        .sort((a, b) => a.slope > b.slope ? 1 : (a.slope < b.slope ? -1 : a.cell.id - b.cell.id));
+      result = [
+        ...result,
+        ...getSequences(grid, sortedGrid, result)
+      ];
+    }
+    return result;
   }
 }
