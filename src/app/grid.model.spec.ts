@@ -2,17 +2,19 @@ import { Grid } from './grid.model';
 import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 
-fdescribe('Grid module', () => {
+describe('Grid module', () => {
   it('getGrid should return a proper grid', () => {
+    let grid: ICell[] = Grid.getGrid(9);
+    expect(grid.length).toBe(81);
+    expect(grid[50]).toEqual({ id: 50 });
+
+    grid = Grid.getGrid(10);
+    expect(grid.length).toBe(100);
+    expect(grid[50]).toEqual({ id: 50 });
+  });
 
   });
-  it('getRandomGrid should return a proper randomized grid', () => {
-
-  });
-  it('getRandomColor should return a random color from the colors set', () => {
-
-  });
-  fit('getMatches should return all the matches on the grid', () => {
+  it('getMatches should return all the matches on the grid', () => {
     let grid: ICell[] = Grid.getGrid(9);
     let matches = Grid.getMatches(grid, 5);
     expect(matches).toEqual([]);
