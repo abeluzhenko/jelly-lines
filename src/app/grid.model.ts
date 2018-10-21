@@ -59,7 +59,6 @@ export class Grid {
     let result = [];
 
     const getSequences = (
-      cells: ICell[],
       flatGrid: { cell: ICell, slope: number }[],
       tempResult: ICell[][]
     ) => {
@@ -67,9 +66,10 @@ export class Grid {
       let sequenceLength = 1;
       let lastItem: { cell: ICell, slope: number } = flatGrid[1];
       const sequencies = [];
-      for (let i = 2; i < cells.length; i++) {
+      for (let i = 0; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
-        if ((lastItem.cell.ball && currentItem.cell.ball)
+        if (currentItem
+          && (lastItem.cell.ball && currentItem.cell.ball)
           && (lastItem.slope === currentItem.slope)
           && (currentItem.cell.ball.color === firstItem.cell.ball.color)
           && (currentItem.cell.ball.color === lastItem.cell.ball.color)) {
@@ -114,7 +114,7 @@ export class Grid {
         .sort((a, b) => a.slope > b.slope ? 1 : (a.slope < b.slope ? -1 : a.cell.id - b.cell.id));
       result = [
         ...result,
-        ...getSequences(grid, sortedGrid, result)
+        ...getSequences(sortedGrid, result)
       ];
     }
     return result;

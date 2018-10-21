@@ -49,17 +49,17 @@ describe('Grid module', () => {
     grid = Grid.getGrid(9);
     for (let i = 0; i < 5; i++) {
       grid[i * 9 + 2].ball = { id: i * 9 + 2, state: BallState.idle, color: BallColor.blue };
-      grid[i * 9 + 10].ball = { id: i * 9 + 10, state: BallState.idle, color: BallColor.red };
+      grid[(i + 4) * 9].ball = { id: (i + 4) * 9, state: BallState.idle, color: BallColor.red };
     }
-    matches = Grid.getMatches(grid, 5);
+    matches = Grid.getMatches(grid, 5, 9);
     expect(matches.length).toBe(2);
     expect(matches[0].length).toBe(5);
     expect(matches[0][0]).toEqual(grid[2]);
     expect(matches[0][4]).toEqual(grid[38]);
 
     expect(matches[1].length).toBe(5);
-    expect(matches[1][0]).toEqual(grid[10]);
-    expect(matches[1][4]).toEqual(grid[46]);
+    expect(matches[1][0]).toEqual(grid[36]);
+    expect(matches[1][4]).toEqual(grid[72]);
 
     grid = Grid.getGrid(9);
     for (let i = 0; i < 6; i++) {

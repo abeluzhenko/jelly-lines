@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AnimationBuilder, keyframes, animate, AnimationStyleMetadata, style } from '@angular/animations';
 import { GridService } from '../grid.service';
 import { ICell } from '../cell/cell.model';
-import { Grid, IGridAnimation, GridAnimationType } from '../grid.model';
+import { Grid, IGridAnimation, GridAnimationType, IGridInput } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
 import { IBall } from '../ball/ball.model';
 import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
@@ -41,8 +41,8 @@ export class GridComponent implements OnInit {
     private _animationBuilder: AnimationBuilder
   ) {
     this._gridService.output$.subscribe(cells => this.cells = cells);
-    this._gridService.input$.next({ cells: Grid.getGrid() });
     this._gridService.animation$.subscribe(data => this.processAnimation(data));
+    this.turn(Grid.getGrid());
   }
 
   ngOnInit() {
@@ -52,13 +52,20 @@ export class GridComponent implements OnInit {
     this._gridService.input$.next({ cells: this.cells, cell });
   }
 
+  private turn(cells: ICell[]) {
+    this._gridService.input$.next({ cells });
+  }
+
   private processAnimation(data: IGridAnimation) {
     if (data.type === GridAnimationType.Move) {
       const ballData = data.cells[data.cells.length - 1].ball;
       const animation = this.buildMoveAnimation(data.cells);
       const player = animation.create(this.animatedBall.elementRef.nativeElement);
       this.animatedData = ballData;
-      player.onDone(() => this.animatedData = null);
+      player.onDone(() => {
+        this.animatedData = null;
+        this.turn(this.cells);
+      });
       player.play();
     }
   }
