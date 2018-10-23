@@ -2,16 +2,16 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AnimationBuilder, keyframes, animate, AnimationStyleMetadata, style } from '@angular/animations';
 import { GridService } from '../grid.service';
 import { ICell } from '../cell/cell.model';
-import { Grid, IGridAnimation, GridAnimationType, IGridInput } from '../grid.model';
+import { Grid, IGridAnimation, GridAnimationType, ITurnData } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
-import { IBall } from '../ball/ball.model';
+import { IBall, BallColor } from '../ball/ball.model';
 import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({
   selector: 'app-grid',
   template: `
     <app-cell
-      *ngFor="let cell of cells"
+      *ngFor="let cell of data.cells"
       [data]="cell"
       (clicked)="cellClicked($event)"
       (ballClicked)="ballClicked($event)">
@@ -31,7 +31,7 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 })
 export class GridComponent implements OnInit {
 
-  public cells: ICell[];
+  public data: ITurnData;
 
   @ViewChild('animatedBall') animatedBall: BallComponent;
   public animatedData: IBall;
@@ -40,7 +40,7 @@ export class GridComponent implements OnInit {
     private _gridService: GridService,
     private _animationBuilder: AnimationBuilder
   ) {
-    this._gridService.output$.subscribe(cells => this.cells = cells);
+    this._gridService.output$.subscribe(data => this.data = data);
     this._gridService.animation$.subscribe(data => this.processAnimation(data));
     this.turn(Grid.getGrid());
   }
@@ -49,7 +49,7 @@ export class GridComponent implements OnInit {
   }
 
   cellClicked(cell: ICell) {
-    this._gridService.input$.next({ cells: this.cells, cell });
+    this._gridService.input$.next({ cells: this.data.cells, cell });
   }
 
   private turn(cells: ICell[]) {
@@ -64,7 +64,7 @@ export class GridComponent implements OnInit {
       this.animatedData = ballData;
       player.onDone(() => {
         this.animatedData = null;
-        this.turn(this.cells);
+        this.turn(this.data.cells);
       });
       player.play();
     }

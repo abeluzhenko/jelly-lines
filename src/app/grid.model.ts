@@ -1,9 +1,10 @@
-import { BallColors, BallColor, BallState, IBall } from './ball/ball.model';
+import { BallColors, BallColor, BallState } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 
-export interface IGridInput {
+export interface ITurnData {
   cells: ICell[];
   cell?: ICell;
+  nextColors?: BallColor[];
 }
 
 export enum GridAnimationType {

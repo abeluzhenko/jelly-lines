@@ -13,7 +13,7 @@ describe('Grid module', () => {
     expect(grid[50]).toEqual({ id: 50 });
   });
 
-  it('getMatches should return all the matches on the grid', () => {
+  xit('getMatches should return all the matches on the grid', () => {
     let grid: ICell[] = Grid.getGrid(9);
     let matches = Grid.getMatches(grid, 5);
     expect(matches).toEqual([]);

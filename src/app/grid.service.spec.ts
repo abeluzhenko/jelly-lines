@@ -22,10 +22,10 @@ describe('GridService', () => {
 
     service.output$.subscribe(data => {
       expect(data).toBeDefined();
-      expect(data.length).toBe(cells.length);
+      expect(data.cells.length).toBe(cells.length);
 
       // There should be n new balls on the grid
-      const fullCells = data.filter(c => c.ball !== undefined);
+      const fullCells = data.cells.filter(c => c.ball !== undefined);
       expect(fullCells.length).toBe(3);
 
       done();
@@ -55,26 +55,26 @@ describe('GridService', () => {
     cells[10] = cell2;
     let step = 0;
     service.output$.subscribe(data => {
-      expect(data[0]).toBeDefined();
-      expect(data[0].id).toBe(cell1.id);
-      expect(data[10]).toBeDefined();
-      expect(data[10].id).toBe(cell2.id);
+      expect(data.cells[0]).toBeDefined();
+      expect(data.cells[0].id).toBe(cell1.id);
+      expect(data.cells[10]).toBeDefined();
+      expect(data.cells[10].id).toBe(cell2.id);
       switch (step) {
         case 0:
-          expect(data[0].ball.state).toBe(BallState.idle);
-          expect(data[10].ball.state).toBe(BallState.idle);
+          expect(data.cells[0].ball.state).toBe(BallState.idle);
+          expect(data.cells[10].ball.state).toBe(BallState.idle);
         break;
         case 1:
-          expect(data[0].ball).toBeDefined();
-          expect(data[10].ball).toBeDefined();
-          expect(data[0].ball.state).toBe(BallState.active);
-          expect(data[10].ball.state).toBe(BallState.idle);
+          expect(data.cells[0].ball).toBeDefined();
+          expect(data.cells[10].ball).toBeDefined();
+          expect(data.cells[0].ball.state).toBe(BallState.active);
+          expect(data.cells[10].ball.state).toBe(BallState.idle);
         break;
         case 2:
-          expect(data[0].ball).toBeDefined();
-          expect(data[10].ball).toBeDefined();
-          expect(data[0].ball.state).toBe(BallState.idle);
-          expect(data[10].ball.state).toBe(BallState.active);
+          expect(data.cells[0].ball).toBeDefined();
+          expect(data.cells[10].ball).toBeDefined();
+          expect(data.cells[0].ball.state).toBe(BallState.idle);
+          expect(data.cells[10].ball.state).toBe(BallState.active);
           done();
         break;
       }
@@ -91,10 +91,10 @@ describe('GridService', () => {
     let count = 0;
     service.output$.subscribe(data => {
       expect(data).toBeDefined();
-      expect(data.length).toBe(cells.length);
+      expect(data.cells.length).toBe(cells.length);
 
       // There should be n new balls on the grid
-      const fullCells = data.filter(c => c.ball);
+      const fullCells = data.cells.filter(c => c.ball);
       count += Grid.ITEMS_PER_TURN;
       expect(fullCells.length).toBe(count);
       done();
@@ -116,9 +116,7 @@ describe('GridService', () => {
     });
     const dataSubscription = service.output$.subscribe(data => {
       if (step === 0) {
-        cell1 = data
-          .filter(c => c.ball !== undefined)
-          .pop();
+        cell1 = data.cells.filter(c => c.ball)[0];
         expect(cell1).toBeTruthy();
         expect(cell1.ball).toBeDefined();
         expect(cell1.ball.state).toBe(BallState.idle);
@@ -126,19 +124,17 @@ describe('GridService', () => {
         return service.input$.next({ cells, cell: cell1 });
       }
       if (step === 1) {
-        expect(data[cell1.id].ball).toBeDefined();
-        expect(data[cell1.id].ball.state).toBe(BallState.active);
-        cell2 = data
-          .filter(c => c.ball === undefined)
-          .pop();
+        expect(data.cells[cell1.id].ball).toBeDefined();
+        expect(data.cells[cell1.id].ball.state).toBe(BallState.active);
+        cell2 = data.cells.filter(c => !c.ball)[0];
         expect(cell2).toBeTruthy();
         step++;
         return service.input$.next({ cells, cell: cell2 });
       }
       if (step === 2) {
-        expect(data[cell1.id].ball).toBeUndefined();
-        expect(data[cell2.id].ball).toBeDefined();
-        expect(data[cell2.id].ball.state).toBe(BallState.idle);
+        expect(data.cells[cell1.id].ball).toBeUndefined();
+        expect(data.cells[cell2.id].ball).toBeDefined();
+        expect(data.cells[cell2.id].ball.state).toBe(BallState.idle);
         dataSubscription.unsubscribe();
         return done();
       }
@@ -161,19 +157,17 @@ describe('GridService', () => {
     });
     const dataSubscription = service.output$.subscribe(data => {
       if (step === 0) {
-        expect(data[0].ball).toBeDefined();
-        expect(data[0].ball.state).toBe(BallState.active);
-        targetCell = data
-          .filter(c => c.ball === undefined)
-          .pop();
+        expect(data.cells[0].ball).toBeDefined();
+        expect(data.cells[0].ball.state).toBe(BallState.active);
+        targetCell = data.cells.filter(c => !c.ball)[0];
         expect(targetCell).toBeTruthy();
         step++;
         return service.input$.next({ cells, cell: targetCell });
       }
       if (step === 1) {
-        expect(data[0].ball).toBeDefined();
-        expect(data[0].ball.state).toBe(BallState.active);
-        expect(data[targetCell.id].ball).toBeUndefined();
+        expect(data.cells[0].ball).toBeDefined();
+        expect(data.cells[0].ball.state).toBe(BallState.active);
+        expect(data.cells[targetCell.id].ball).toBeUndefined();
         dataSubscription.unsubscribe();
         return done();
       }
@@ -194,15 +188,37 @@ describe('GridService', () => {
     });
     const dataSubscription = service.output$.subscribe(data => {
       expect(data).toBeDefined();
-      matches = Grid.getMatches(data);
+      matches = Grid.getMatches(data.cells);
       expect(matches.length).toBe(0);
 
       // No new items should be added after the match
-      expect(data.some(cell => !!cell.ball)).toBeFalsy();
+      expect(data.cells.some(cell => !!cell.ball)).toBeFalsy();
 
       dataSubscription.unsubscribe();
       return done();
     });
     service.input$.next({ cells });
+  })());
+
+  xit('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
+    const cells = Grid.getGrid(9);
+    const dataSubscription = service.output$.subscribe(data => {
+      service.input$.next({ cells });
+      if (data.cells.filter(cell => cell.ball).length === 81) {
+        dataSubscription.unsubscribe();
+        done();
+      }
+    });
+    service.input$.next({ cells });
+  })());
+
+  xit('should properly process matches on new turn', done => inject([GridService], (service: GridService) => {
+    const cells = Grid.getGrid(9);
+    for (let i = 0; i < 6; i++) {
+      cells[i * 10].ball = { id: i * 10, state: BallState.idle, color: BallColor.blue };
+    }
+    const dataSubscription = service.output$.subscribe(data => {
+      //
+    });
   })());
 });

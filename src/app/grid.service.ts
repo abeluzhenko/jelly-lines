@@ -4,10 +4,10 @@ import { ICell } from './cell/cell.model';
 import { Subject, Observable, merge, pipe } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './path.model';
-import { IGridInput, IGridAnimation, Grid, GridAnimationType } from './grid.model';
+import { ITurnData, IGridAnimation, Grid, GridAnimationType } from './grid.model';
 
-interface ITurnData {
-  data: IGridInput;
+interface ILoopData {
+  data: ITurnData;
   matches: ICell[][];
 }
 
@@ -16,11 +16,11 @@ interface ITurnData {
 })
 export class GridService {
 
-  private _outputSubject: Subject<ICell[]> = new Subject<ICell[]>();
+  private _outputSubject: Subject<ITurnData> = new Subject<ITurnData>();
   private _animationSubject: Subject<IGridAnimation> = new Subject<IGridAnimation>();
 
-  public input$: Subject<IGridInput> = new Subject<IGridInput>();
-  public output$: Observable<ICell[]>;
+  public input$: Subject<ITurnData> = new Subject<ITurnData>();
+  public output$: Observable<ITurnData>;
   public animation$: Observable<IGridAnimation>;
 
   constructor() {
@@ -35,26 +35,26 @@ export class GridService {
       turn$,
       activate$,
       move$
-    ).subscribe(data => this._outputSubject.next(data.cells));
+    ).subscribe(data => this._outputSubject.next(data));
   }
 
   private getTurnObservable(
-    input$: Observable<IGridInput>,
+    input$: Observable<ITurnData>,
     animationSubject: Subject<IGridAnimation>
-  ): Observable<IGridInput> {
+  ): Observable<ITurnData> {
     return input$.pipe(
       filter(data => !data.cell),
       // Process matches
-      map((data: IGridInput) => ({ data, matches: Grid.getMatches(data.cells) })),
+      map((data: ITurnData) => ({ data, matches: Grid.getMatches(data.cells) })),
       // Start animation
-      tap((data: ITurnData) =>
+      tap((data: ILoopData) =>
         data.matches.forEach(cells => animationSubject.next({
           type: GridAnimationType.Match,
           cells
         }))
       ),
       // Remove matching ball from the grid
-      map((data: ITurnData) => ({
+      map((data: ILoopData) => ({
         data: {
           cells: data.data.cells.map(cell => {
             const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
@@ -65,7 +65,7 @@ export class GridService {
         matches: data.matches
       })),
       // Process new turn
-      map((data: ITurnData) => {
+      map((data: ILoopData) => {
         if (data.matches.length) {
           return {
             cells: data.data.cells,
@@ -96,9 +96,9 @@ export class GridService {
   }
 
   private getMoveObservable(
-    input$: Observable<IGridInput>,
+    input$: Observable<ITurnData>,
     animationSubject: Subject<IGridAnimation>
-  ): Observable<IGridInput> {
+  ): Observable<ITurnData> {
     return input$.pipe(
       filter(data => data.cell && !data.cell.ball),
       map(data => {
@@ -127,17 +127,17 @@ export class GridService {
         data.cells[data.cell.id].ball = ballToMove;
         return { data, path };
       }),
-      tap((data: { data: IGridInput, path: ICell[] }) =>
+      tap((data: { data: ITurnData, path: ICell[] }) =>
         animationSubject.next({
           type: data.path ? GridAnimationType.Move : GridAnimationType.Wrong,
           cells: data.path
         })
       ),
-      map((data: { data: IGridInput, path: ICell[] }) => data.data)
+      map((data: { data: ITurnData, path: ICell[] }) => data.data)
     );
   }
 
-  private getActivateObservable(input$: Observable<IGridInput>): Observable<IGridInput> {
+  private getActivateObservable(input$: Observable<ITurnData>): Observable<ITurnData> {
     return input$
       .pipe(
         filter(data => !!(data.cell && data.cell.ball)),
