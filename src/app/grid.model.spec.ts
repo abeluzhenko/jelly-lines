@@ -24,7 +24,11 @@ describe('Grid module', () => {
       grid[i + 2].ball = { id: i + 2, state: BallState.idle, color: BallColor.blue };
       grid[i + 10].ball = { id: i + 10, state: BallState.idle, color: BallColor.red };
       grid[i + 15].ball = { id: i + 15, state: BallState.idle, color: BallColor.green };
+      grid[i + 30].ball = { id: i + 30, state: BallState.idle, color: BallColor.green };
     }
+    grid[29].ball = grid[30].ball;
+    grid[30] = { id: 30 };
+
     matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(2);
     expect(matches[0].length).toBe(5);
@@ -50,7 +54,11 @@ describe('Grid module', () => {
     for (let i = 0; i < 5; i++) {
       grid[i * 9 + 2].ball = { id: i * 9 + 2, state: BallState.idle, color: BallColor.blue };
       grid[(i + 4) * 9].ball = { id: (i + 4) * 9, state: BallState.idle, color: BallColor.red };
+      grid[(i + 9) * 9].ball = { id: (i + 9) * 9, state: BallState.idle, color: BallColor.red };
     }
+    grid[53].ball = grid[44].ball;
+    grid[44] = { id: 44 };
+
     matches = Grid.getMatches(grid, 5, 9);
     expect(matches.length).toBe(2);
     expect(matches[0].length).toBe(5);
