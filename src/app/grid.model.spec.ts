@@ -13,7 +13,7 @@ describe('Grid module', () => {
     expect(grid[50]).toEqual({ id: 50 });
   });
 
-  xit('getMatches should return all the matches on the grid', () => {
+  it('getMatches should return all the matches on the grid', () => {
     let grid: ICell[] = Grid.getGrid(9);
     let matches = Grid.getMatches(grid, 5);
     expect(matches).toEqual([]);
@@ -53,8 +53,8 @@ describe('Grid module', () => {
     grid = Grid.getGrid(9);
     for (let i = 0; i < 5; i++) {
       grid[i * 9 + 2].ball = { id: i * 9 + 2, state: BallState.idle, color: BallColor.blue };
-      grid[(i + 4) * 9].ball = { id: (i + 4) * 9, state: BallState.idle, color: BallColor.red };
-      grid[(i + 9) * 9].ball = { id: (i + 9) * 9, state: BallState.idle, color: BallColor.red };
+      grid[i * 9 + 4].ball = { id: i * 9 + 4, state: BallState.idle, color: BallColor.red };
+      grid[i * 9 + 8].ball = { id: i * 9 + 8, state: BallState.idle, color: BallColor.red };
     }
     grid[53].ball = grid[44].ball;
     grid[44] = { id: 44 };
@@ -66,8 +66,8 @@ describe('Grid module', () => {
     expect(matches[0][4]).toEqual(grid[38]);
 
     expect(matches[1].length).toBe(5);
-    expect(matches[1][0]).toEqual(grid[36]);
-    expect(matches[1][4]).toEqual(grid[72]);
+    expect(matches[1][0]).toEqual(grid[4]);
+    expect(matches[1][4]).toEqual(grid[40]);
 
     grid = Grid.getGrid(9);
     for (let i = 0; i < 6; i++) {
@@ -85,12 +85,16 @@ describe('Grid module', () => {
       grid[(i + 1) * 8].ball = { id: (i + 1) * 8, state: BallState.idle, color: BallColor.red };
       grid[i * 10].ball = { id: i * 10, state: BallState.idle, color: BallColor.red };
     }
+    grid[40] = { id: 40 };
+    matches = Grid.getMatches(grid, 5);
+    expect(matches.length).toBe(0);
+
+    grid[40] = { id: 40, ball: { id: 40, state: BallState.idle, color: BallColor.red } };
     matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(2);
     expect(matches[0].length).toBe(9);
     expect(matches[0][0]).toEqual(grid[0]);
     expect(matches[0][8]).toEqual(grid[80]);
-
     expect(matches[1].length).toBe(9);
     expect(matches[1][0]).toEqual(grid[8]);
     expect(matches[1][8]).toEqual(grid[72]);

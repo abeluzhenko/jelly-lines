@@ -59,22 +59,32 @@ export class Grid {
     const CURRENT = -2000;
     let result = [];
 
+    const isAdjacent = (cell0: ICell, cell1: ICell): boolean => {
+      const x0 = Math.floor(cell0.id / gridSize);
+      const y0 = cell0.id % gridSize;
+      const x1 = Math.floor(cell1.id / gridSize);
+      const y1 = cell1.id % gridSize;
+      const dx = Math.abs(x0 - x1);
+      const dy = Math.abs(y0 - y1);
+      return ((dx === 1 && dy === 1) || (!dx && dy === 1) || (!dy && dx === 1));
+    };
+
     const getSequences = (
-      flatGrid: { cell: ICell, slope: number }[],
-      tempResult: ICell[][]
+      flatGrid: { cell: ICell, slope: number }[]
     ) => {
       const firstItem = flatGrid[0];
       let sequenceLength = 1;
       let lastItem: { cell: ICell, slope: number } = flatGrid[1];
       const sequencies = [];
-      for (let i = 0; i <= flatGrid.length; i++) {
+      for (let i = 2; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
         if (currentItem
           && (lastItem.cell.ball && currentItem.cell.ball)
-          && (lastItem.slope === currentItem.slope)
-          && (currentItem.cell.ball.color === firstItem.cell.ball.color)
-          && (currentItem.cell.ball.color === lastItem.cell.ball.color)) {
+          && lastItem.slope === currentItem.slope
+          && currentItem.cell.ball.color === firstItem.cell.ball.color
+          && currentItem.cell.ball.color === lastItem.cell.ball.color) {
           sequenceLength++;
+          lastItem = currentItem;
           continue;
         }
         if (sequenceLength >= length - 1) {
@@ -82,12 +92,12 @@ export class Grid {
             .slice(i - sequenceLength, i)
             .map(data => data.cell);
           n.unshift(firstItem.cell);
-          if (!tempResult.some(s => s.filter(el => n.indexOf(el) !== -1).length > 1)) {
+          if (n.every((el, j) => !j || isAdjacent(n[j - 1], el))) {
             sequencies.push(n);
           }
         }
         sequenceLength = 1;
-        lastItem = flatGrid[i];
+        lastItem = currentItem;
       }
       return sequencies;
     };
@@ -115,7 +125,7 @@ export class Grid {
         .sort((a, b) => a.slope > b.slope ? 1 : (a.slope < b.slope ? -1 : a.cell.id - b.cell.id));
       result = [
         ...result,
-        ...getSequences(sortedGrid, result)
+        ...getSequences(sortedGrid)
       ];
     }
     return result;
