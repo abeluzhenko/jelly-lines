@@ -79,10 +79,11 @@ export class Grid {
       for (let i = 2; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
         if (currentItem
-          && (lastItem.cell.ball && currentItem.cell.ball)
+          && lastItem.cell.ball
+          && currentItem.cell.ball
           && lastItem.slope === currentItem.slope
           && currentItem.cell.ball.color === firstItem.cell.ball.color
-          && currentItem.cell.ball.color === lastItem.cell.ball.color) {
+        ) {
           sequenceLength++;
           lastItem = currentItem;
           continue;
