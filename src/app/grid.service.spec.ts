@@ -103,6 +103,37 @@ describe('GridService', () => {
     service.input$.next({ cells });
   })());
 
+  fit('should setup new balls colors on a new turn', done => inject([GridService], (service: GridService) => {
+    const cells = Grid.getGrid(9);
+    let dataSubscription = service.output$.subscribe(data => {
+      expect(data).toBeDefined();
+      expect(data.cells.length).toBe(cells.length);
+      expect(data.nextColors).toBeTruthy();
+      expect(data.nextColors.length).toBe(3);
+      const existBalls = data.cells
+          .filter(cell => cell.ball);
+      const nextColors = data.nextColors.sort();
+      dataSubscription.unsubscribe();
+
+      dataSubscription = service.output$.subscribe(data2 => {
+        expect(data2).toBeDefined();
+        const newColors = data.cells
+          .filter(cell => cell.ball && !existBalls.some(el => el.id === cell.id))
+          .map(cell => cell.ball.color)
+          .sort();
+        expect(newColors).toBeTruthy();
+        expect(newColors.length).toEqual(3);
+        expect(newColors).toEqual(nextColors);
+        dataSubscription.unsubscribe();
+        done();
+      });
+
+      service.input$.next(data);
+    });
+
+    service.input$.next({ cells });
+  })());
+
   it('should properly move the current ball (if there is a path to the target)', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(Path.GRID_SIZE);
     let step = 0;
