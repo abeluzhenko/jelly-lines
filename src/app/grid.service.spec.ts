@@ -1,10 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService } from './grid.service';
+import { GridService, doWhile } from './grid.service';
 import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Path } from './path.model';
 import { Grid, GridAnimationType } from './grid.model';
+import { from, pipe, Observable, UnaryFunction, of, Subject } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -103,7 +105,7 @@ describe('GridService', () => {
     service.input$.next({ cells });
   })());
 
-  fit('should setup new balls colors on a new turn', done => inject([GridService], (service: GridService) => {
+  it('should setup new balls colors on a new turn', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
     let dataSubscription = service.output$.subscribe(data => {
       expect(data).toBeDefined();
@@ -243,13 +245,36 @@ describe('GridService', () => {
     service.input$.next({ cells });
   })());
 
-  xit('should properly process matches on new turn', done => inject([GridService], (service: GridService) => {
+  fit('doWhile should repeat a stream while the condition is truthy', done => inject([GridService], (service: GridService) => {
+    const input$: Subject<number> = new Subject();
+    const output$ = doWhile(
+      input$,
+      (value: number) => !!(value < 10),
+      pipe(map(value => value + 1))
+    );
+    output$.subscribe(value => {
+      expect(value).toEqual(10);
+      done();
+    });
+    input$.next(1);
+  })());
+
+  it('should properly process matches on new turn', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
-    for (let i = 0; i < 6; i++) {
-      cells[i * 10].ball = { id: i * 10, state: BallState.idle, color: BallColor.blue };
+    for (let i = 0; i < 81 - 3; i++) {
+      cells[i].ball = { id: i, state: BallState.idle, color: BallColor.blue };
     }
     const dataSubscription = service.output$.subscribe(data => {
-      //
+      expect(data).toBeTruthy();
+      expect(data.cells).toBeTruthy();
+      const fullCells = data.cells.map(cell => cell.ball);
+      expect(fullCells.length).toBeLessThan(81);
+      dataSubscription.unsubscribe();
+      done();
+    });
+    service.input$.next({
+      cells,
+      nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ]
     });
   })());
 });

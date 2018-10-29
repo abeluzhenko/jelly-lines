@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BallState } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
-import { Subject, Observable, merge, pipe } from 'rxjs';
+import { Subject, Observable, merge, pipe, OperatorFunction, UnaryFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './path.model';
 import { ITurnData, IGridAnimation, Grid, GridAnimationType } from './grid.model';
@@ -9,6 +9,25 @@ import { ITurnData, IGridAnimation, Grid, GridAnimationType } from './grid.model
 interface ILoopData {
   data: ITurnData;
   matches: ICell[][];
+}
+
+export function doWhile<T>(
+  enter$: Subject<T>,
+  conditionFn: (value: T) => boolean,
+  loop: OperatorFunction<T, T>
+): Observable<T> {
+  const exit$ = new Subject<T>();
+  const loop$ = enter$.pipe(loop);
+  loop$.subscribe(value => {
+    if (conditionFn(value)) {
+      enter$.next(value);
+      return;
+    }
+    exit$.next(value);
+    exit$.complete();
+    enter$.complete();
+  });
+  return exit$.asObservable();
 }
 
 @Injectable({
