@@ -21,7 +21,7 @@ describe('Grid module', () => {
     // Horizontal
     grid = Grid.getGrid(9);
     for (let i = 0; i < 5; i++) {
-      grid[i + 2].ball = { id: i + 2, state: BallState.idle, color: BallColor.blue };
+      grid[i + 4].ball = { id: i + 4, state: BallState.idle, color: BallColor.blue };
       grid[i + 10].ball = { id: i + 10, state: BallState.idle, color: BallColor.red };
       grid[i + 15].ball = { id: i + 15, state: BallState.idle, color: BallColor.green };
       grid[i + 30].ball = { id: i + 30, state: BallState.idle, color: BallColor.green };
@@ -29,11 +29,14 @@ describe('Grid module', () => {
     grid[29].ball = grid[30].ball;
     grid[30] = { id: 30 };
 
+    grid[9] = {id : 9, ball: { id: 9, state: BallState.idle, color: BallColor.yellow }};
+    grid[15] = {id : 9, ball: { id: 9, state: BallState.idle, color: BallColor.yellow }};
+
     matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(2);
     expect(matches[0].length).toBe(5);
-    expect(matches[0][0]).toEqual(grid[2]);
-    expect(matches[0][4]).toEqual(grid[6]);
+    expect(matches[0][0]).toEqual(grid[4]);
+    expect(matches[0][4]).toEqual(grid[8]);
 
     expect(matches[1].length).toBe(5);
     expect(matches[1][0]).toEqual(grid[10]);
@@ -58,6 +61,8 @@ describe('Grid module', () => {
     }
     grid[53].ball = grid[44].ball;
     grid[44] = { id: 44 };
+
+    grid[41] = {id : 9, ball: { id: 9, state: BallState.idle, color: BallColor.yellow }};
 
     matches = Grid.getMatches(grid, 5, 9);
     expect(matches.length).toBe(2);

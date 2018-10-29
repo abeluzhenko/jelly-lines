@@ -61,12 +61,7 @@ export class Grid {
       const sequencies = [];
       for (let i = 2; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
-        if (currentItem
-          && lastItem.cell.ball
-          && currentItem.cell.ball
-          && lastItem.slope === currentItem.slope
-          && currentItem.cell.ball.color === firstItem.cell.ball.color
-        ) {
+        if (currentItem && lastItem.slope === currentItem.slope) {
           sequenceLength++;
           lastItem = currentItem;
           continue;
@@ -92,6 +87,7 @@ export class Grid {
       }
       const currPos = Grid.getPosition(i, gridSize);
       const sortedGrid = grid
+        .filter(cell => cell.ball && cell.ball.color === currItem.ball.color)
         .map(cell => {
           const cellPos = Grid.getPosition(cell.id, gridSize);
           let slope = 0;
