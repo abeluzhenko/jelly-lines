@@ -245,7 +245,7 @@ describe('GridService', () => {
     service.input$.next({ cells });
   })());
 
-  fit('doWhile should repeat a stream while the condition is truthy', done => inject([GridService], (service: GridService) => {
+  it('doWhile should repeat a stream while the condition is truthy', done => inject([GridService], (service: GridService) => {
     const input$: Subject<number> = new Subject();
     const output$ = doWhile(
       input$,
@@ -267,8 +267,8 @@ describe('GridService', () => {
     const dataSubscription = service.output$.subscribe(data => {
       expect(data).toBeTruthy();
       expect(data.cells).toBeTruthy();
-      const fullCells = data.cells.map(cell => cell.ball);
-      expect(fullCells.length).toBeLessThan(81);
+      const fullCells = data.cells.filter(cell => cell.ball);
+      expect(fullCells.length).toBe(0);
       dataSubscription.unsubscribe();
       done();
     });

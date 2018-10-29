@@ -61,65 +61,70 @@ export class GridService {
     input$: Observable<ITurnData>,
     animationSubject: Subject<IGridAnimation>
   ): Observable<ITurnData> {
-    return input$.pipe(
-      filter(data => !data.cell),
-      // Process matches
-      map((data: ITurnData) => ({ data, matches: Grid.getMatches(data.cells) })),
-      // Start animation
-      tap((data: ILoopData) =>
-        data.matches.forEach(cells => animationSubject.next({
-          type: GridAnimationType.Match,
-          cells
-        }))
-      ),
-      // Remove matching ball from the grid
-      map((data: ILoopData) => ({
-        data: {
-          cells: data.data.cells.map(cell => {
-            const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
-            return isMatch ? { id: cell.id } : cell;
-          }),
-          cell: data.data.cell,
-          nextColors: data.data.nextColors
-        },
-        matches: data.matches
-      })),
-      // Process new turn
-      map((data: ILoopData) => {
-        if (data.matches.length) {
+    const loopStart$ = new Subject<ITurnData>();
+    const mainLoop$ = doWhile(
+      loopStart$,
+      data => !!Grid.getMatches(data.cells).length,
+      pipe(
+        // Process matches
+        map(data => ({ data, matches: Grid.getMatches(data.cells) })),
+        // Start animation
+        tap((data: ILoopData) =>
+          data.matches.forEach(cells => animationSubject.next({
+            type: GridAnimationType.Match,
+            cells
+          }))
+        ),
+        // Remove matching ball from the grid
+        map((data: ILoopData) => ({
+          data: {
+            cells: data.data.cells.map(cell => {
+              const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
+              return isMatch ? { id: cell.id } : cell;
+            }),
+            cell: data.data.cell,
+            nextColors: data.data.nextColors
+          },
+          matches: data.matches
+        })),
+        // Process new turn
+        map((data: ILoopData) => {
+          if (data.matches.length) {
+            return {
+              cells: data.data.cells,
+              cell: data.data.cell
+            };
+          }
+          const cells: ICell[] = data.data.cells;
+          const openCells = cells.filter(c => !c.ball);
+          let colors = [];
+          if (data.data.nextColors && data.data.nextColors.length === Grid.ITEMS_PER_TURN) {
+            colors = data.data.nextColors;
+          } else {
+            colors = this.getRandomColors();
+          }
+
+          if (openCells.length >= Grid.ITEMS_PER_TURN) {
+            for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
+              const r = Math.floor(openCells.length * Math.random());
+              cells[openCells[r].id].ball = {
+                id: openCells[r].id,
+                color: colors[i],
+                state: BallState.idle
+              };
+              openCells.splice(r, 1);
+            }
+          }
+
           return {
             cells: data.data.cells,
-            cell: data.data.cell
+            cell: data.data.cell,
+            nextColors: this.getRandomColors()
           };
-        }
-        const cells: ICell[] = data.data.cells;
-        const openCells = cells.filter(c => !c.ball);
-        let colors = [];
-        if (data.data.nextColors && data.data.nextColors.length === Grid.ITEMS_PER_TURN) {
-          colors = data.data.nextColors;
-        } else {
-          colors = this.getRandomColors();
-        }
-
-        if (openCells.length >= Grid.ITEMS_PER_TURN) {
-          for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
-            const r = Math.floor(openCells.length * Math.random());
-            cells[openCells[r].id].ball = {
-              id: openCells[r].id,
-              color: colors[i],
-              state: BallState.idle
-            };
-            openCells.splice(r, 1);
-          }
-        }
-
-        return {
-          cells: data.data.cells,
-          cell: data.data.cell,
-          nextColors: this.getRandomColors()
-        };
-      })
-    );
+        })
+      ));
+    input$.pipe(filter(data => !data.cell)).subscribe(loopStart$);
+    return mainLoop$;
   }
 
   private getMoveObservable(
