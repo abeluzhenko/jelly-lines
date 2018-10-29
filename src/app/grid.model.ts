@@ -53,40 +53,43 @@ export class Grid {
     };
 
     const getSequences = (
-      flatGrid: { cell: ICell, slope: number }[]
+      flatGrid: { cell: ICell, slope: number }[],
+      matches: ICell[][]
     ) => {
-      const firstItem = flatGrid[0];
-      let sequenceLength = 1;
-      let lastItem: { cell: ICell, slope: number } = flatGrid[1];
+      let lastItem = flatGrid[0];
+      // console.log('>', lastItem.cell.id);
+
+      let sequence = [ lastItem ];
       const sequencies = [];
-      for (let i = 2; i <= flatGrid.length; i++) {
+      for (let i = 1; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
-        if (currentItem && lastItem.slope === currentItem.slope) {
-          sequenceLength++;
+        // console.log('>>', currentItem && currentItem.cell.id);
+        if (
+          currentItem
+          && isAdjacent(lastItem.cell, currentItem.cell)) {
+          sequence.push(currentItem);
           lastItem = currentItem;
           continue;
         }
-        if (sequenceLength >= length - 1) {
-          const n = flatGrid
-            .slice(i - sequenceLength, i)
-            .map(data => data.cell);
-          n.unshift(firstItem.cell);
-          if (n.every((el, j) => !j || isAdjacent(n[j - 1], el))) {
+        if (sequence.length >= length) {
+          const n = sequence.map(data => data.cell);
+          if (!matches.some(s => s[s.length - 1].id === n[n.length - 1].id)) {
             sequencies.push(n);
+            // console.log(n);
           }
         }
-        sequenceLength = 1;
-        lastItem = currentItem;
+        sequence = [ lastItem ];
       }
       return sequencies;
     };
-    for (let i = 0; i < grid.length; i++) {
-      const currItem = grid[i];
-      if (!currItem.ball) {
+    for (let i = 0; i < grid.length - length + 1; i++) {
+      if (!grid[i].ball) {
         continue;
       }
+      const currItem = grid[i];
       const currPos = Grid.getPosition(i, gridSize);
       const sortedGrid = grid
+        .slice(i)
         .filter(cell => cell.ball && cell.ball.color === currItem.ball.color)
         .map(cell => {
           const cellPos = Grid.getPosition(cell.id, gridSize);
@@ -105,7 +108,7 @@ export class Grid {
         .sort((a, b) => a.slope > b.slope ? 1 : (a.slope < b.slope ? -1 : a.cell.id - b.cell.id));
       result = [
         ...result,
-        ...getSequences(sortedGrid)
+        ...getSequences(sortedGrid, result)
       ];
     }
     return result;
