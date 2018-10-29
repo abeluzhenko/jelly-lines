@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AnimationBuilder, keyframes, animate, AnimationStyleMetadata, style } from '@angular/animations';
-import { GridService } from '../grid.service';
+import { GridService, ITurnData, IGridAnimation, GridAnimationType } from '../grid.service';
 import { ICell } from '../cell/cell.model';
-import { Grid, IGridAnimation, GridAnimationType, ITurnData } from '../grid.model';
+import { Grid } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
-import { IBall, BallColor } from '../ball/ball.model';
+import { IBall } from '../ball/ball.model';
 import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({

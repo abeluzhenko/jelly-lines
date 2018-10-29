@@ -1,23 +1,6 @@
 import { BallColors, BallColor, BallState } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 
-export interface ITurnData {
-  cells: ICell[];
-  cell?: ICell;
-  nextColors?: BallColor[];
-}
-
-export enum GridAnimationType {
-  Move = 0,
-  Match = 1,
-  Wrong = 2,
-}
-
-export interface IGridAnimation {
-  type: GridAnimationType;
-  cells: ICell[];
-}
-
 export class Grid {
 
   public static SIZE = 9;

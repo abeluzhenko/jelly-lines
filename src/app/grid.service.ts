@@ -1,10 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BallState } from './ball/ball.model';
+import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Subject, Observable, merge, pipe, OperatorFunction, UnaryFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './path.model';
-import { ITurnData, IGridAnimation, Grid, GridAnimationType } from './grid.model';
+import { Grid } from './grid.model';
+
+export interface ITurnData {
+  cells: ICell[];
+  cell?: ICell;
+  nextColors?: BallColor[];
+}
+
+export enum GridAnimationType {
+  Move = 0,
+  Match = 1,
+  Wrong = 2,
+  Full = 3,
+}
+
+export interface IGridAnimation {
+  type: GridAnimationType;
+  cells?: ICell[];
+}
 
 interface ILoopData {
   data: ITurnData;
@@ -24,8 +42,6 @@ export function doWhile<T>(
       return;
     }
     exit$.next(value);
-    exit$.complete();
-    enter$.complete();
   });
   return exit$.asObservable();
 }
@@ -62,7 +78,7 @@ export class GridService {
     animationSubject: Subject<IGridAnimation>
   ): Observable<ITurnData> {
     const loopStart$ = new Subject<ITurnData>();
-    const mainLoop$ = doWhile(
+    const result$ = doWhile(
       loopStart$,
       data => !!Grid.getMatches(data.cells).length,
       pipe(
@@ -76,17 +92,20 @@ export class GridService {
           }))
         ),
         // Remove matching ball from the grid
-        map((data: ILoopData) => ({
-          data: {
-            cells: data.data.cells.map(cell => {
-              const isMatch = data.matches.some(match => match.some(el => el.id === cell.id));
-              return isMatch ? { id: cell.id } : cell;
-            }),
-            cell: data.data.cell,
-            nextColors: data.data.nextColors
-          },
-          matches: data.matches
-        })),
+        map((data: ILoopData) => {
+          return {
+            data: {
+              cells: data.data.cells.map(cell => {
+                const isMatch = data.matches.some(match =>
+                  match.some(el => el.id === cell.id));
+                return isMatch ? { id: cell.id } : cell;
+              }),
+              cell: data.data.cell,
+              nextColors: data.data.nextColors
+            },
+            matches: data.matches
+          };
+        }),
         // Process new turn
         map((data: ILoopData) => {
           if (data.matches.length) {
@@ -104,16 +123,15 @@ export class GridService {
             colors = this.getRandomColors();
           }
 
-          if (openCells.length >= Grid.ITEMS_PER_TURN) {
-            for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
-              const r = Math.floor(openCells.length * Math.random());
-              cells[openCells[r].id].ball = {
-                id: openCells[r].id,
-                color: colors[i],
-                state: BallState.idle
-              };
-              openCells.splice(r, 1);
-            }
+          const newAmount = Math.min(openCells.length, Grid.ITEMS_PER_TURN);
+          for (let i = 0; i < newAmount; i++) {
+            const r = Math.floor(openCells.length * Math.random());
+            cells[openCells[r].id].ball = {
+              id: openCells[r].id,
+              color: colors[i],
+              state: BallState.idle
+            };
+            openCells.splice(r, 1);
           }
 
           return {
@@ -123,8 +141,18 @@ export class GridService {
           };
         })
       ));
-    input$.pipe(filter(data => !data.cell)).subscribe(loopStart$);
-    return mainLoop$;
+
+    input$
+      .pipe(filter(data => !data.cell))
+      .subscribe(loopStart$);
+
+    return result$; /*.pipe(
+        tap(data => {
+          if (!data.cells.filter(cell => !cell.ball).length) {
+            // animationSubject.next({ type: GridAnimationType.Full });
+          }
+        })
+      );*/
   }
 
   private getMoveObservable(

@@ -1,12 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService, doWhile } from './grid.service';
+import { GridService, doWhile, GridAnimationType } from './grid.service';
 import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Path } from './path.model';
-import { Grid, GridAnimationType } from './grid.model';
-import { from, pipe, Observable, UnaryFunction, of, Subject } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { Grid } from './grid.model';
+import { pipe, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -233,14 +233,15 @@ describe('GridService', () => {
     service.input$.next({ cells });
   })());
 
-  xit('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
+  it('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
     const dataSubscription = service.output$.subscribe(data => {
-      service.input$.next({ cells });
-      if (data.cells.filter(cell => cell.ball).length === 81) {
+      const length = data.cells.filter(cell => cell.ball).length;
+      if (length === 81) {
         dataSubscription.unsubscribe();
-        done();
+        return done();
       }
+      service.input$.next({ cells: data.cells });
     });
     service.input$.next({ cells });
   })());
@@ -264,13 +265,22 @@ describe('GridService', () => {
     for (let i = 0; i < 81 - 3; i++) {
       cells[i].ball = { id: i, state: BallState.idle, color: BallColor.blue };
     }
-    const dataSubscription = service.output$.subscribe(data => {
+    const dataSubscription1 = service.output$.subscribe(data => {
       expect(data).toBeTruthy();
       expect(data.cells).toBeTruthy();
-      const fullCells = data.cells.filter(cell => cell.ball);
-      expect(fullCells.length).toBe(0);
-      dataSubscription.unsubscribe();
-      done();
+      const fullCells1 = data.cells.filter(cell => cell.ball);
+      expect(fullCells1.length).toBe(0);
+      dataSubscription1.unsubscribe();
+      const dataSubscription2 = service.output$.subscribe(data2 => {
+        const fullCells2 = data2.cells.filter(cell => cell.ball);
+        expect(fullCells2.length).toBe(3);
+        dataSubscription2.unsubscribe();
+        done();
+      });
+      service.input$.next({
+        cells: data.cells,
+        nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ]
+      });
     });
     service.input$.next({
       cells,
