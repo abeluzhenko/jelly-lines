@@ -57,28 +57,26 @@ export class Grid {
       matches: ICell[][]
     ) => {
       let lastItem = flatGrid[0];
-      // console.log('>', lastItem.cell.id);
-
-      let sequence = [ lastItem ];
+      let sequence = [];
       const sequencies = [];
+
       for (let i = 1; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
-        // console.log('>>', currentItem && currentItem.cell.id);
-        if (
-          currentItem
-          && isAdjacent(lastItem.cell, currentItem.cell)) {
+        if (currentItem
+          && (currentItem.slope === lastItem.slope || lastItem.slope === CURRENT)
+          && isAdjacent(lastItem.cell, currentItem.cell)
+        ) {
           sequence.push(currentItem);
           lastItem = currentItem;
           continue;
         }
-        if (sequence.length >= length) {
-          const n = sequence.map(data => data.cell);
+        if (sequence.length >= length - 1) {
+          const n = [flatGrid[0], ...sequence].map(data => data.cell);
           if (!matches.some(s => s[s.length - 1].id === n[n.length - 1].id)) {
             sequencies.push(n);
-            // console.log(n);
           }
         }
-        sequence = [ lastItem ];
+        sequence = [];
       }
       return sequencies;
     };
