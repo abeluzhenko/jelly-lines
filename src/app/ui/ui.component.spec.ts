@@ -26,29 +26,29 @@ describe('UiComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('should properly render next balls colors', () => {
+  it('should properly render next balls colors', () => {
     component.data = {
-      colors: [ BallColor.red, BallColor.green, BallColor.blue ],
+      nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
       score: 0
     };
     fixture.detectChanges();
     const ballEls = fixture.debugElement.queryAll(By.css('.ball'));
     expect(ballEls.length).toEqual(3);
     for (let i = 0; i < 3; i++) {
-      expect(ballEls[i].classes[component.data.colors[i]]).toBeTruthy();
+      expect(ballEls[i].classes[component.data.nextColors[i]]).toBeTruthy();
     }
   });
 
-  fit('should properly render scores', () => {
+  it('should properly render scores', () => {
     component.data = {
-      colors: [ BallColor.red, BallColor.green, BallColor.blue ],
+      nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
       score: 1000
     };
     fixture.detectChanges();
     let scoreEl = fixture.debugElement.query(By.css('.ui__score'));
     expect(scoreEl.nativeElement.textContent).toEqual('1000');
     component.data = {
-      colors: [ BallColor.red, BallColor.green, BallColor.blue ],
+      nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
       score: 2000
     };
     fixture.detectChanges();

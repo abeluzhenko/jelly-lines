@@ -18,7 +18,7 @@ export class UiComponent implements OnInit {
   public balls: IBall[];
 
   @Input() set data(value: IUIData) {
-    this.balls = value.colors.map((color, i) =>
+    this.balls = value.nextColors.map((color, i) =>
     ({ id: i, color, state: BallState.idle }));
     this._data = value;
   }

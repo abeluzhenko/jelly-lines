@@ -4,6 +4,7 @@ import { GridComponent } from './grid/grid.component';
 import { CellComponent } from './cell/cell.component';
 import { BallComponent } from './ball/ball.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { UiComponent } from './ui/ui.component';
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -14,7 +15,8 @@ describe('AppComponent', () => {
         AppComponent,
         GridComponent,
         CellComponent,
-        BallComponent
+        BallComponent,
+        UiComponent
       ],
     }).compileComponents();
   }));

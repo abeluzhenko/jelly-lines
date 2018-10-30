@@ -10,6 +10,7 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 @Component({
   selector: 'app-grid',
   template: `
+    <app-ui [data]=""></app-ui>
     <app-cell
       *ngFor="let cell of data.cells"
       [data]="cell"
