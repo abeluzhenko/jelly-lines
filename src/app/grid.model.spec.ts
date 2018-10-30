@@ -48,6 +48,9 @@ describe('Grid module', () => {
     for (let i = 0; i < 6; i++) {
       grid[i + 10].ball = { id: i + 10, state: BallState.idle, color: BallColor.red };
     }
+    // Add noise
+    grid[2] = { id: 2, ball: { id: 2, state: BallState.idle, color: BallColor.red } };
+
     matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(1);
     expect(matches[0].length).toBe(6);
@@ -65,7 +68,7 @@ describe('Grid module', () => {
     }
     grid[53].ball = grid[44].ball;
     grid[44] = { id: 44 };
-
+    // Add noise
     grid[41] = {id : 41, ball: { id: 41, state: BallState.idle, color: BallColor.yellow }};
 
     let matches = Grid.getMatches(grid, 5, 9);
@@ -82,6 +85,8 @@ describe('Grid module', () => {
     for (let i = 0; i < 6; i++) {
       grid[i * 9 + 10].ball = { id: i * 9 + 10, state: BallState.idle, color: BallColor.red };
     }
+    // Add noise
+    grid[18] = {id : 18, ball: { id: 18, state: BallState.idle, color: BallColor.red }};
     matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(1);
     expect(matches[0].length).toBe(6);
@@ -110,7 +115,7 @@ describe('Grid module', () => {
     expect(matches[1][8]).toEqual(grid[72]);
   });
 
-  xit('getMatches should return all the corner matches on the grid', () => {
+  it('getMatches should return all the corner matches on the grid', () => {
     const grid = Grid.getGrid(9);
     for (let i = 0; i < 5; i++) {
       grid[i * 9].ball = { id: i * 9, state: BallState.idle, color: BallColor.red };
@@ -119,7 +124,6 @@ describe('Grid module', () => {
 
     const matches = Grid.getMatches(grid, 5);
     expect(matches.length).toBe(2);
-    console.log(matches);
     expect(matches[0].length).toBe(5);
     expect(matches[0][0]).toEqual(grid[0]);
     expect(matches[0][4]).toEqual(grid[4]);

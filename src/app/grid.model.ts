@@ -56,27 +56,43 @@ export class Grid {
       flatGrid: { cell: ICell, slope: number }[],
       matches: ICell[][]
     ) => {
-      let lastItem = flatGrid[0];
+      if (flatGrid.length < length) {
+        return [];
+      }
+      const primeItem = flatGrid[0];
+      let lastItem = flatGrid[1];
+      let lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell) ? lastItem : primeItem;
       let sequence = [];
       const sequencies = [];
-
-      for (let i = 1; i <= flatGrid.length; i++) {
+      // console.log('>', primeItem.cell.id);
+      for (let i = 2; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
+        // console.log('>>', currentItem && currentItem.cell.id);
         if (currentItem
-          && (currentItem.slope === lastItem.slope || lastItem.slope === CURRENT)
-          && isAdjacent(lastItem.cell, currentItem.cell)
+          && (currentItem.slope === lastItem.slope)
+          && isAdjacent(lastSequenceItem.cell, currentItem.cell)
         ) {
+          if (!sequence.length) {
+            sequence.push(lastItem);
+          }
+          // console.log('>>', sequence.map(s => s.cell.id));
           sequence.push(currentItem);
+          lastSequenceItem = currentItem;
           lastItem = currentItem;
           continue;
         }
         if (sequence.length >= length - 1) {
-          const n = [flatGrid[0], ...sequence].map(data => data.cell);
+          const n = [primeItem, ...sequence].map(data => data.cell);
           if (!matches.some(s => s[s.length - 1].id === n[n.length - 1].id)) {
             sequencies.push(n);
+            // console.log(n, sequence.length, length - 2);
           }
         }
-        sequence = [];
+        if (currentItem) {
+          sequence = [];
+          lastItem = currentItem;
+          lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell) ? lastItem : primeItem;
+        }
       }
       return sequencies;
     };
