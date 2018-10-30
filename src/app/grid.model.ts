@@ -85,7 +85,6 @@ export class Grid {
           const n = [primeItem, ...sequence].map(data => data.cell);
           if (!matches.some(s => s[s.length - 1].id === n[n.length - 1].id)) {
             sequencies.push(n);
-            // console.log(n, sequence.length, length - 2);
           }
         }
         if (currentItem) {
