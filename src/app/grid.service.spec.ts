@@ -235,11 +235,18 @@ describe('GridService', () => {
 
   it('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
+    const animationSubscription = service.animation$.subscribe(data => {
+      expect(data).toBeTruthy();
+      if (data.type === GridAnimationType.Full) {
+        animationSubscription.unsubscribe();
+        return done();
+      }
+    });
     const dataSubscription = service.output$.subscribe(data => {
       const length = data.cells.filter(cell => cell.ball).length;
       if (length === 81) {
         dataSubscription.unsubscribe();
-        return done();
+        return;
       }
       service.input$.next({ cells: data.cells });
     });

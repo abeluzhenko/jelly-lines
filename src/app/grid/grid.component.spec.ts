@@ -8,6 +8,7 @@ import { GridService } from '../grid.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Grid } from '../grid.model';
 import { UiComponent } from '../ui/ui.component';
+import { AnimationBuilder } from '@angular/animations';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -24,7 +25,9 @@ describe('GridComponent', () => {
         BallComponent,
         UiComponent
       ],
-      providers: [ GridService ]
+      providers: [
+        AnimationBuilder
+      ]
     })
     .compileComponents();
   }));

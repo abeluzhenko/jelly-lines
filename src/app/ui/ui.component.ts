@@ -15,9 +15,12 @@ import { IBall, BallState } from '../ball/ball.model';
 export class UiComponent implements OnInit {
 
   private _data: IUIData;
-  public balls: IBall[];
+  public balls: IBall[] = [];
 
   @Input() set data(value: IUIData) {
+    if (!value) {
+      return;
+    }
     if (value.nextColors) {
       this.balls = value.nextColors.map((color, i) =>
         ({ id: i, color, state: BallState.idle }));

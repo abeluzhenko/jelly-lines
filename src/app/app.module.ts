@@ -7,6 +7,7 @@ import { BallComponent } from './ball/ball.component';
 import { CellComponent } from './cell/cell.component';
 import { GridComponent } from './grid/grid.component';
 import { UiComponent } from './ui/ui.component';
+import { GameComponent } from './game/game.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { UiComponent } from './ui/ui.component';
     BallComponent,
     CellComponent,
     GridComponent,
-    UiComponent
+    UiComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,

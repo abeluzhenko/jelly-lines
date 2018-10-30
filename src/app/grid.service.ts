@@ -147,13 +147,13 @@ export class GridService {
       .pipe(filter(data => !data.cell))
       .subscribe(loopStart$);
 
-    return result$; /*.pipe(
-        tap(data => {
-          if (!data.cells.filter(cell => !cell.ball).length) {
-            // animationSubject.next({ type: GridAnimationType.Full });
-          }
-        })
-      );*/
+    return result$.pipe(
+      tap(data => {
+        if (!data.cells.filter(cell => !cell.ball).length) {
+          animationSubject.next({ type: GridAnimationType.Full });
+        }
+      })
+    );
   }
 
   private getMoveObservable(
