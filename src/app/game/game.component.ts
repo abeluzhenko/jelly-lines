@@ -29,7 +29,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.next({ cells: Grid.getGrid() });
+    this.next({ cells: Grid.getGrid(), score: 0 });
   }
 
   onInput(data: ITurnData) {

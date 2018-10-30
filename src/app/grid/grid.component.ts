@@ -51,7 +51,11 @@ export class GridComponent implements OnInit {
       this.animatedData = ballData;
       player.onDone(() => {
         this.animatedData = null;
-        this.input.emit({ cells: this.data.cells, nextColors: this.data.nextColors });
+        this.input.emit({
+          cells: this.data.cells,
+          nextColors: this.data.nextColors,
+          score: this.data.score,
+        });
       });
       player.play();
     }
@@ -70,7 +74,11 @@ export class GridComponent implements OnInit {
   }
 
   cellClicked(cell: ICell) {
-    this.next({ cells: this.data.cells, cell });
+    this.next({
+      cell,
+      cells: this.data.cells,
+      score: this.data.score,
+    });
   }
 
   private next(data: ITurnData) {

@@ -7,8 +7,11 @@ import { Path } from './path.model';
 import { Grid } from './grid.model';
 import { IUIData } from './ui/ui.model';
 
+export const SCORE_MULTIPLIER = 10;
+
 export interface ITurnData extends IUIData {
   cells: ICell[];
+  score?: number;
   cell?: ICell;
   nextColors?: BallColor[];
 }
@@ -102,7 +105,9 @@ export class GridService {
                 return isMatch ? { id: cell.id } : cell;
               }),
               cell: data.data.cell,
-              nextColors: data.data.nextColors
+              nextColors: data.data.nextColors,
+              score: data.data.score
+                + data.matches.reduce((result, match) => result + match.length, 0) * SCORE_MULTIPLIER
             },
             matches: data.matches
           };
@@ -112,7 +117,8 @@ export class GridService {
           if (data.matches.length) {
             return {
               cells: data.data.cells,
-              cell: data.data.cell
+              cell: data.data.cell,
+              score: data.data.score,
             };
           }
           const cells: ICell[] = data.data.cells;
@@ -138,7 +144,8 @@ export class GridService {
           return {
             cells: data.data.cells,
             cell: data.data.cell,
-            nextColors: this.getRandomColors()
+            nextColors: this.getRandomColors(),
+            score: data.data.score,
           };
         })
       ));
@@ -221,7 +228,8 @@ export class GridService {
         });
         return {
           cell: data.cell,
-          cells
+          score: data.score,
+          cells,
         };
     }));
   }

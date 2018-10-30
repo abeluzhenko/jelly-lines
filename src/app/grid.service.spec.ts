@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService, doWhile, GridAnimationType } from './grid.service';
+import { GridService, doWhile, GridAnimationType, SCORE_MULTIPLIER } from './grid.service';
 import { BallState, BallColor } from './ball/ball.model';
 import { ICell } from './cell/cell.model';
 import { Path } from './path.model';
@@ -221,6 +221,7 @@ describe('GridService', () => {
     });
     const dataSubscription = service.output$.subscribe(data => {
       expect(data).toBeDefined();
+      expect(data.score).toEqual(SCORE_MULTIPLIER * 6);
       matches = Grid.getMatches(data.cells);
       expect(matches.length).toBe(0);
 
@@ -230,7 +231,7 @@ describe('GridService', () => {
       dataSubscription.unsubscribe();
       return done();
     });
-    service.input$.next({ cells });
+    service.input$.next({ cells, score: 0 });
   })());
 
   it('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
