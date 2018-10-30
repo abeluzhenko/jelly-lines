@@ -5,8 +5,9 @@ import { Subject, Observable, merge, pipe, OperatorFunction, UnaryFunction } fro
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './path.model';
 import { Grid } from './grid.model';
+import { IUIData } from './ui/ui.model';
 
-export interface ITurnData {
+export interface ITurnData extends IUIData {
   cells: ICell[];
   cell?: ICell;
   nextColors?: BallColor[];
