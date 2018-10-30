@@ -1,0 +1,18 @@
+:host {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ui__colors {
+  display: flex;
+  flex-flow: row;
+}
+
+.ui__ball {
+  width: var(--ball-size);
+  height: var(--ball-size);
+}

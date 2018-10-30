@@ -4,13 +4,13 @@ import { GridService, ITurnData, IGridAnimation, GridAnimationType } from '../gr
 import { ICell } from '../cell/cell.model';
 import { Grid } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
-import { IBall } from '../ball/ball.model';
+import { IBall, BallColor } from '../ball/ball.model';
 import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({
   selector: 'app-grid',
   template: `
-    <app-ui [data]=""></app-ui>
+    <app-ui [data]="data"></app-ui>
     <app-cell
       *ngFor="let cell of data.cells"
       [data]="cell"
@@ -32,7 +32,19 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 })
 export class GridComponent implements OnInit {
 
-  public data: ITurnData;
+  private _data: ITurnData;
+
+  public set data(value: ITurnData) {
+    this._data = {
+      cells: value.cells
+    };
+    if (value.nextColors) {
+      this._data.nextColors = value.nextColors;
+    }
+  }
+  public get data(): ITurnData {
+    return this._data;
+  }
 
   @ViewChild('animatedBall') animatedBall: BallComponent;
   public animatedData: IBall;
@@ -53,8 +65,8 @@ export class GridComponent implements OnInit {
     this._gridService.input$.next({ cells: this.data.cells, cell });
   }
 
-  private turn(cells: ICell[]) {
-    this._gridService.input$.next({ cells });
+  private turn(cells: ICell[], nextColors?: BallColor[]) {
+    this._gridService.input$.next({ cells, nextColors });
   }
 
   private processAnimation(data: IGridAnimation) {
@@ -65,7 +77,8 @@ export class GridComponent implements OnInit {
       this.animatedData = ballData;
       player.onDone(() => {
         this.animatedData = null;
-        this.turn(this.data.cells);
+        // console.log(this.data.nextColors);
+        this.turn(this.data.cells, this.data.nextColors);
       });
       player.play();
     }

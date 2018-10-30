@@ -6,7 +6,7 @@ import { IBall, BallState } from '../ball/ball.model';
   selector: 'app-ui',
   template: `
     <div class="ui__colors">
-      <app-ball *ngFor="let ball of balls" [data]="ball"></app-ball>
+      <app-ball class="ui__ball" *ngFor="let ball of balls" [data]="ball"></app-ball>
     </div>
     <div class="ui__score">{{ data?.score }}</div>
   `,
@@ -18,8 +18,10 @@ export class UiComponent implements OnInit {
   public balls: IBall[];
 
   @Input() set data(value: IUIData) {
-    this.balls = value.nextColors.map((color, i) =>
-    ({ id: i, color, state: BallState.idle }));
+    if (value.nextColors) {
+      this.balls = value.nextColors.map((color, i) =>
+        ({ id: i, color, state: BallState.idle }));
+    }
     this._data = value;
   }
 
