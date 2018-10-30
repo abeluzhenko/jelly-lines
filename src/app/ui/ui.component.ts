@@ -8,7 +8,7 @@ import { IBall, BallState } from '../ball/ball.model';
     <div class="ui__colors">
       <app-ball *ngFor="let ball of balls" [data]="ball"></app-ball>
     </div>
-    <div class="ui__score"></div>
+    <div class="ui__score">{{ data?.score }}</div>
   `,
   styleUrls: ['./ui.component.scss']
 })

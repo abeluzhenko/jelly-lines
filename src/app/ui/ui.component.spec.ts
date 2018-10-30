@@ -38,4 +38,21 @@ describe('UiComponent', () => {
       expect(ballEls[i].classes[component.data.colors[i]]).toBeTruthy();
     }
   });
+
+  fit('should properly render scores', () => {
+    component.data = {
+      colors: [ BallColor.red, BallColor.green, BallColor.blue ],
+      score: 1000
+    };
+    fixture.detectChanges();
+    let scoreEl = fixture.debugElement.query(By.css('.ui__score'));
+    expect(scoreEl.nativeElement.textContent).toEqual('1000');
+    component.data = {
+      colors: [ BallColor.red, BallColor.green, BallColor.blue ],
+      score: 2000
+    };
+    fixture.detectChanges();
+    scoreEl = fixture.debugElement.query(By.css('.ui__score'));
+    expect(scoreEl.nativeElement.textContent).toEqual('2000');
+  });
 });
