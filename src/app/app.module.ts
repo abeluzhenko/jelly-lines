@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { BallComponent } from './ball/ball.component';
 import { CellComponent } from './cell/cell.component';
 import { GridComponent } from './grid/grid.component';
+import { UiComponent } from './ui/ui.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BallComponent,
     CellComponent,
-    GridComponent
+    GridComponent,
+    UiComponent
   ],
   imports: [
     BrowserModule,
