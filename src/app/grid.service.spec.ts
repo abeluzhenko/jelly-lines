@@ -217,6 +217,7 @@ describe('GridService', () => {
     expect(matches.length).toBe(1);
     const animationSubscription = service.animation$.subscribe(data => {
       expect(data).toBeDefined();
+      expect(data.type).toEqual(GridAnimationType.Match);
       animationSubscription.unsubscribe();
     });
     const dataSubscription = service.output$.subscribe(data => {
