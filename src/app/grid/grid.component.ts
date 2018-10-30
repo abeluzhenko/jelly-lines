@@ -35,12 +35,7 @@ export class GridComponent implements OnInit {
   private _data: ITurnData;
 
   public set data(value: ITurnData) {
-    this._data = {
-      cells: value.cells
-    };
-    if (value.nextColors) {
-      this._data.nextColors = value.nextColors;
-    }
+    this._data = Object.assign({}, this._data, value);
   }
   public get data(): ITurnData {
     return this._data;
@@ -77,7 +72,6 @@ export class GridComponent implements OnInit {
       this.animatedData = ballData;
       player.onDone(() => {
         this.animatedData = null;
-        // console.log(this.data.nextColors);
         this.turn(this.data.cells, this.data.nextColors);
       });
       player.play();
