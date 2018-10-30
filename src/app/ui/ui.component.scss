@@ -4,7 +4,6 @@
   left: 50%;
   transform: translate(-50%, 0);
   z-index: 2;
-  pointer-events: none;
   display: flex;
   flex-flow: row;
   align-items: center;
@@ -25,5 +24,10 @@
 .ui__turn,
 .ui__score {
   color: #fff;
-  font-size: 3rem;
+  font-size: 4rem;
+  width: 5em;
+}
+
+.ui__turn {
+  text-align: right;
 }
