@@ -5,6 +5,11 @@
   transform: translate(-50%, 0);
   z-index: 2;
   pointer-events: none;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 60vmin;
 }
 
 .ui__colors {
@@ -17,6 +22,8 @@
   height: var(--ball-size);
 }
 
+.ui__turn,
 .ui__score {
   color: #fff;
+  font-size: 3rem;
 }

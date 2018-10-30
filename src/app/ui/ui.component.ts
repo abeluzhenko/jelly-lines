@@ -5,10 +5,11 @@ import { IBall, BallState } from '../ball/ball.model';
 @Component({
   selector: 'app-ui',
   template: `
+    <div class="ui__score">{{ data?.score }}</div>
     <div class="ui__colors">
       <app-ball class="ui__ball" *ngFor="let ball of balls" [data]="ball"></app-ball>
     </div>
-    <div class="ui__score">{{ data?.score }}</div>
+    <div class="ui__turn">0</div>
   `,
   styleUrls: ['./ui.component.scss']
 })
