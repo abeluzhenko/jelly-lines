@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.next({ cells: Grid.getGrid() });
   }
 
-  onNext(data: ITurnData) {
+  onInput(data: ITurnData) {
     this.next(data);
   }
 
