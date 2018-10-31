@@ -1,8 +1,5 @@
 import {
-  trigger,
-  state,
   style,
-  transition,
   animate,
   keyframes,
   AnimationMetadata,
@@ -10,7 +7,7 @@ import {
 
 export const APPEAR_DURATION = 320;
 export const MATCH_DURATION = 500;
-export const MOVING_DURATION = 800;
+export const MOVING_DURATION = 500;
 
 export function getMatchAnimation(
   position: { x: number, y: number },
@@ -31,28 +28,11 @@ export function getMoveAnimation(
   path: { x: number, y: number }[],
   duration: number = MOVING_DURATION
 ): AnimationMetadata {
-  const delta = duration / path.length;
+  const delta = 1 / (path.length - 1);
   const steps = path.map((p, i) => style({
     transform: `translate(${ p.x * 100 }%, ${ p.y * 100 }%)`,
-    offset: delta * i / 1000,
+    offset: delta * i,
     opacity: 1,
   }));
   return animate(`${ duration }ms ease`, keyframes(steps));
 }
-
-export const cellBallAnimation = trigger('cellBallAnimation', [
-  state(
-    'active',
-    style({ transform: 'scale(1)' }),
-  ),
-  state(
-    'animated',
-    style({ transform: 'scale(1)' }),
-  ),
-  state(
-    'void',
-    style({ transform: 'scale(0)' }),
-  ),
-  transition('void => active', animate(`${ APPEAR_DURATION }ms ease`)),
-  transition('void => animated', animate(`1ms ${ MOVING_DURATION }ms`))
-]);
