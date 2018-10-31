@@ -8,6 +8,7 @@ import { CellComponent } from './cell/cell.component';
 import { GridComponent } from './grid/grid.component';
 import { UiComponent } from './ui/ui.component';
 import { GameComponent } from './game/game.component';
+import { GridAnimationComponent } from './grid-animation/grid-animation.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { GameComponent } from './game/game.component';
     CellComponent,
     GridComponent,
     UiComponent,
-    GameComponent
+    GameComponent,
+    GridAnimationComponent
   ],
   imports: [
     BrowserModule,
