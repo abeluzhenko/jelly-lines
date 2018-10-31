@@ -5,11 +5,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  width: var(--ball-size);
-  height: var(--ball-size);
   pointer-events: none;
 }
 
 .ball {
-
+  position: absolute;
+  width: var(--ball-size);
+  height: var(--ball-size);
+  opacity: 0;
 }
