@@ -31,14 +31,7 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 })
 export class GridComponent implements OnInit {
 
-  private _data: ITurnData;
-
-  @Input() public set data(value: ITurnData) {
-    this._data = Object.assign({}, this._data, value);
-  }
-  public get data(): ITurnData {
-    return this._data;
-  }
+  @Input() public data: ITurnData;
 
   @Input() public set animation(value: IGridAnimation) {
     if (!value) {
@@ -51,10 +44,10 @@ export class GridComponent implements OnInit {
       this.animatedData = ballData;
       player.onDone(() => {
         this.animatedData = null;
-        this.input.emit({
+        this.next({
           cells: this.data.cells,
-          nextColors: this.data.nextColors,
           score: this.data.score,
+          nextColors: this.data.nextColors,
         });
       });
       player.play();
@@ -78,6 +71,7 @@ export class GridComponent implements OnInit {
       cell,
       cells: this.data.cells,
       score: this.data.score,
+      nextColors: this.data.nextColors
     });
   }
 

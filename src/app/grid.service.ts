@@ -11,9 +11,9 @@ export const SCORE_MULTIPLIER = 10;
 
 export interface ITurnData extends IUIData {
   cells: ICell[];
-  score?: number;
+  score: number;
+  nextColors: BallColor[];
   cell?: ICell;
-  nextColors?: BallColor[];
 }
 
 export enum GridAnimationType {
@@ -29,7 +29,7 @@ export interface IGridAnimation {
 }
 
 interface ILoopData {
-  data: ITurnData;
+  turn: ITurnData;
   matches: ICell[][];
 }
 
@@ -87,7 +87,7 @@ export class GridService {
       data => !!Grid.getMatches(data.cells).length,
       pipe(
         // Process matches
-        map(data => ({ data, matches: Grid.getMatches(data.cells) })),
+        map(data => ({ turn: data, matches: Grid.getMatches(data.cells) })),
         // Start animation
         tap((data: ILoopData) =>
           data.matches.forEach(cells => animationSubject.next({
@@ -98,15 +98,15 @@ export class GridService {
         // Remove matching ball from the grid
         map((data: ILoopData) => {
           return {
-            data: {
-              cells: data.data.cells.map(cell => {
+            turn: {
+              cells: data.turn.cells.map(cell => {
                 const isMatch = data.matches.some(match =>
                   match.some(el => el.id === cell.id));
                 return isMatch ? { id: cell.id } : cell;
               }),
-              cell: data.data.cell,
-              nextColors: data.data.nextColors,
-              score: data.data.score
+              cell: data.turn.cell,
+              nextColors: data.turn.nextColors,
+              score: data.turn.score
                 + data.matches.reduce((result, match) => result + match.length, 0) * SCORE_MULTIPLIER
             },
             matches: data.matches
@@ -115,17 +115,13 @@ export class GridService {
         // Process new turn
         map((data: ILoopData) => {
           if (data.matches.length) {
-            return {
-              cells: data.data.cells,
-              cell: data.data.cell,
-              score: data.data.score,
-            };
+            return data.turn;
           }
-          const cells: ICell[] = data.data.cells;
+          const cells: ICell[] = data.turn.cells;
           const openCells = cells.filter(c => !c.ball);
           let colors = [];
-          if (data.data.nextColors && data.data.nextColors.length === Grid.ITEMS_PER_TURN) {
-            colors = data.data.nextColors;
+          if (data.turn.nextColors && data.turn.nextColors.length === Grid.ITEMS_PER_TURN) {
+            colors = data.turn.nextColors;
           } else {
             colors = this.getRandomColors();
           }
@@ -142,10 +138,10 @@ export class GridService {
           }
 
           return {
-            cells: data.data.cells,
-            cell: data.data.cell,
+            cells: data.turn.cells,
+            cell: data.turn.cell,
             nextColors: this.getRandomColors(),
-            score: data.data.score,
+            score: data.turn.score,
           };
         })
       ));
@@ -229,6 +225,7 @@ export class GridService {
         return {
           cell: data.cell,
           score: data.score,
+          nextColors: data.nextColors,
           cells,
         };
     }));
