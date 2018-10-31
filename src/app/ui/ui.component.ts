@@ -1,11 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { IUIData } from './ui.model';
 import { IBall, BallState } from '../ball/ball.model';
+import { timer, Subscription } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-ui',
   template: `
-    <div class="ui__score">{{ data?.score }}</div>
+    <div class="ui__score">{{ score }}</div>
     <div class="ui__colors">
       <app-ball class="ui__ball" *ngFor="let ball of balls" [data]="ball"></app-ball>
     </div>
@@ -13,10 +15,13 @@ import { IBall, BallState } from '../ball/ball.model';
   `,
   styleUrls: ['./ui.component.scss']
 })
-export class UiComponent implements OnInit {
+export class UiComponent implements OnInit, OnDestroy {
 
   private _data: IUIData;
+  private _timerSubscription: Subscription;
+
   public balls: IBall[] = [];
+  public score = 0;
 
   @Input() set data(value: IUIData) {
     if (!value) {
@@ -27,6 +32,12 @@ export class UiComponent implements OnInit {
         ({ id: i, color, state: BallState.idle }));
     }
     this._data = value;
+    if (value.score !== this.score) {
+      const currentScore = this.score;
+      this._timerSubscription = timer(0, 20)
+        .pipe(takeWhile(val => val < (value.score - currentScore)))
+        .subscribe(() => this.score++);
+    }
   }
 
   get data(): IUIData {
@@ -36,6 +47,12 @@ export class UiComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    if (this._timerSubscription) {
+      this._timerSubscription.unsubscribe();
+    }
   }
 
 }
