@@ -1,8 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
-import { AnimationStyleMetadata, style, keyframes, animate, AnimationBuilder } from '@angular/animations';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { AnimationBuilder } from '@angular/animations';
 import { IGridAnimation, GridAnimationType } from '../grid.service';
 import { BallComponent } from '../ball/ball.component';
-import { MOVING_DURATION, getMatchAnimation, MATCH_DURATION, getMoveAnimation, getAddAnimation } from './grid-animation.animations';
+import {
+  MOVING_DURATION,
+  MATCH_DURATION,
+  getMatchAnimation,
+  getMoveAnimation,
+  getAddAnimation,
+  getWrongAnimation
+} from './grid-animation.animations';
 import { Grid } from '../grid.model';
 import { ICell } from '../cell/cell.model';
 import { IBall } from '../ball/ball.model';
@@ -25,6 +32,8 @@ export class GridAnimationComponent implements OnInit {
   @ViewChildren(BallComponent) balls: QueryList<BallComponent>;
 
   @Output() complete: EventEmitter<any> = new EventEmitter<any>();
+
+  @Input() public container: ElementRef;
 
   @Input() public set animation(value: IGridAnimation) {
     if (!value) {
@@ -86,6 +95,12 @@ export class GridAnimationComponent implements OnInit {
           this.data = null;
         });
         break;
+      case GridAnimationType.Wrong:
+        const wrongAnimation = this.buildWrongAnimation();
+        const wrongPlayer = wrongAnimation.create(this.container.nativeElement);
+        wrongPlayer.onDone(() => wrongPlayer.destroy());
+        wrongPlayer.play();
+        break;
     }
   }
 
@@ -110,6 +125,10 @@ export class GridAnimationComponent implements OnInit {
   private buildMoveAnimation(path: ICell[], duration = MOVING_DURATION) {
     const steps = path.map(cell => Grid.getPosition(cell.id));
     return this._animationBuilder.build(getMoveAnimation(steps, duration));
+  }
+
+  private buildWrongAnimation(duration = MOVING_DURATION) {
+    return this._animationBuilder.build(getWrongAnimation(duration));
   }
 
 }

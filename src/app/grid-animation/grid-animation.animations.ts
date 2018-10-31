@@ -55,3 +55,19 @@ export function getMoveAnimation(
   }));
   return animate(`${ duration }ms ease`, keyframes(steps));
 }
+
+export function getWrongAnimation(
+  duration: number = MOVING_DURATION
+): AnimationMetadata[] {
+  return [
+    animate(`${ duration }ms ease`,
+      keyframes([
+        style({ transform: `translateX(10px)`, offset: 0.25 }),
+        style({ transform: `translateX(-10px)`, offset: 0.5 }),
+        style({ transform: `translateX(5px)`, offset: 0.75 }),
+        style({ transform: `translateX(-5px)`, offset: 0.9 }),
+        style({ transform: `translateX(0)`, offset: 1 }),
+      ]
+    )
+  )];
+}

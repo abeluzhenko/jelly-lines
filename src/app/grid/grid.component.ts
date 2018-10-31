@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ITurnData, IGridAnimation } from '../grid.service';
 import { ICell } from '../cell/cell.model';
 import { cellBallAnimation } from './grid.animations';
@@ -17,6 +17,7 @@ import { cellBallAnimation } from './grid.animations';
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-grid-animation
+      [container]="elementRef"
       [animation]="animation"
       (complete)="animationCompleted()"></app-grid-animation>
   `,
@@ -31,7 +32,9 @@ export class GridComponent implements OnInit {
 
   @Output() input: EventEmitter<ITurnData> = new EventEmitter<ITurnData>();
 
-  constructor() {}
+  constructor(
+    public elementRef: ElementRef
+  ) {}
 
   ngOnInit() {
   }
