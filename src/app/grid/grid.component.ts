@@ -4,7 +4,7 @@ import { ITurnData, IGridAnimation, GridAnimationType } from '../grid.service';
 import { ICell } from '../cell/cell.model';
 import { Grid } from '../grid.model';
 import { BallComponent } from '../ball/ball.component';
-import { IBall, BallColor } from '../ball/ball.model';
+import { IBall } from '../ball/ball.model';
 import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({
@@ -17,7 +17,7 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
       (ballClicked)="ballClicked($event)">
       <app-ball
         *ngIf="cell.ball"
-        [@cellBallAnimation]="animatedData === cell.ball ? 'animated' : 'active'"
+        [@cellBallAnimation]="animatedData?.id === cell.id ? 'animated' : 'active'"
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-ball
