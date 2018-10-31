@@ -32,7 +32,7 @@ describe('GridService', () => {
 
       done();
     });
-    service.input$.next({ cells });
+    service.input$.next({ cells, nextColors: [], score: 0 });
   })());
 
   it('should properly set the current ball', done => inject([GridService], (service: GridService) => {
@@ -82,9 +82,9 @@ describe('GridService', () => {
       }
       step++;
     });
-    service.input$.next({ cells });
-    service.input$.next({ cells, cell: cell1 });
-    service.input$.next({ cells, cell: cell2 });
+    service.input$.next({ cells, nextColors: [], score: 0 });
+    service.input$.next({ cells, cell: cell1, nextColors: [], score: 0 });
+    service.input$.next({ cells, cell: cell2, nextColors: [], score: 0 });
   })());
 
   it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
@@ -102,7 +102,7 @@ describe('GridService', () => {
       done();
     });
 
-    service.input$.next({ cells });
+    service.input$.next({ cells, nextColors: [], score: 0 });
   })());
 
   it('should setup new balls colors on a new turn', done => inject([GridService], (service: GridService) => {
@@ -133,7 +133,7 @@ describe('GridService', () => {
       service.input$.next(data);
     });
 
-    service.input$.next({ cells });
+    service.input$.next({ cells, nextColors: [], score: 0 });
   })());
 
   it('should properly move the current ball (if there is a path to the target)', done => inject([GridService], (service: GridService) => {
@@ -154,7 +154,7 @@ describe('GridService', () => {
         expect(cell1.ball).toBeDefined();
         expect(cell1.ball.state).toBe(BallState.idle);
         step++;
-        return service.input$.next({ cells, cell: cell1 });
+        return service.input$.next({ cells, cell: cell1, nextColors: [], score: 0  });
       }
       if (step === 1) {
         expect(data.cells[cell1.id].ball).toBeDefined();
@@ -162,7 +162,7 @@ describe('GridService', () => {
         cell2 = data.cells.filter(c => !c.ball)[0];
         expect(cell2).toBeTruthy();
         step++;
-        return service.input$.next({ cells, cell: cell2 });
+        return service.input$.next({ cells, cell: cell2, nextColors: [], score: 0  });
       }
       if (step === 2) {
         expect(data.cells[cell1.id].ball).toBeUndefined();
@@ -172,7 +172,7 @@ describe('GridService', () => {
         return done();
       }
     });
-    service.input$.next({ cells });
+    service.input$.next({ cells, nextColors: [], score: 0  });
   })());
 
   it('should not move the current ball if there is no path to the target', done => inject([GridService], (service: GridService) => {
@@ -195,7 +195,7 @@ describe('GridService', () => {
         targetCell = data.cells.filter(c => !c.ball)[0];
         expect(targetCell).toBeTruthy();
         step++;
-        return service.input$.next({ cells, cell: targetCell });
+        return service.input$.next({ cells, cell: targetCell, nextColors: [], score: 0  });
       }
       if (step === 1) {
         expect(data.cells[0].ball).toBeDefined();
@@ -205,7 +205,7 @@ describe('GridService', () => {
         return done();
       }
     });
-    service.input$.next({ cells, cell: cells[0] });
+    service.input$.next({ cells, cell: cells[0], nextColors: [], score: 0  });
   })());
 
   it('should properly process matches', done => inject([GridService], (service: GridService) => {
@@ -232,7 +232,7 @@ describe('GridService', () => {
       dataSubscription.unsubscribe();
       return done();
     });
-    service.input$.next({ cells, score: 0 });
+    service.input$.next({ cells, nextColors: [], score: 0  });
   })());
 
   it('should properly finish the game when the grid is full', done => inject([GridService], (service: GridService) => {
@@ -250,9 +250,9 @@ describe('GridService', () => {
         dataSubscription.unsubscribe();
         return;
       }
-      service.input$.next({ cells: data.cells });
+      service.input$.next({ cells: data.cells, nextColors: [], score: 0  });
     });
-    service.input$.next({ cells });
+    service.input$.next({ cells, nextColors: [], score: 0  });
   })());
 
   it('doWhile should repeat a stream while the condition is truthy', done => inject([GridService], (service: GridService) => {
@@ -288,12 +288,14 @@ describe('GridService', () => {
       });
       service.input$.next({
         cells: data.cells,
-        nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ]
+        nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ],
+        score: 0,
       });
     });
     service.input$.next({
       cells,
-      nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ]
+      nextColors: [ BallColor.blue, BallColor.blue, BallColor.blue ],
+      score: 0
     });
   })());
 });

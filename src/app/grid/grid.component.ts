@@ -1,11 +1,6 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, ViewChildren } from '@angular/core';
-import { AnimationBuilder, keyframes, animate, AnimationStyleMetadata, style } from '@angular/animations';
-import { ITurnData, IGridAnimation, GridAnimationType } from '../grid.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ITurnData, IGridAnimation } from '../grid.service';
 import { ICell } from '../cell/cell.model';
-import { Grid } from '../grid.model';
-import { BallComponent } from '../ball/ball.component';
-import { IBall } from '../ball/ball.model';
-import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
 
 @Component({
   selector: 'app-grid',
@@ -17,15 +12,13 @@ import { cellBallAnimation, MOVING_DURATION } from './grid.animations';
       (ballClicked)="ballClicked($event)">
       <app-ball
         *ngIf="cell.ball"
-        [@cellBallAnimation]="animatedData?.id === cell.id ? 'animated' : 'active'"
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-grid-animation
-      [data]="animation"
+      [animation]="animation"
       (complete)="animationCompleted()"></app-grid-animation>
   `,
-  styleUrls: ['./grid.component.scss'],
-  animations: [ cellBallAnimation ]
+  styleUrls: ['./grid.component.scss']
 })
 export class GridComponent implements OnInit {
 

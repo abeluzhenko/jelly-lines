@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GridAnimationComponent } from './grid-animation.component';
+import { BallComponent } from '../ball/ball.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('GridAnimationComponent', () => {
   let component: GridAnimationComponent;
@@ -8,7 +10,8 @@ describe('GridAnimationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GridAnimationComponent ]
+      imports: [ NoopAnimationsModule ],
+      declarations: [ GridAnimationComponent, BallComponent ]
     })
     .compileComponents();
   }));

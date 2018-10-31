@@ -1,17 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChildren } from '@angular/core';
-import { ICell } from '../cell/cell.model';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { AnimationStyleMetadata, style, keyframes, animate, AnimationBuilder } from '@angular/animations';
-import { Grid } from '../grid.model';
-import { MOVING_DURATION } from '../grid/grid.animations';
 import { IGridAnimation, GridAnimationType } from '../grid.service';
 import { BallComponent } from '../ball/ball.component';
-import { QueryList } from '@angular/core/src/render3';
+import { MOVING_DURATION } from './grid-animation.animations';
+import { Grid } from '../grid.model';
+import { ICell } from '../cell/cell.model';
 import { IBall } from '../ball/ball.model';
 
 @Component({
   selector: 'app-grid-animation',
   template: `
-    <app-ball *ngFor="let ball of data" [data]="ball"></app-ball>
+    <app-ball
+      class="ball"
+      *ngFor="let ball of data"
+      [data]="ball">
+    </app-ball>
   `,
   styleUrls: ['./grid-animation.component.scss']
 })
@@ -28,10 +31,12 @@ export class GridAnimationComponent implements OnInit {
       return;
     }
     if (value.type === GridAnimationType.Move) {
-      this.data = value.cells.map(cell => cell.ball);
+      this.data = [ value.cells[value.cells.length - 1].ball ];
+      this._changeDetectorRef.detectChanges();
       const animation = this.buildMoveAnimation(value.cells);
-      const player = animation.create(this.balls[0].elementRef.nativeElement);
+      const player = animation.create(this.balls.first.elementRef.nativeElement);
       player.onDone(() => {
+        this.complete.emit();
         this.data = null;
       });
       player.play();
@@ -39,7 +44,8 @@ export class GridAnimationComponent implements OnInit {
   }
 
   constructor(
-    private _animationBuilder: AnimationBuilder
+    private _animationBuilder: AnimationBuilder,
+    private _changeDetectorRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {

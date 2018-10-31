@@ -4,11 +4,10 @@ import { GridComponent } from './grid.component';
 import { CellComponent } from '../cell/cell.component';
 import { BallComponent } from '../ball/ball.component';
 import { By } from '@angular/platform-browser';
-import { GridService } from '../grid.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Grid } from '../grid.model';
 import { UiComponent } from '../ui/ui.component';
-import { AnimationBuilder } from '@angular/animations';
+import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -16,17 +15,13 @@ describe('GridComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule
-      ],
+      imports: [ NoopAnimationsModule ],
       declarations: [
         GridComponent,
         CellComponent,
         BallComponent,
+        GridAnimationComponent,
         UiComponent
-      ],
-      providers: [
-        AnimationBuilder
       ]
     })
     .compileComponents();
