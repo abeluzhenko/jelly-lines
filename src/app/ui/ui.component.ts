@@ -11,7 +11,7 @@ import { takeWhile } from 'rxjs/operators';
     <div class="ui__colors">
       <app-ball class="ui__ball" *ngFor="let ball of balls" [data]="ball"></app-ball>
     </div>
-    <div class="ui__turn">0</div>
+    <div class="ui__turn">{{ turn }}</div>
   `,
   styleUrls: ['./ui.component.scss']
 })
@@ -22,6 +22,7 @@ export class UiComponent implements OnInit, OnDestroy {
 
   public balls: IBall[] = [];
   public score = 0;
+  public turn = 0;
 
   @Input() set data(value: IUIData) {
     if (!value) {
@@ -33,6 +34,8 @@ export class UiComponent implements OnInit, OnDestroy {
     }
     this._data = value;
     if (value.score !== this.score) {
+      this.turn++;
+
       const currentScore = this.score;
       this._timerSubscription = timer(0, 20)
         .pipe(takeWhile(val => val < (value.score - currentScore)))
