@@ -9,6 +9,23 @@ export const APPEAR_DURATION = 320;
 export const MATCH_DURATION = 500;
 export const MOVING_DURATION = 500;
 
+export function getAddAnimation(
+  position: { x: number, y: number },
+  delay: number,
+  duration: number = APPEAR_DURATION
+): AnimationMetadata[] {
+  const translate = `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`;
+  return [
+    style({ transform: `${ translate } scale(0)`, opacity: 1 }),
+    animate(`${ duration }ms ${ delay + 1 }ms ease`,
+      keyframes([
+        style({ transform: `${ translate } scale(1.2)`, offset: 0.4 }),
+        style({ transform: `${ translate } scale(1)`, offset: 1 }),
+      ]
+    )
+  )];
+}
+
 export function getMatchAnimation(
   position: { x: number, y: number },
   delay: number,
@@ -17,10 +34,12 @@ export function getMatchAnimation(
   const translate = `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`;
   return [
     style({ transform: `${ translate } scale(1)`, opacity: 1 }),
-    animate(`${ duration }ms ${ delay + 1 }ms ease`, keyframes([
-      style({ transform: `${ translate } scale(1.6)`, opacity: 1, offset: 0.4 }),
-      style({ transform: `${ translate } scale(0)`, opacity: 1, offset: 1 }),
-    ])
+    animate(`${ duration }ms ${ delay + 1 }ms ease`,
+      keyframes([
+        style({ transform: `${ translate } scale(1.6)`, opacity: 1, offset: 0.4 }),
+        style({ transform: `${ translate } scale(0)`, opacity: 1, offset: 1 }),
+      ]
+    )
   )];
 }
 

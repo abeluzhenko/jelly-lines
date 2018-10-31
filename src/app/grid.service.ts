@@ -152,12 +152,14 @@ export class GridService {
             updated
           };
         }),
-        tap((data: ILoopData) =>
-          animationSubject.next({
-            type: GridAnimationType.Add,
-            cells: data.updated
-          })
-        ),
+        tap((data: ILoopData) => {
+          if (data.updated) {
+            animationSubject.next({
+              type: GridAnimationType.Add,
+              cells: data.updated
+            });
+          }
+        }),
         map((data: ILoopData) => data.turn)
       ));
 
