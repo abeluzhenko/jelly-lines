@@ -17,10 +17,11 @@ export interface ITurnData extends IUIData {
 }
 
 export enum GridAnimationType {
-  Move = 0,
-  Match = 1,
-  Wrong = 2,
-  Full = 3,
+  Add = 0,
+  Move = 1,
+  Match = 2,
+  Wrong = 3,
+  Full = 4,
 }
 
 export interface IGridAnimation {
@@ -31,6 +32,7 @@ export interface IGridAnimation {
 interface ILoopData {
   turn: ITurnData;
   matches: ICell[][];
+  updated?: ICell[];
 }
 
 export function doWhile<T>(
@@ -115,7 +117,7 @@ export class GridService {
         // Process new turn
         map((data: ILoopData) => {
           if (data.matches.length) {
-            return data.turn;
+            return data;
           }
           const cells: ICell[] = data.turn.cells;
           const openCells = cells.filter(c => !c.ball);
@@ -126,24 +128,37 @@ export class GridService {
             colors = this.getRandomColors();
           }
 
+          const updated = [];
           const newAmount = Math.min(openCells.length, Grid.ITEMS_PER_TURN);
           for (let i = 0; i < newAmount; i++) {
             const r = Math.floor(openCells.length * Math.random());
-            cells[openCells[r].id].ball = {
+            const cell = cells[openCells[r].id];
+            cell.ball = {
               id: openCells[r].id,
               color: colors[i],
               state: BallState.idle
             };
+            updated.push(cell);
             openCells.splice(r, 1);
           }
 
           return {
-            cells: data.turn.cells,
-            cell: data.turn.cell,
-            nextColors: this.getRandomColors(),
-            score: data.turn.score,
+            turn: {
+              cells: data.turn.cells,
+              cell: data.turn.cell,
+              nextColors: this.getRandomColors(),
+              score: data.turn.score,
+            },
+            updated
           };
-        })
+        }),
+        tap((data: ILoopData) =>
+          animationSubject.next({
+            type: GridAnimationType.Add,
+            cells: data.updated
+          })
+        ),
+        map((data: ILoopData) => data.turn)
       ));
 
     input$

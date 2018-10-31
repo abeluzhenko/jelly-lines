@@ -87,11 +87,19 @@ describe('GridService', () => {
     service.input$.next({ cells, cell: cell2, nextColors: [], score: 0 });
   })());
 
-  it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
+  fit('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
 
+    const animationSubscription = service.animation$.subscribe(data => {
+      expect(data).toBeDefined();
+      expect(data.type).toBe(GridAnimationType.Add);
+      expect(data.cells.length).toEqual(Grid.ITEMS_PER_TURN);
+      animationSubscription.unsubscribe();
+      done();
+    });
+
     let count = 0;
-    service.output$.subscribe(data => {
+    const dataSubscription = service.output$.subscribe(data => {
       expect(data).toBeDefined();
       expect(data.cells.length).toBe(cells.length);
 
@@ -99,7 +107,7 @@ describe('GridService', () => {
       const fullCells = data.cells.filter(c => c.ball);
       count += Grid.ITEMS_PER_TURN;
       expect(fullCells.length).toBe(count);
-      done();
+      dataSubscription.unsubscribe();
     });
 
     service.input$.next({ cells, nextColors: [], score: 0 });
