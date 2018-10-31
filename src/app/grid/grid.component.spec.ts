@@ -43,7 +43,7 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.data = { cells: Grid.getRandomGrid(), score: 0 };
+    component.data = { cells: Grid.getRandomGrid(), score: 0, nextColors: [] };
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
     expect(cellEls.length).toBe(component.data.cells.length);
