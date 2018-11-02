@@ -4,9 +4,8 @@
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
   background: var(--color-grid);
-  border: 1rem solid var(--color-border);
   border-radius: 0.5rem;
-  box-shadow: 0 0 32px 0 rgba(#000, 0.33);
+  box-shadow: 0 0 0 1rem var(--color-border), 0 0 32px 0 rgba(#000, 0.33);
   perspective: 300px;
   transform: translate3d(0, 0, 1px);
 }
