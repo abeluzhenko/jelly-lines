@@ -20,13 +20,10 @@ $balls-colors: (
   height: 100%;
   top: 0;
   left: 0;
-  // top: 50%;
-  // left: 50%;
   border-radius: 50%;
   position: absolute;
   display: block;
   cursor: pointer;
-  // transform: translate(-50%, -50%);
   box-shadow: inset 1px -2px 3vmax 0 var(--color-dark);
   overflow: hidden;
   transform-origin: 50% 100%;

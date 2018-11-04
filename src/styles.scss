@@ -2,17 +2,19 @@
 
 html {
   --color-cell: #ccc;
-  --color-grid: #444;
+  --color-grid: #c9bacc;
+  --color-grid-dark: #c0b0c4;
   --color-root: #333;
   --color-border: #ccc;
-  --ball-size: 6vmax;
+  --ball-size: 60px;
   width: 100%;
   height: 100%;
-  background: var(--color-root);
+  background: linear-gradient(to bottom, #3fe1ff, #974dab);
   font-family: 'Poor Story', cursive;
   @media screen and (min-width: 667px) {
-    --ball-size: 6vmin;
+    --ball-size: 60px;
   }
+
 }
 
 
@@ -25,4 +27,5 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
