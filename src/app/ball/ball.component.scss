@@ -1,11 +1,3 @@
-$balls-colors: (
-  red: #FF1155,
-  green: #66B8BA,
-  blue: #176475,
-  yellow: #F5FF9B,
-  purple: #E1EFE8
-);
-
 :host {
   position: relative;
   width: 100%;
@@ -24,51 +16,59 @@ $balls-colors: (
   position: absolute;
   display: block;
   cursor: pointer;
-  box-shadow: inset 1px -2px 3vmax 0 var(--color-dark);
   overflow: hidden;
   transform-origin: 50% 100%;
 
-  &::before, &::after {
-    content: '';
-    display: block;
+  &::after,
+  &::before {
     position: absolute;
+    display: block;
+    content: '';
+    z-index: 1;
+  }
+  
+  &::before {
+    color: #fff;
+    background: currentColor;
+    opacity: 0.16;
+    width: 100%;
+    height: 100%;
     top: 50%;
     left: 50%;
-    mix-blend-mode: overlay;
-  }
-
-  &::before {
-    width: 80%;
-    height: 80%;
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    background: var(--color-light);
-    box-shadow: 0 0 10px 6px var(--color-light);
-    opacity: 0;
-    transition: 320ms;
+    transform: translateX(-50%) scale(1.6, 1);
+    box-shadow: 0 0 6px 4px currentColor;
   }
-
+  
   &::after {
-    width: 25%;
-    height: 25%;
+    background: #fff;
+    width: 18%;
+    height: 6%;
     border-radius: 50%;
-    background: var(--color-light);
-    box-shadow: 0 0 10px 6px var(--color-light);
-    transform: translate(-75%, -75%);
-    z-index: 2;
+    top: 12%;
+    left: 52%;
+    opacity: 0.40;
+    transform: rotate(15deg);
+  }
+  
+  &.blue {
+    background: radial-gradient(#7cffe3, #1f62de 35%, #0638d9 60%, #290ec4);
+  }
+  &.red {
+    background: radial-gradient(#e8c580, #f23630 35%, #e02f74 60%, #ab2465);
+  }
+  &.green {
+    background: radial-gradient(#e2eb3d, #0bb554 45%, #11996c 60%, #17756f);
+  }
+  &.yellow {
+    background: radial-gradient(#dded51, #b88b25 45%, #82441b);
+  }
+  &.purple {
+    background: radial-gradient(#f09484, #d86ee0 25%, #742fd5 55%, #411775);
   }
 
   &.active {
     animation: jump 600ms infinite linear;
-  }
-
-  @each $name, $value in $balls-colors {
-    &.#{$name} {
-      background: $value;
-      --color-dark: #{ rgba(darken(adjust-hue($value, -10%), 50%), 0.6) };
-      --color-light: #{ rgba(lighten(adjust-hue($value, 10%), 50%), 0.3) };
-    }
   }
 }
 
@@ -76,18 +76,18 @@ $shadow-translate: translateY(0);
 .shadow {
   display: block;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 30%;
+  top: 4px;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   transform: #{$shadow-translate};
   background: #000;
-  box-shadow: 0 0 4px 4px rgba(#000, 1);
+  box-shadow: 0 0 6px 0 rgba(#000, 1);
   opacity: 0.3;
   transform-origin: 50% 100%;
 
-  .active {
+  &.active {
     animation: jump-shadow 600ms infinite linear;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, Input, ElementRef } from '@angular/core';
 import { BallState, IBall } from './ball.model';
 
 interface ISpriteClass {
@@ -8,7 +8,7 @@ interface ISpriteClass {
 @Component({
   selector: 'app-ball',
   template: `
-  <!--div class="shadow" [ngClass]="getSpriteClass(data)"></div-->
+  <div class="shadow" [ngClass]="getSpriteClass(data)"></div>
   <div class="ball" [ngClass]="getSpriteClass(data)"></div>
   `,
   styleUrls: ['./ball.component.scss']
