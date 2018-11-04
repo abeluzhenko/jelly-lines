@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@ang
 import { ITurnData, IGridAnimation } from '../grid.service';
 import { ICell } from '../cell/cell.model';
 import { cellBallAnimation } from './grid.animations';
+import { Grid } from '../grid.model';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-grid',
@@ -9,6 +11,7 @@ import { cellBallAnimation } from './grid.animations';
     <app-cell
       *ngFor="let cell of data?.cells"
       [data]="cell"
+      [style.transform]="styles[cell.id]"
       (clicked)="cellClicked($event)"
       (ballClicked)="ballClicked($event)">
       <app-ball
@@ -26,14 +29,31 @@ import { cellBallAnimation } from './grid.animations';
 })
 export class GridComponent implements OnInit {
 
-  @Input() public data: ITurnData;
+  public styles: SafeStyle[];
+  public turnData: ITurnData;
+
+  @Input() public set data(value: ITurnData) {
+    if (!value || !value.cells) {
+      return;
+    }
+    this.styles = value.cells
+      .map(cell => Grid.getPosition(cell.id))
+      .map(pos => this._domSanitizer.bypassSecurityTrustStyle(
+        'translate3d(' + (pos.x * 100) + '%, ' + (pos.y * 100) + '%, 1px)'));
+    this.turnData = value;
+  }
+
+  public get data(): ITurnData {
+    return this.turnData;
+  }
 
   @Input() public animation: IGridAnimation;
 
   @Output() input: EventEmitter<ITurnData> = new EventEmitter<ITurnData>();
 
   constructor(
-    public elementRef: ElementRef
+    public elementRef: ElementRef,
+    private _domSanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {

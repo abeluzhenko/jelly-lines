@@ -16,15 +16,17 @@ $balls-colors: (
 }
 
 .ball {
-  width: 80%;
-  height: 80%;
-  top: 50%;
-  left: 50%;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  // top: 50%;
+  // left: 50%;
   border-radius: 50%;
   position: absolute;
   display: block;
   cursor: pointer;
-  transform: translate(-50%, -50%);
+  // transform: translate(-50%, -50%);
   box-shadow: inset 1px -2px 3vmax 0 var(--color-dark);
   overflow: hidden;
   transform-origin: 50% 100%;
@@ -73,7 +75,7 @@ $balls-colors: (
   }
 }
 
-$shadow-translate: translate(-50%, 50%);
+$shadow-translate: translateY(0);
 .shadow {
   display: block;
   position: absolute;
@@ -95,25 +97,25 @@ $shadow-translate: translate(-50%, 50%);
 
 @keyframes jump {
   0% {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateY(0) scale(1);
   }
   15% {
-    transform: translate(-50%, -48%) scale(1.2, 1);
+    transform: translateY(-2%) scale(1.2, 1);
   }
   40% {
-    transform: translate(-50%, -60%) scale(1, 1.2);
+    transform: translateY(-10%) scale(1, 1.2);
   }
   60% {
-    transform: translate(-50%, -75%) scale(1.2, 1.1);
+    transform: translateY(-25%) scale(1.2, 1.1);
   }
   70% {
-    transform: translate(-50%, -65%) scale(1.2, 1.2);
+    transform: translateY(-15%) scale(1.2, 1.2);
   }
   90% {
-    transform: translate(-50%, -50%) scale(1, 1.2);
+    transform: translateY(0) scale(1, 1.2);
   }
   100% {
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 

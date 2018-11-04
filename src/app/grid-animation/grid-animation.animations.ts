@@ -14,7 +14,7 @@ export function getAddAnimation(
   delay: number,
   duration: number = APPEAR_DURATION
 ): AnimationMetadata[] {
-  const translate = `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`;
+  const translate = `translate3d(${ position.x * 100 }%, ${ position.y * 100 }%, 1px)`;
   return [
     style({ transform: `${ translate } scale(0)`, opacity: 1 }),
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
@@ -31,7 +31,7 @@ export function getMatchAnimation(
   delay: number,
   duration: number = MATCH_DURATION
 ): AnimationMetadata[] {
-  const translate = `translate(${ position.x * 100 }%, ${ position.y * 100 }%)`;
+  const translate = `translate3d(${ position.x * 100 }%, ${ position.y * 100 }%, 1px)`;
   return [
     style({ transform: `${ translate } scale(1)`, opacity: 1 }),
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
@@ -49,7 +49,7 @@ export function getMoveAnimation(
 ): AnimationMetadata {
   const delta = 1 / (path.length - 1);
   const steps = path.map((p, i) => style({
-    transform: `translate(${ p.x * 100 }%, ${ p.y * 100 }%)`,
+    transform: `translate3d(${ p.x * 100 }%, ${ p.y * 100 }%, 1px)`,
     offset: delta * i,
     opacity: 1,
   }));

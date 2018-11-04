@@ -68,9 +68,9 @@ export class GridAnimationComponent implements OnInit {
         const moveAnimation = this.buildMoveAnimation(value.cells);
         const movePlayer = moveAnimation.create(this.balls.first.elementRef.nativeElement);
         movePlayer.onDone(() => {
-          movePlayer.destroy();
-          this.complete.emit();
-          this.data = null;
+          // movePlayer.destroy();
+          // this.complete.emit();
+          // this.data = null;
         });
         movePlayer.play();
         break;
