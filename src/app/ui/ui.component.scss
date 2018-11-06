@@ -12,7 +12,7 @@
     0 0 0 16px var(--color-ui), 
     0 0 32px 20px rgba(#000, 0.4), 
     inset 0 0 24px 1px rgba(#000, 0.24);
-  @media screen and (min-width: 375px) {
+  @media screen and (min-width: 768px) {
     max-width: 100%;
   }
 }

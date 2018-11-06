@@ -1,8 +1,9 @@
 :host {
   position: relative;
   display: grid;
-  width: calc(var(--ball-size) * 9);
-  height: calc(var(--ball-size) * 9);
+  width: calc(var(--ball-size) * 9 + var(--border-size) * 2);
+  height: calc(var(--ball-size) * 9 + var(--border-size) * 2);
+  border: var(--border-size) solid transparent;
   background-color: var(--color-grid);
   background-image: 
     linear-gradient(45deg, var(--color-grid-dark) 25%, transparent 25%),
@@ -11,14 +12,15 @@
     linear-gradient(-45deg, transparent 75%, var(--color-grid-dark) 75%);
   background-size: calc(var(--ball-size) * 2) calc(var(--ball-size) * 2);
   background-position: 
-    0 0, 
-    0 var(--ball-size), 
+    var(--border-size) var(--border-size), 
+    var(--border-size) var(--ball-size), 
     var(--ball-size) calc(var(--ball-size) * -1), 
-    calc(var(--ball-size) * -1) 0;
+    calc(var(--ball-size) * -1) var(--border-size);
   border-radius: 0.5rem;
   box-shadow: 
     0 0 0 24px #fff, 
     0 0 48px 20px rgba(#000, 0.4), 
     inset 0 0 24px 1px rgba(#000, 0.24);
   perspective: 300px;
+  box-sizing: border-box;
 }
