@@ -1,17 +1,27 @@
 :host {
-  position: absolute;
-  top: 1rem;
-  left: 50%;
-  transform: translate(-50%, 0);
+  margin: 2rem auto 3rem;
+  position: relative;
   z-index: 2;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 60vmin;
+  display: block;
+  width: calc(var(--ball-size) * 9);
+  height: calc(var(--ball-size) * 1.5);
+  background: var(--color-ui-dark);
+  max-width: calc(100% - 48px);
+  border-radius: 0.5rem;
+  box-shadow: 
+    0 0 0 16px var(--color-ui), 
+    0 0 32px 20px rgba(#000, 0.4), 
+    inset 0 0 24px 1px rgba(#000, 0.24);
+  @media screen and (min-width: 375px) {
+    max-width: 100%;
+  }
 }
 
 .ui__colors {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-flow: row;
 }
@@ -23,11 +33,20 @@
 
 .ui__turn,
 .ui__score {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   color: #fff;
-  font-size: 4rem;
-  width: 5em;
+  font-size: var(--font-size);
+  font-weight: bold;
+  text-shadow: 0 0 16px rgba(#000, 0.33);
 }
 
 .ui__turn {
+  right: 1rem;
   text-align: right;
+}
+
+.ui__score {
+  left: 1rem;
 }
