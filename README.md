@@ -1,27 +1,15 @@
-# LinesGame
+# Jelly Lines
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+This is a HTML5 remake of the famous [Color Lines](https://ru.wikipedia.org/wiki/Color_Lines) game.<br>
+The project was build with [Angular](https://github.com/angular/). All the graphics were made using CSS only.<br>
+The game is just an experiment in using Angular for relatively complex animations and reactive game loop.
 
-## Development server
+## Demo
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Check out the [demo](https://beluzhenko.ru/jelly-lines/) here.
 
-## Code scaffolding
+## License
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+MIT: http://mit-license.org/
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Copyright 2018 Anton Beluzhenko
