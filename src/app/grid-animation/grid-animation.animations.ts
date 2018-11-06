@@ -5,9 +5,10 @@ import {
   AnimationMetadata,
 } from '@angular/animations';
 
-export const APPEAR_DURATION = 320;
+export const APPEAR_DURATION = 500;
 export const MATCH_DURATION = 500;
 export const MOVING_DURATION = 500;
+export const WRONG_DURATION = 500;
 
 export function getAddAnimation(
   position: { x: number, y: number },

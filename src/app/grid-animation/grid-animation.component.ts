@@ -1,5 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChildren, QueryList, ChangeDetectorRef, ElementRef } from '@angular/core';
-import { AnimationBuilder } from '@angular/animations';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChildren,
+  QueryList,
+  ChangeDetectorRef,
+  ElementRef,
+  OnDestroy
+} from '@angular/core';
+import { AnimationBuilder, AnimationMetadata, AnimationPlayer } from '@angular/animations';
 import { IGridAnimation, GridAnimationType } from '../grid.service';
 import { BallComponent } from '../ball/ball.component';
 import {
@@ -8,7 +19,9 @@ import {
   getMatchAnimation,
   getMoveAnimation,
   getAddAnimation,
-  getWrongAnimation
+  getWrongAnimation,
+  WRONG_DURATION,
+  APPEAR_DURATION
 } from './grid-animation.animations';
 import { Grid } from '../grid.model';
 import { ICell } from '../cell/cell.model';
@@ -25,7 +38,9 @@ import { IBall } from '../ball/ball.model';
   `,
   styleUrls: ['./grid-animation.component.scss']
 })
-export class GridAnimationComponent implements OnInit {
+export class GridAnimationComponent implements OnInit, OnDestroy {
+
+  private _wrongAnimationPlayer: AnimationPlayer;
 
   public data: IBall[];
 
@@ -41,31 +56,14 @@ export class GridAnimationComponent implements OnInit {
     }
     switch (value.type) {
       case GridAnimationType.Add:
-        this.data = value.cells.map(cell => cell.ball);
-        this._changeDetectorRef.detectChanges();
-        const doneList1 = [];
-
-        this.balls.forEach((item, i) => {
-          const matchAnimation = this.buildAddAnimation(item.data.id, i * 100);
-          const matchPlayer = matchAnimation.create(item.elementRef.nativeElement);
-          const done = new Promise(resolve => {
-            matchPlayer.onDone(() => {
-              matchPlayer.destroy();
-              resolve();
-            });
-          });
-          doneList1.push(done);
-          matchPlayer.play();
-        });
-        Promise.all(doneList1).then(() => {
-          this.data = null;
-        });
+        this.buildGroupAnimation(value.cells, getAddAnimation, APPEAR_DURATION);
         break;
       case GridAnimationType.Move:
         this.data = [ value.cells[value.cells.length - 1].ball ];
         this._changeDetectorRef.detectChanges();
 
-        const moveAnimation = this.buildMoveAnimation(value.cells);
+        const steps = value.cells.map(cell => Grid.getPosition(cell.id));
+        const moveAnimation = this._animationBuilder.build(getMoveAnimation(steps, MOVING_DURATION));
         const movePlayer = moveAnimation.create(this.balls.first.elementRef.nativeElement);
         movePlayer.onDone(() => {
           movePlayer.destroy();
@@ -75,31 +73,14 @@ export class GridAnimationComponent implements OnInit {
         movePlayer.play();
         break;
       case GridAnimationType.Match:
-        this.data = value.cells.map(cell => cell.ball);
-        this._changeDetectorRef.detectChanges();
-        const doneList2 = [];
-
-        this.balls.forEach((item, i) => {
-          const matchAnimation = this.buildMatchAnimation(item.data.id, i * 100);
-          const matchPlayer = matchAnimation.create(item.elementRef.nativeElement);
-          const done = new Promise(resolve => {
-            matchPlayer.onDone(() => {
-              matchPlayer.destroy();
-              resolve();
-            });
-          });
-          doneList2.push(done);
-          matchPlayer.play();
-        });
-        Promise.all(doneList2).then(() => {
-          this.data = null;
-        });
+        this.buildGroupAnimation(value.cells, getMatchAnimation, MATCH_DURATION);
         break;
       case GridAnimationType.Wrong:
-        const wrongAnimation = this.buildWrongAnimation();
-        const wrongPlayer = wrongAnimation.create(this.container.nativeElement);
-        wrongPlayer.onDone(() => wrongPlayer.destroy());
-        wrongPlayer.play();
+        if (!this._wrongAnimationPlayer) {
+          const wrongAnimation = this._animationBuilder.build(getWrongAnimation(WRONG_DURATION));
+          this._wrongAnimationPlayer = wrongAnimation.create(this.container.nativeElement);
+        }
+        this._wrongAnimationPlayer.play();
         break;
     }
   }
@@ -112,23 +93,38 @@ export class GridAnimationComponent implements OnInit {
   ngOnInit() {
   }
 
-  private buildAddAnimation(id: number, delay: number, duration = MATCH_DURATION) {
-    const position = Grid.getPosition(id);
-    return this._animationBuilder.build(getAddAnimation(position, delay, duration));
+  ngOnDestroy() {
+    this._wrongAnimationPlayer.destroy();
   }
 
-  private buildMatchAnimation(id: number, delay: number, duration = MATCH_DURATION) {
-    const position = Grid.getPosition(id);
-    return this._animationBuilder.build(getMatchAnimation(position, delay, duration));
-  }
+  private buildGroupAnimation(
+    cells: ICell[],
+    animationFn: (
+      position: { x: number, y: number },
+      delay: number,
+      d: number
+    ) => AnimationMetadata[],
+    duration
+  ): Promise<any> {
+    this.data = cells.map(cell => cell.ball);
+    this._changeDetectorRef.detectChanges();
+    const doneList = [];
 
-  private buildMoveAnimation(path: ICell[], duration = MOVING_DURATION) {
-    const steps = path.map(cell => Grid.getPosition(cell.id));
-    return this._animationBuilder.build(getMoveAnimation(steps, duration));
+    this.balls.forEach((item, i) => {
+      const animation = this._animationBuilder.build(
+        animationFn(Grid.getPosition(item.data.id), i * 100, duration));
+      const player = animation.create(item.elementRef.nativeElement);
+      const done = new Promise(resolve => {
+        player.onDone(() => {
+          player.destroy();
+          resolve();
+        });
+      });
+      doneList.push(done);
+      player.play();
+    });
+    return Promise.all(doneList).then(() => {
+      this.data = null;
+    });
   }
-
-  private buildWrongAnimation(duration = MOVING_DURATION) {
-    return this._animationBuilder.build(getWrongAnimation(duration));
-  }
-
 }
