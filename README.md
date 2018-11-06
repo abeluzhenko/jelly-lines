@@ -6,7 +6,7 @@ The game is just an experiment in using Angular for relatively complex animation
 
 ## Demo
 
-Check out the [demo](http://jelly-lines.beluzhenko.ru/) here.
+Check out the [demo](http://beluzhenko.ru/jelly-lines/) here.
 
 ## License
 
