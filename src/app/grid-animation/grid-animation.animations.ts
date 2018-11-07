@@ -54,7 +54,7 @@ export function getMoveAnimation(
     offset: delta * i,
     opacity: 1,
   }));
-  return animate(`${ duration }ms ease`, keyframes(steps));
+  return animate(`${ duration }ms ease-out`, keyframes(steps));
 }
 
 export function getWrongAnimation(
