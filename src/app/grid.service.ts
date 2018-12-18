@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BallState, BallColor } from './shared/ball.model';
 import { ICell } from './shared/cell.model';
-import { Subject, Observable, merge, pipe, OperatorFunction, UnaryFunction } from 'rxjs';
+import { Subject, Observable, merge, pipe, OperatorFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './shared/path.model';
 import { Grid } from './shared/grid.model';
