@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BallComponent } from './ball.component';
-import { BallColors, BallColor, BallState } from './ball.model';
+import { BallColors, BallColor, BallState } from '../shared/ball.model';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 

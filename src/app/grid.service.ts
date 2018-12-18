@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BallState, BallColor } from './ball/ball.model';
-import { ICell } from './cell/cell.model';
+import { BallState, BallColor } from './shared/ball.model';
+import { ICell } from './shared/cell.model';
 import { Subject, Observable, merge, pipe, OperatorFunction, UnaryFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { Path } from './path.model';
-import { Grid } from './grid.model';
+import { Path } from './shared/path.model';
+import { Grid } from './shared/grid.model';
 import { IUIData } from './ui/ui.model';
 
 export const SCORE_MULTIPLIER = 10;

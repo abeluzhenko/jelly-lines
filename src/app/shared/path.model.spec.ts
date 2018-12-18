@@ -1,6 +1,6 @@
 import { Path, IPathCell } from './path.model';
-import { ICell } from './cell/cell.model';
-import { BallState, BallColor } from './ball/ball.model';
+import { ICell } from './cell.model';
+import { BallState, BallColor } from './ball.model';
 
 describe('Path module', () => {
   it('getGrid should return a proper grid', () => {

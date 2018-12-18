@@ -23,9 +23,9 @@ import {
   WRONG_DURATION,
   APPEAR_DURATION
 } from './grid-animation.animations';
-import { Grid } from '../grid.model';
-import { ICell } from '../cell/cell.model';
-import { IBall } from '../ball/ball.model';
+import { Grid } from '../shared/grid.model';
+import { ICell } from '../shared/cell.model';
+import { IBall } from '../shared/ball.model';
 
 @Component({
   selector: 'app-grid-animation',

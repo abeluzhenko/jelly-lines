@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { ICell } from './cell.model';
+import { ICell } from '../shared/cell.model';
 
 @Component({
   selector: 'app-cell',

@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef } from '@angular/core';
-import { BallState, IBall } from './ball.model';
+import { BallState, IBall } from '../shared/ball.model';
 
 interface ISpriteClass {
   active: boolean;

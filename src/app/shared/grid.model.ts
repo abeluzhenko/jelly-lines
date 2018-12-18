@@ -1,5 +1,5 @@
-import { BallColors, BallColor, BallState } from './ball/ball.model';
-import { ICell } from './cell/cell.model';
+import { BallColors, BallColor, BallState } from './ball.model';
+import { ICell } from './cell.model';
 
 export class Grid {
 
@@ -64,10 +64,8 @@ export class Grid {
       let lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell) ? lastItem : primeItem;
       let sequence = [];
       const sequencies = [];
-      // console.log('>', primeItem.cell.id);
       for (let i = 2; i <= flatGrid.length; i++) {
         const currentItem = flatGrid[i];
-        // console.log('>>', currentItem && currentItem.cell.id);
         if (currentItem
           && (currentItem.slope === lastItem.slope)
           && isAdjacent(lastSequenceItem.cell, currentItem.cell)
@@ -75,7 +73,6 @@ export class Grid {
           if (!sequence.length) {
             sequence.push(lastItem);
           }
-          // console.log('>>', sequence.map(s => s.cell.id));
           sequence.push(currentItem);
           lastSequenceItem = currentItem;
           lastItem = currentItem;
