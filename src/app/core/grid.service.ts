@@ -1,53 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, merge, pipe, OperatorFunction } from 'rxjs';
+import { Subject, Observable, merge, pipe } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
+import { doWhile } from '../shared/operators/doWhile';
 import { BallState } from '../shared/Ball';
 import { ICell } from '../shared/Cell';
 import { Path } from '../shared/Path';
 import { Grid } from '../shared/Grid';
 import { ITurnData } from '../shared/TurnData';
+import { CoreModule } from './core.module';
+import { IGridAnimation, GridAnimationType } from '../shared/GridAnimation';
+import { ILoopData } from '../shared/LoopData';
 
 export const SCORE_MULTIPLIER = 10;
 
-export enum GridAnimationType {
-  Add = 0,
-  Move = 1,
-  Match = 2,
-  Wrong = 3,
-  Full = 4,
-}
-
-export interface IGridAnimation {
-  type: GridAnimationType;
-  cells?: ICell[];
-}
-
-interface ILoopData {
-  turn: ITurnData;
-  matches: ICell[][];
-  updated?: ICell[];
-}
-
-export function doWhile<T>(
-  enter$: Subject<T>,
-  conditionFn: (value: T) => boolean,
-  loop: OperatorFunction<T, T>
-): Observable<T> {
-  const exit$ = new Subject<T>();
-  const loop$ = enter$.pipe(loop);
-  loop$.subscribe(value => {
-    if (conditionFn(value)) {
-      enter$.next(value);
-      return;
-    }
-    exit$.next(value);
-  });
-  return exit$.asObservable();
-}
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: CoreModule
 })
 export class GridService {
 
