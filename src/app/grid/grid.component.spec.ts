@@ -4,7 +4,7 @@ import { GridComponent } from './grid.component';
 import { CellComponent } from '../cell/cell.component';
 import { BallComponent } from '../ball/ball.component';
 import { By } from '@angular/platform-browser';
-import { Grid } from '../shared/grid.model';
+import { Grid } from '../shared/Grid';
 import { UiComponent } from '../ui/ui.component';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

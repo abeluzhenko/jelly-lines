@@ -1,6 +1,6 @@
-import { Grid } from './grid.model';
-import { BallState, BallColor } from './ball.model';
-import { ICell } from './cell.model';
+import { Grid } from './Grid';
+import { BallState, BallColor } from './Ball';
+import { ICell } from './Cell';
 
 describe('Grid module', () => {
   it('getGrid should return a proper grid', () => {

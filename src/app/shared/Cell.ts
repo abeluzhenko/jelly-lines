@@ -1,4 +1,4 @@
-import { IBall } from './ball.model';
+import { IBall } from './Ball';
 
 export interface ICell {
   id: number;

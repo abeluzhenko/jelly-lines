@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CellComponent } from './cell.component';
 import { BallComponent } from '../ball/ball.component';
-import { BallState, BallColor } from '../shared/ball.model';
+import { BallState, BallColor } from '../shared/Ball';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 

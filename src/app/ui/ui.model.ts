@@ -1,4 +1,4 @@
-import { BallColor } from '../shared/ball.model';
+import { BallColor } from '../shared/Ball';
 
 export interface IUIData {
   nextColors?: BallColor[];

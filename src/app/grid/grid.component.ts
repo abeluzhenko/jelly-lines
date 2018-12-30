@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ITurnData, IGridAnimation } from '../grid.service';
-import { ICell } from '../shared/cell.model';
+import { ICell } from '../shared/Cell';
 import { cellBallAnimation } from './grid.animations';
-import { Grid } from '../shared/grid.model';
+import { Grid } from '../shared/Grid';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 @Component({

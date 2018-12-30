@@ -1,5 +1,5 @@
-import { BallColors, BallColor, BallState } from './ball.model';
-import { ICell } from './cell.model';
+import { BallColors, BallColor, BallState } from './Ball';
+import { ICell } from './Cell';
 
 export class Grid {
 

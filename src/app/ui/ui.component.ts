@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { IUIData } from './ui.model';
-import { IBall, BallState } from '../shared/ball.model';
+import { IBall, BallState } from '../shared/Ball';
 import { timer, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 
