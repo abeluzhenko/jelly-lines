@@ -1,10 +1,10 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { GridService, doWhile, GridAnimationType, SCORE_MULTIPLIER } from './grid.service';
-import { BallState, BallColor } from './shared/Ball';
-import { ICell } from './shared/Cell';
-import { Path } from './shared/Path';
-import { Grid } from './shared/Grid';
+import { BallState, BallColor } from '../shared/Ball';
+import { ICell } from '../shared/Cell';
+import { Path } from '../shared/Path';
+import { Grid } from '../shared/Grid';
 import { pipe, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 

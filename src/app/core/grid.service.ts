@@ -1,20 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BallState, BallColor } from './shared/Ball';
-import { ICell } from './shared/Cell';
 import { Subject, Observable, merge, pipe, OperatorFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { Path } from './shared/Path';
-import { Grid } from './shared/Grid';
-import { IUIData } from './core/ui/ui.model';
+
+import { BallState } from '../shared/Ball';
+import { ICell } from '../shared/Cell';
+import { Path } from '../shared/Path';
+import { Grid } from '../shared/Grid';
+import { ITurnData } from '../shared/TurnData';
 
 export const SCORE_MULTIPLIER = 10;
-
-export interface ITurnData extends IUIData {
-  cells: ICell[];
-  score: number;
-  nextColors: BallColor[];
-  cell?: ICell;
-}
 
 export enum GridAnimationType {
   Add = 0,

@@ -11,7 +11,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import { AnimationBuilder, AnimationMetadata, AnimationPlayer } from '@angular/animations';
-import { IGridAnimation, GridAnimationType } from '../../grid.service';
+import { IGridAnimation, GridAnimationType } from '../grid.service';
 import { BallComponent } from '../ball/ball.component';
 import {
   MOVING_DURATION,
