@@ -3,13 +3,13 @@ import { Subject, Observable, merge, pipe } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
 import { doWhile } from '../shared/operators/doWhile';
-import { BallState } from '../shared/Ball';
-import { ICell } from '../shared/Cell';
-import { Path } from '../shared/Path';
-import { Grid } from '../shared/Grid';
-import { ITurnData } from '../shared/TurnData';
-import { IGridAnimation, GridAnimationType } from '../shared/GridAnimation';
-import { ILoopData } from '../shared/LoopData';
+import { BallState } from './shared/Ball';
+import { ICell } from './shared/Cell';
+import { Path } from './shared/Path';
+import { Grid } from './shared/Grid';
+import { ITurnData } from './shared/TurnData';
+import { IGridAnimation, GridAnimationType } from './shared/GridAnimation';
+import { ILoopData } from './shared/LoopData';
 
 export const SCORE_MULTIPLIER = 10;
 

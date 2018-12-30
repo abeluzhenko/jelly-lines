@@ -22,10 +22,10 @@ import {
   WRONG_DURATION,
   APPEAR_DURATION
 } from './grid-animation.animations';
-import { Grid } from '../../shared/Grid';
-import { ICell } from '../../shared/Cell';
-import { IBall } from '../../shared/Ball';
-import { IGridAnimation, GridAnimationType } from 'src/app/shared/GridAnimation';
+import { Grid } from '../shared/Grid';
+import { ICell } from '../shared/Cell';
+import { IBall } from '../shared/Ball';
+import { IGridAnimation, GridAnimationType } from 'src/app/core/shared/GridAnimation';
 
 @Component({
   selector: 'app-grid-animation',

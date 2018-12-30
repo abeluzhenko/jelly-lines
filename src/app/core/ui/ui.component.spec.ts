@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UiComponent } from './ui.component';
 import { By } from '@angular/platform-browser';
-import { BallColor } from '../../shared/Ball';
+import { BallColor } from '../shared/Ball';
 import { BallComponent } from '../ball/ball.component';
 
 describe('UiComponent', () => {

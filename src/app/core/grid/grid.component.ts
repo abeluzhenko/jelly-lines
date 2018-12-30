@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 import { cellBallAnimation } from './grid.animations';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { ITurnData } from 'src/app/shared/TurnData';
-import { Grid } from 'src/app/shared/Grid';
-import { IGridAnimation } from 'src/app/shared/GridAnimation';
-import { ICell } from 'src/app/shared/Cell';
+import { ITurnData } from 'src/app/core/shared/TurnData';
+import { Grid } from 'src/app/core/shared/Grid';
+import { IGridAnimation } from 'src/app/core/shared/GridAnimation';
+import { ICell } from 'src/app/core/shared/Cell';
 
 @Component({
   selector: 'app-grid',
