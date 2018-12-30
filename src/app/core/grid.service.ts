@@ -8,17 +8,15 @@ import { ICell } from '../shared/Cell';
 import { Path } from '../shared/Path';
 import { Grid } from '../shared/Grid';
 import { ITurnData } from '../shared/TurnData';
-import { CoreModule } from './core.module';
 import { IGridAnimation, GridAnimationType } from '../shared/GridAnimation';
 import { ILoopData } from '../shared/LoopData';
 
 export const SCORE_MULTIPLIER = 10;
 
 @Injectable({
-  providedIn: CoreModule
+  providedIn: 'root'
 })
 export class GridService {
-
   private _outputSubject: Subject<ITurnData> = new Subject<ITurnData>();
   private _animationSubject: Subject<IGridAnimation> = new Subject<IGridAnimation>();
 
