@@ -26,8 +26,8 @@ describe('GameComponent', () => {
         UiComponent
       ],
       providers: [
+        AnimationBuilder,
         GridService,
-        AnimationBuilder
       ]
     })
     .compileComponents();

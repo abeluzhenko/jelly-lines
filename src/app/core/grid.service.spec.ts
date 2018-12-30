@@ -1,12 +1,14 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { GridService, doWhile, GridAnimationType, SCORE_MULTIPLIER } from './grid.service';
+import { GridService, SCORE_MULTIPLIER } from './grid.service';
 import { BallState, BallColor } from '../shared/Ball';
 import { ICell } from '../shared/Cell';
 import { Path } from '../shared/Path';
 import { Grid } from '../shared/Grid';
 import { pipe, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { GridAnimationType } from '../shared/GridAnimation';
+import { doWhile } from '../shared/operators/doWhile';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -87,7 +89,7 @@ describe('GridService', () => {
     service.input$.next({ cells, cell: cell2, nextColors: [], score: 0 });
   })());
 
-  fit('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
+  it('should properly add new items to the grid on a new step', done => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
 
     const animationSubscription = service.animation$.subscribe(data => {

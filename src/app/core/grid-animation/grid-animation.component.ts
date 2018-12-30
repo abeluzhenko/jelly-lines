@@ -94,7 +94,9 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._wrongAnimationPlayer.destroy();
+    if (this._wrongAnimationPlayer) {
+      this._wrongAnimationPlayer.destroy();
+    }
   }
 
   private buildGroupAnimation(

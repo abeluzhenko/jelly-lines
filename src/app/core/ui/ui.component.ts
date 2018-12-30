@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { IUIData } from './ui.model';
 import { IBall, BallState } from '../../shared/Ball';
 import { timer, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
+import { IUIData } from 'src/app/shared/UIData';
 
 @Component({
   selector: 'app-ui',

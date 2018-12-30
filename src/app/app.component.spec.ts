@@ -1,7 +1,8 @@
 import { TestBed, async } from '@angular/core/testing';
-import { AppComponent } from './app.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
+import { AppComponent } from './app.component';
+import { GridService } from './core/grid.service';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -12,6 +13,9 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
+      ],
+      providers: [
+        GridService,
       ],
     }).compileComponents();
   }));

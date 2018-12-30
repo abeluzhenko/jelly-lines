@@ -9,16 +9,15 @@ import { GameComponent } from './game/game.component';
 import { GridAnimationComponent } from './grid-animation/grid-animation.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
+  imports: [ CommonModule ],
+  exports: [ GameComponent ],
+  declarations: [
     BallComponent,
     CellComponent,
     GridComponent,
     UiComponent,
     GridAnimationComponent,
     GameComponent,
-  ],
-  exports: [ GameComponent ],
-  declarations: []
+  ]
 })
 export class CoreModule { }
