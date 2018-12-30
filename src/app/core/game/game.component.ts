@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { GridService, ITurnData, IGridAnimation } from '../grid.service';
 import { Observable } from 'rxjs';
-import { Grid } from '../shared/Grid';
+import { GridService, ITurnData, IGridAnimation } from '../../grid.service';
+import { Grid } from '../../shared/Grid';
 
 @Component({
   selector: 'app-game',

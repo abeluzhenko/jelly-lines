@@ -5,7 +5,7 @@ import { Subject, Observable, merge, pipe, OperatorFunction } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { Path } from './shared/Path';
 import { Grid } from './shared/Grid';
-import { IUIData } from './ui/ui.model';
+import { IUIData } from './core/ui/ui.model';
 
 export const SCORE_MULTIPLIER = 10;
 

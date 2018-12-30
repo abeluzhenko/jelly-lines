@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GridComponent } from './grid.component';
-import { CellComponent } from '../cell/cell.component';
-import { BallComponent } from '../ball/ball.component';
+import { CellComponent } from '../../core/cell/cell.component';
+import { BallComponent } from '../../core/ball/ball.component';
 import { By } from '@angular/platform-browser';
-import { Grid } from '../shared/Grid';
+import { Grid } from '../../shared/Grid';
 import { UiComponent } from '../ui/ui.component';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

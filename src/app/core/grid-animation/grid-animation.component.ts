@@ -11,7 +11,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import { AnimationBuilder, AnimationMetadata, AnimationPlayer } from '@angular/animations';
-import { IGridAnimation, GridAnimationType } from '../grid.service';
+import { IGridAnimation, GridAnimationType } from '../../grid.service';
 import { BallComponent } from '../ball/ball.component';
 import {
   MOVING_DURATION,
@@ -23,9 +23,9 @@ import {
   WRONG_DURATION,
   APPEAR_DURATION
 } from './grid-animation.animations';
-import { Grid } from '../shared/Grid';
-import { ICell } from '../shared/Cell';
-import { IBall } from '../shared/Ball';
+import { Grid } from '../../shared/Grid';
+import { ICell } from '../../shared/Cell';
+import { IBall } from '../../shared/Ball';
 
 @Component({
   selector: 'app-grid-animation',
