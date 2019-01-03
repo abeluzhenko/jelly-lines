@@ -1,9 +1,11 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GridService } from '../grid.service';
 import { Grid } from '../shared/Grid';
 import { ITurnData } from 'src/app/core/shared/TurnData';
 import { IGridAnimation } from 'src/app/core/shared/GridAnimation';
+import { pluck, distinctUntilChanged } from 'rxjs/operators';
+import { SelectCellAction } from '../shared/Action';
 
 @Component({
   selector: 'app-game',
@@ -14,11 +16,12 @@ import { IGridAnimation } from 'src/app/core/shared/GridAnimation';
       [animation]="animation$ | async"
       (input)="onInput($event)"></app-grid>
   `,
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameComponent implements OnInit, AfterViewInit {
+export class GameComponent implements OnInit {
 
-  output$: Observable<ITurnData>;
+  turn$: Observable<ITurnData>;
   animation$: Observable<IGridAnimation>;
 
   constructor(
@@ -26,12 +29,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.output$ = this._grid.output$;
-    this.animation$ = this._grid.animation$;
-  }
-
-  ngAfterViewInit() {
-    this.next({ cells: Grid.getGrid(), score: 0, nextColors: [] });
+    this.turn$ = this._grid.state$.pipe(pluck('turn'));
+    this.animation$ = this._grid.state$.pipe(pluck('animation'));
   }
 
   onInput(data: ITurnData) {
@@ -39,7 +38,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   private next(data: ITurnData) {
-    this._grid.input$.next(data);
+    this._grid.dispatch(new SelectCellAction(data.cell));
   }
 
 }
