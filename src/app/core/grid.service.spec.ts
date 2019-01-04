@@ -14,7 +14,7 @@ class GridServiceMocked extends GridService {
   }
 }
 
-fdescribe('GridService', () => {
+describe('GridService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,7 +27,8 @@ fdescribe('GridService', () => {
   }));
 
   it('should properly generate a grid', (done) => inject([GridService], (service: GridService) => {
-    const sub = service.state$.subscribe((state) => {
+    service.dispatch(new StartGameAction());
+    service.state$.subscribe((state) => {
       expect(state).toBeDefined();
       expect(state.turn).toBeDefined();
       expect(state.turn.cells.length).toBe(state.turn.cells.length);
@@ -35,11 +36,8 @@ fdescribe('GridService', () => {
       // There should be n new balls on the grid
       const fullCells = state.turn.cells.filter(c => c.ball !== undefined);
       expect(fullCells.length).toBe(Grid.ITEMS_PER_TURN);
-
-      sub.unsubscribe();
       done();
     });
-    service.dispatch(new StartGameAction());
   })());
 
   it('should properly set the current ball', () =>
@@ -77,9 +75,9 @@ fdescribe('GridService', () => {
   it('should properly add new items to the grid on a new step',
     (done) => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
-
     let count = 0;
-    const dataSubscription = service.state$.subscribe((state) => {
+    service.dispatch(new StartGameAction());
+    service.state$.subscribe((state) => {
       expect(state.turn).toBeDefined();
       expect(state.turn.cells.length).toBe(cells.length);
 
@@ -95,27 +93,25 @@ fdescribe('GridService', () => {
         expect(state.animation[i].type).toBe(GridAnimationType.Add);
         expect(state.animation[i].cells.length).toEqual(Grid.ITEMS_PER_TURN);
       }
-      dataSubscription.unsubscribe();
       done();
     });
-
-    // service.input$.next({ cells, nextColors: [], score: 0 });
-    service.dispatch(new StartGameAction());
   })());
 
   it('should setup new balls colors on a new turn', (done) => inject([GridService], (service: GridService) => {
     const cells = Grid.getGrid(9);
-    let dataSubscription = service.state$.subscribe((state) => {
-      expect(state).toBeDefined();
-      expect(state.turn.cells.length).toBe(cells.length);
-      expect(state.turn.nextColors).toBeTruthy();
-      expect(state.turn.nextColors.length).toBe(3);
-      const existBalls = state.turn.cells.filter(cell => cell.ball);
-      const nextColors = state.turn.nextColors.sort();
-      dataSubscription.unsubscribe();
-
-      dataSubscription = service.state$.subscribe(data2 => {
-        expect(data2).toBeDefined();
+    let step = 0;
+    let existBalls;
+    let nextColors;
+    service.state$.subscribe((state) => {
+      if (step === 1) {
+        expect(state).toBeDefined();
+        expect(state.turn.cells.length).toBe(cells.length);
+        expect(state.ui.nextColors).toBeTruthy();
+        expect(state.ui.nextColors.length).toBe(3);
+        existBalls = state.turn.cells.filter(cell => cell.ball);
+        nextColors = state.ui.nextColors.sort();
+      }
+      if (step === 2) {
         const newColors = state.turn.cells
           .filter(cell => cell.ball && !existBalls.some(el => el.id === cell.id))
           .map(cell => cell.ball.color)
@@ -123,11 +119,11 @@ fdescribe('GridService', () => {
         expect(newColors).toBeTruthy();
         expect(newColors.length).toEqual(3);
         expect(newColors).toEqual(nextColors);
-        dataSubscription.unsubscribe();
         done();
-      });
-      service.dispatch(new StartGameAction());
+      }
+      step++;
     });
+    service.dispatch(new StartGameAction());
     service.dispatch(new StartGameAction());
   })());
 
@@ -136,26 +132,20 @@ fdescribe('GridService', () => {
     let step = 0;
     let cell1: ICell;
     let cell2: ICell;
-    const dataSubscription = service.state$.subscribe((state) => {
-      if (step === 0) {
-        cell1 = state.turn.cells.filter(c => c.ball)[0];
+    service.state$.subscribe((state) => {
+      if (step === 1) {
+        cell1 = state.turn.cells.filter((cell) => cell.ball)[0];
         expect(cell1).toBeTruthy();
         expect(cell1.ball).toBeDefined();
         expect(cell1.ball.state).toBe(BallState.idle);
-        step++;
-        service.dispatch(new SelectCellAction(cell1));
-        return;
-      }
-      if (step === 1) {
-        expect(state.turn.cells[cell1.id].ball).toBeDefined();
-        expect(state.turn.cells[cell1.id].ball.state).toBe(BallState.active);
-        cell2 = state.turn.cells.filter(c => !c.ball)[0];
-        expect(cell2).toBeTruthy();
-        step++;
-        service.dispatch(new SelectCellAction(cell2));
-        return;
       }
       if (step === 2) {
+        expect(state.turn.cells[cell1.id].ball).toBeDefined();
+        expect(state.turn.cells[cell1.id].ball.state).toBe(BallState.active);
+        cell2 = state.turn.cells.filter((cell) => !cell.ball)[0];
+        expect(cell2).toBeTruthy();
+      }
+      if (step === 3) {
         expect(state.turn.cells[cell1.id].ball).toBeUndefined();
         expect(state.turn.cells[cell2.id].ball).toBeDefined();
         expect(state.turn.cells[cell2.id].ball.state).toBe(BallState.idle);
@@ -163,11 +153,13 @@ fdescribe('GridService', () => {
         expect(state.animation.length).toBe(1);
         expect(state.animation[0].type).toBe(GridAnimationType.Move);
         expect(state.animation[0].cells.length).toBeTruthy();
-        dataSubscription.unsubscribe();
         return done();
       }
+      step++;
     });
     service.dispatch(new StartGameAction());
+    service.dispatch(new SelectCellAction(cell1));
+    service.dispatch(new SelectCellAction(cell2));
   })());
 
   it('should not move the current ball if there is no path to the target',

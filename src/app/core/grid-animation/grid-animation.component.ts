@@ -41,7 +41,7 @@ import { IGridAnimation, GridAnimationType } from 'src/app/core/shared/GridAnima
 export class GridAnimationComponent implements OnInit, OnDestroy {
 
   private _wrongAnimationPlayer: AnimationPlayer;
-
+  private _animationQueue: IGridAnimation[] = [];
   public data: IBall[];
 
   @ViewChildren(BallComponent) balls: QueryList<BallComponent>;
@@ -50,39 +50,11 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
 
   @Input() public container: ElementRef;
 
-  @Input() public set animation(value: IGridAnimation) {
+  @Input() public set animation(value: IGridAnimation[]) {
     if (!value) {
       return;
     }
-    switch (value.type) {
-      case GridAnimationType.Add:
-        this.buildGroupAnimation(value.cells, getAddAnimation, APPEAR_DURATION);
-        break;
-      case GridAnimationType.Move:
-        this.data = [ value.cells[value.cells.length - 1].ball ];
-        this._changeDetectorRef.detectChanges();
-
-        const steps = value.cells.map(cell => Grid.getPosition(cell.id));
-        const moveAnimation = this._animationBuilder.build(getMoveAnimation(steps, MOVING_DURATION));
-        const movePlayer = moveAnimation.create(this.balls.first.elementRef.nativeElement);
-        movePlayer.onDone(() => {
-          movePlayer.destroy();
-          this.complete.emit();
-          this.data = null;
-        });
-        movePlayer.play();
-        break;
-      case GridAnimationType.Match:
-        this.buildGroupAnimation(value.cells, getMatchAnimation, MATCH_DURATION);
-        break;
-      case GridAnimationType.Wrong:
-        if (!this._wrongAnimationPlayer) {
-          const wrongAnimation = this._animationBuilder.build(getWrongAnimation(WRONG_DURATION));
-          this._wrongAnimationPlayer = wrongAnimation.create(this.container.nativeElement);
-        }
-        this._wrongAnimationPlayer.play();
-        break;
-    }
+    this._animationQueue.push(...value);
   }
 
   constructor(
@@ -96,6 +68,38 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this._wrongAnimationPlayer) {
       this._wrongAnimationPlayer.destroy();
+    }
+  }
+
+  private playSingle(animation: IGridAnimation) {
+    switch (animation.type) {
+      case GridAnimationType.Add:
+        this.buildGroupAnimation(animation.cells, getAddAnimation, APPEAR_DURATION);
+        break;
+      case GridAnimationType.Move:
+        this.data = [ animation.cells[animation.cells.length - 1].ball ];
+        this._changeDetectorRef.detectChanges();
+
+        const steps = animation.cells.map(cell => Grid.getPosition(cell.id));
+        const moveAnimation = this._animationBuilder.build(getMoveAnimation(steps, MOVING_DURATION));
+        const movePlayer = moveAnimation.create(this.balls.first.elementRef.nativeElement);
+        movePlayer.onDone(() => {
+          movePlayer.destroy();
+          this.complete.emit();
+          this.data = null;
+        });
+        movePlayer.play();
+        break;
+      case GridAnimationType.Match:
+        this.buildGroupAnimation(animation.cells, getMatchAnimation, MATCH_DURATION);
+        break;
+      case GridAnimationType.Wrong:
+        if (!this._wrongAnimationPlayer) {
+          const wrongAnimation = this._animationBuilder.build(getWrongAnimation(WRONG_DURATION));
+          this._wrongAnimationPlayer = wrongAnimation.create(this.container.nativeElement);
+        }
+        this._wrongAnimationPlayer.play();
+        break;
     }
   }
 

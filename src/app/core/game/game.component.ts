@@ -1,44 +1,42 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GridService } from '../grid.service';
-import { Grid } from '../shared/Grid';
 import { ITurnData } from 'src/app/core/shared/TurnData';
 import { IGridAnimation } from 'src/app/core/shared/GridAnimation';
-import { pluck, distinctUntilChanged } from 'rxjs/operators';
-import { SelectCellAction } from '../shared/Action';
+import { map } from 'rxjs/operators';
+import { StartGameAction } from '../shared/Action';
+import { IUIData } from '../shared/UIData';
 
 @Component({
   selector: 'app-game',
   template: `
-    <app-ui [data]="output$ | async"></app-ui>
+    <app-ui [data]="ui$ | async"></app-ui>
     <app-grid
-      [data]="output$ | async"
-      [animation]="animation$ | async"
-      (input)="onInput($event)"></app-grid>
+      [turn]="turn$ | async"
+      [animation]="animation$ | async"></app-grid>
   `,
   styleUrls: ['./game.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, AfterViewInit {
 
   turn$: Observable<ITurnData>;
-  animation$: Observable<IGridAnimation>;
+  ui$: Observable<IUIData>;
+  animation$: Observable<IGridAnimation[]>;
 
   constructor(
     private _grid: GridService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    this.turn$ = this._grid.state$.pipe(pluck('turn'));
-    this.animation$ = this._grid.state$.pipe(pluck('animation'));
+    this.turn$ = this._grid.state$.pipe(map((state) => state.turn));
+    this.animation$ = this._grid.state$.pipe(map((state) => state.animation));
+    this.ui$ = this._grid.state$.pipe(map((state) => state.ui));
+    this._grid.dispatch(new StartGameAction());
   }
 
-  onInput(data: ITurnData) {
-    this.next(data);
+  ngAfterViewInit() {
+    //
   }
-
-  private next(data: ITurnData) {
-    this._grid.dispatch(new SelectCellAction(data.cell));
-  }
-
 }

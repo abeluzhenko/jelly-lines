@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { scan, share } from 'rxjs/operators';
 
 import { BallState } from './shared/Ball';
@@ -17,8 +17,8 @@ export const SCORE_MULTIPLIER = 10;
   providedIn: 'root'
 })
 export class GridService {
-  private _action$: Subject<Action> = new Subject<Action>();
-  private _state$: Subject<IGameState> = new Subject<IGameState>();
+  private _action$: Subject<Action>;
+  private _state$: BehaviorSubject<IGameState>;
 
   public get state$(): Observable<IGameState> {
     return this._state$.asObservable();
@@ -29,6 +29,8 @@ export class GridService {
   }
 
   constructor(private _gridFactory: GridFactoryService) {
+    this._action$ = new Subject<Action>();
+    this._state$ = new BehaviorSubject<IGameState>(this.initialState);
     this._action$
       .pipe(
         scan((state: IGameState, action: Action) =>
@@ -86,10 +88,10 @@ export class GridService {
       const openCells = cells.filter((cell) => !cell.ball);
       let colors = [];
       if (
-        state.turn.nextColors &&
-        state.turn.nextColors.length === Grid.ITEMS_PER_TURN
+        state.ui.nextColors &&
+        state.ui.nextColors.length === Grid.ITEMS_PER_TURN
       ) {
-        colors = state.turn.nextColors;
+        colors = state.ui.nextColors;
       } else {
         colors = this.getRandomColors();
       }
@@ -108,7 +110,7 @@ export class GridService {
         openCells.splice(r, 1);
       }
 
-      turn.nextColors = this.getRandomColors();
+      ui.nextColors = this.getRandomColors();
 
       if (updated) {
         animation.push({

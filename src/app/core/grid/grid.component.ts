@@ -5,16 +5,17 @@ import { ITurnData } from 'src/app/core/shared/TurnData';
 import { Grid } from 'src/app/core/shared/Grid';
 import { IGridAnimation } from 'src/app/core/shared/GridAnimation';
 import { ICell } from 'src/app/core/shared/Cell';
+import { GridService } from '../grid.service';
+import { SelectCellAction, StartGameAction } from '../shared/Action';
 
 @Component({
   selector: 'app-grid',
   template: `
     <app-cell
-      *ngFor="let cell of data?.cells"
+      *ngFor="let cell of turn?.cells"
       [data]="cell"
       [style.transform]="styles[cell.id]"
-      (clicked)="cellClicked($event)"
-      (ballClicked)="ballClicked($event)">
+      (clicked)="cellClicked($event)">
       <app-ball
         *ngIf="cell.ball"
         [@cellBallAnimation]="'active'"
@@ -33,51 +34,38 @@ export class GridComponent implements OnInit {
   public styles: SafeStyle[];
   public turnData: ITurnData;
 
-  @Input() public set data(value: ITurnData) {
+  @Input() public set turn(value: ITurnData) {
     if (!value || !value.cells) {
       return;
     }
     this.styles = value.cells
-      .map(cell => Grid.getPosition(cell.id))
-      .map(pos => this._domSanitizer.bypassSecurityTrustStyle(
-        'translate3d(' + (pos.x * 100) + '%, ' + (pos.y * 100) + '%, 1px)'));
+      .map((cell) => Grid.getPosition(cell.id))
+      .map((position) => this._domSanitizer.bypassSecurityTrustStyle(
+        `translate3d(${position.x * 100}%, ${position.y * 100}%, 1px)`));
     this.turnData = value;
   }
-
-  public get data(): ITurnData {
+  public get turn(): ITurnData {
     return this.turnData;
   }
 
-  @Input() public animation: IGridAnimation;
-
-  @Output() input: EventEmitter<ITurnData> = new EventEmitter<ITurnData>();
+  @Input() public animation: IGridAnimation[];
+  @Output() cellClick: EventEmitter<ICell> = new EventEmitter<ICell>();
+  @Output() animationEnd: EventEmitter<ICell> = new EventEmitter<ICell>();
 
   constructor(
     public elementRef: ElementRef,
-    private _domSanitizer: DomSanitizer
+    private _domSanitizer: DomSanitizer,
+    private _grid: GridService,
   ) {}
 
   ngOnInit() {
   }
 
   cellClicked(cell: ICell) {
-    this.next({
-      cell,
-      cells: this.data.cells,
-      score: this.data.score,
-      nextColors: this.data.nextColors
-    });
+    this._grid.dispatch(new SelectCellAction(cell));
   }
 
   animationCompleted() {
-    this.next({
-      cells: this.data.cells,
-      score: this.data.score,
-      nextColors: this.data.nextColors,
-    });
-  }
-
-  private next(data: ITurnData) {
-    this.input.emit(data);
+    this._grid.dispatch(new StartGameAction());
   }
 }

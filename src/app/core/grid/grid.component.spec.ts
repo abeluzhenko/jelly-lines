@@ -38,10 +38,10 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.data = { cells: Grid.getRandomGrid(), score: 0, nextColors: [] };
+    component.turn = { cells: Grid.getRandomGrid(), score: 0, nextColors: [] };
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
-    expect(cellEls.length).toBe(component.data.cells.length);
+    expect(cellEls.length).toBe(component.turn.cells.length);
 
     const onClickSpy = spyOn(component, 'cellClicked').and.callThrough();
 
@@ -50,6 +50,6 @@ describe('GridComponent', () => {
       cellEl.nativeElement.click();
       fixture.detectChanges();
     }
-    expect(onClickSpy).toHaveBeenCalledTimes(component.data.cells.length);
+    expect(onClickSpy).toHaveBeenCalledTimes(component.turn.cells.length);
   });
 });
