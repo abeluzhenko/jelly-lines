@@ -3,5 +3,5 @@ import { ICell } from './Cell';
 
 export interface ITurnData extends IUIData {
   cells: ICell[];
-  cell?: ICell;
+  cell?: ICell | null;
 }

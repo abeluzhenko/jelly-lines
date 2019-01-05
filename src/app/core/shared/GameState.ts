@@ -14,10 +14,11 @@ export class GameState implements IGameState {
     public turn: ITurnData = {
       cells: Grid.getGrid(),
       cell: null,
-    },
+    } as ITurnData,
     public ui: IUIData = {
       nextColors: [],
       score: 0,
+      turn: 0,
     },
     public animation: IGridAnimation[] = [],
   ) {}

@@ -9,8 +9,9 @@ import { UiComponent } from '../ui/ui.component';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { GridAnimationType } from '../shared/GridAnimation';
+import { ITurnData } from '../shared/TurnData';
 
-fdescribe('GridComponent', () => {
+describe('GridComponent', () => {
   let component: GridComponent;
   let fixture: ComponentFixture<GridComponent>;
 
@@ -39,7 +40,7 @@ fdescribe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.turn = { cells: Grid.getRandomGrid(), score: 0, nextColors: [] };
+    component.turn = { cells: Grid.getRandomGrid() } as ITurnData;
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
     expect(cellEls.length).toBe(component.turn.cells.length);

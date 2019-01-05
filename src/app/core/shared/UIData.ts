@@ -1,6 +1,7 @@
 import { BallColor } from './Ball';
 
 export interface IUIData {
-  nextColors?: BallColor[];
-  score?: number;
+  nextColors: BallColor[];
+  score: number;
+  turn: number;
 }

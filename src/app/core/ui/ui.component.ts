@@ -35,8 +35,6 @@ export class UiComponent implements OnDestroy {
     }
     this._data = value;
     if (value.score !== this.score) {
-      this.turn++;
-
       const currentScore = this.score;
       this._timerSubscription = timer(0, 20)
         .pipe(takeWhile(val => val < (value.score - currentScore)))
@@ -45,6 +43,7 @@ export class UiComponent implements OnDestroy {
           this._changeDetectorRef.markForCheck();
         });
     }
+    this.turn = value.turn;
   }
 
   public get data(): IUIData {

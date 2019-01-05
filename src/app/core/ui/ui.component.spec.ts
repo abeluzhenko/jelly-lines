@@ -29,7 +29,8 @@ describe('UiComponent', () => {
   xit('should properly render next balls colors', () => {
     component.data = {
       nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
-      score: 0
+      score: 0,
+      turn: 0,
     };
     fixture.detectChanges();
     const ballEls = fixture.debugElement.queryAll(By.css('.ball'));
@@ -42,14 +43,16 @@ describe('UiComponent', () => {
   xit('should properly render scores', () => {
     component.data = {
       nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
-      score: 1000
+      score: 1000,
+      turn: 0,
     };
     fixture.detectChanges();
     let scoreEl = fixture.debugElement.query(By.css('.ui__score'));
     expect(scoreEl.nativeElement.textContent).toEqual('1000');
     component.data = {
       nextColors: [ BallColor.red, BallColor.green, BallColor.blue ],
-      score: 2000
+      score: 2000,
+      turn: 0,
     };
     fixture.detectChanges();
     scoreEl = fixture.debugElement.query(By.css('.ui__score'));
