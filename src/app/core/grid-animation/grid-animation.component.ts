@@ -40,7 +40,7 @@ import { IGridAnimation, GridAnimationType } from 'src/app/core/shared/GridAnima
   `,
   styleUrls: ['./grid-animation.component.scss']
 })
-export class GridAnimationComponent implements OnInit, OnDestroy {
+export class GridAnimationComponent implements OnDestroy {
 
   private _queueSubscripion: Subscription;
   private _wrongAnimationPlayer: AnimationPlayer;
@@ -75,9 +75,6 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
     private _animationBuilder: AnimationBuilder,
     private _changeDetectorRef: ChangeDetectorRef,
   ) {}
-
-  ngOnInit() {
-  }
 
   ngOnDestroy() {
     if (this._wrongAnimationPlayer) {
@@ -161,8 +158,6 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
     });
     return Promise
       .all(doneList)
-      .then(() => {
-      this.data = null;
-    });
+      .then(() => this.data = null);
   }
 }

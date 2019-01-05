@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { IBall, BallState } from '../shared/Ball';
 import { timer, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -40,13 +40,20 @@ export class UiComponent implements OnDestroy {
       const currentScore = this.score;
       this._timerSubscription = timer(0, 20)
         .pipe(takeWhile(val => val < (value.score - currentScore)))
-        .subscribe(() => this.score++);
+        .subscribe(() => {
+          this.score++;
+          this._changeDetectorRef.markForCheck();
+        });
     }
   }
 
   public get data(): IUIData {
     return this._data;
   }
+
+  constructor(
+    private _changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnDestroy() {
     if (this._timerSubscription) {

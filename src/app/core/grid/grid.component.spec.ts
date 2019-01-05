@@ -8,8 +8,9 @@ import { Grid } from '../shared/Grid';
 import { UiComponent } from '../ui/ui.component';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { GridAnimationType } from '../shared/GridAnimation';
 
-describe('GridComponent', () => {
+fdescribe('GridComponent', () => {
   let component: GridComponent;
   let fixture: ComponentFixture<GridComponent>;
 
@@ -51,5 +52,14 @@ describe('GridComponent', () => {
       fixture.detectChanges();
     }
     expect(onClickSpy).toHaveBeenCalledTimes(component.turn.cells.length);
+  });
+
+  it('should block input when animation is playing', (done) => {
+    const spy = spyOn(component, 'animationCompleted').and.callFake(() => {
+      expect(spy).toHaveBeenCalledTimes(1);
+      done();
+    });
+    component.animation = [ { type: GridAnimationType.None } ];
+    fixture.detectChanges();
   });
 });

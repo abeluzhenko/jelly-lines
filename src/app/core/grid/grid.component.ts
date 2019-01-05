@@ -16,9 +16,12 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
       [data]="cell"
       [style.transform]="styles[cell.id]"
       (clicked)="cellClicked($event)">
-      <app-ball
+      <!--app-ball
         *ngIf="cell.ball"
         [@cellBallAnimation]="'active'"
+        [data]="cell.ball"></app-ball-->
+      <app-ball
+        *ngIf="cell.ball"
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-grid-animation
@@ -30,6 +33,9 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
   animations: [ cellBallAnimation ]
 })
 export class GridComponent implements OnInit {
+
+  private _animation: IGridAnimation[];
+  private _isInAnimation = false;
 
   public styles: SafeStyle[];
   public turnData: ITurnData;
@@ -48,9 +54,15 @@ export class GridComponent implements OnInit {
     return this.turnData;
   }
 
-  @Input() public animation: IGridAnimation[];
-  @Output() cellClick: EventEmitter<ICell> = new EventEmitter<ICell>();
-  @Output() animationEnd: EventEmitter<ICell> = new EventEmitter<ICell>();
+  @Input() public set animation(value: IGridAnimation[]) {
+    this._animation = value;
+    if (value && value.length) {
+      this._isInAnimation = true;
+    }
+  }
+  public get animation(): IGridAnimation[] {
+    return this._animation;
+  }
 
   constructor(
     public elementRef: ElementRef,
@@ -66,6 +78,7 @@ export class GridComponent implements OnInit {
   }
 
   animationCompleted() {
+    this._isInAnimation = false;
     this._grid.dispatch(new StartGameAction());
   }
 }
