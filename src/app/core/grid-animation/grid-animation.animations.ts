@@ -5,26 +5,37 @@ import {
   AnimationMetadata,
 } from '@angular/animations';
 
-export const APPEAR_DURATION = 500;
-export const MATCH_DURATION = 500;
-export const MOVING_DURATION = 500;
+export const APPEAR_DURATION = 720;
+export const MATCH_DURATION = 420;
+export const MOVING_DURATION = 600;
 export const WRONG_DURATION = 500;
+
+export type AnimationFunction = (
+  position: { x: number, y: number },
+  delay: number,
+  duration?: number,
+  delayAfter?: number,
+) => AnimationMetadata[];
 
 export function getAddAnimation(
   position: { x: number, y: number },
   delay: number,
-  duration: number = APPEAR_DURATION
+  duration: number = APPEAR_DURATION,
+  delayAfter: number = 0,
 ): AnimationMetadata[] {
   const translate = `translate3d(${ position.x * 100 }%, ${ position.y * 100 }%, 1px)`;
   return [
     style({ transform: `${ translate } scale(0)`, opacity: 1 }),
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
+    // animate(`${ duration }ms ease`,
       keyframes([
-        style({ transform: `${ translate } scale(1.2)`, offset: 0.4 }),
-        style({ transform: `${ translate } scale(1)`, offset: 1 }),
-      ]
-    )
-  )];
+        style({ transform: `${ translate } scale(1.1)`, offset: 0.4 }),
+        style({ transform: `${ translate } scale(1)`, offset: 0.98 }),
+      ],
+    )),
+    animate(`${ delayAfter + 1 }ms ease`,
+      style({ transform: `${ translate } scale(1)`, opacity: 1 })),
+  ];
 }
 
 export function getMatchAnimation(

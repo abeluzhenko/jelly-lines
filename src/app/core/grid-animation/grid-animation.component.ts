@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   Input,
   Output,
   EventEmitter,
@@ -12,7 +11,7 @@ import {
 } from '@angular/core';
 import { from, Subscription } from 'rxjs';
 import { reduce } from 'rxjs/operators';
-import { AnimationBuilder, AnimationMetadata, AnimationPlayer } from '@angular/animations';
+import { AnimationBuilder, AnimationPlayer } from '@angular/animations';
 import { BallComponent } from '../ball/ball.component';
 import {
   MOVING_DURATION,
@@ -22,7 +21,8 @@ import {
   getAddAnimation,
   getWrongAnimation,
   WRONG_DURATION,
-  APPEAR_DURATION
+  APPEAR_DURATION,
+  AnimationFunction
 } from './grid-animation.animations';
 import { Grid } from '../shared/Grid';
 import { ICell } from '../shared/Cell';
@@ -132,29 +132,28 @@ export class GridAnimationComponent implements OnDestroy {
 
   private buildGroupAnimation(
     cells: ICell[],
-    animationFn: (
-      position: { x: number, y: number },
-      delay: number,
-      d: number
-    ) => AnimationMetadata[],
-    duration
+    animationFn: AnimationFunction,
+    duration: number,
   ): Promise<any> {
     this.data = cells.map(cell => cell.ball);
     this._changeDetectorRef.detectChanges();
-    const doneList = [];
 
-    this.balls.forEach((item, i) => {
+    const doneList = this.balls.map((item, i) => {
       const animation = this._animationBuilder.build(
-        animationFn(Grid.getPosition(item.data.id), i * 100, duration));
+        animationFn(
+          Grid.getPosition(item.data.id),
+          i * 100, duration,
+          (cells.length - i) * 100
+        )
+      );
       const player = animation.create(item.elementRef.nativeElement);
-      const done = new Promise(resolve => {
+      player.play();
+      return new Promise(resolve =>
         player.onDone(() => {
           player.destroy();
           resolve();
-        });
-      });
-      doneList.push(done);
-      player.play();
+        })
+      );
     });
     return Promise
       .all(doneList)

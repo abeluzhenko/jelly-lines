@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef } from '@angular/core';
-import { cellBallAnimation } from './grid.animations';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { ITurnData } from 'src/app/core/shared/TurnData';
 import { Grid } from 'src/app/core/shared/Grid';
@@ -16,12 +15,9 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
       [data]="cell"
       [style.transform]="styles[cell.id]"
       (clicked)="cellClicked($event)">
-      <!--app-ball
-        *ngIf="cell.ball"
-        [@cellBallAnimation]="'active'"
-        [data]="cell.ball"></app-ball-->
       <app-ball
         *ngIf="cell.ball"
+        [style.visibility]="getBallVisibility(cell.id) ? 'visible' : 'hidden'"
         [data]="cell.ball"></app-ball>
     </app-cell>
     <app-grid-animation
@@ -29,13 +25,13 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
       [animation]="animation"
       (completed)="animationCompleted()"></app-grid-animation>
   `,
-  styleUrls: ['./grid.component.scss'],
-  animations: [ cellBallAnimation ]
+  styleUrls: ['./grid.component.scss']
 })
 export class GridComponent implements OnInit {
 
   private _animation: IGridAnimation[];
   private _isInAnimation = false;
+  private _animatedCells: ICell[] = [];
 
   public styles: SafeStyle[];
   public turnData: ITurnData;
@@ -58,6 +54,8 @@ export class GridComponent implements OnInit {
     this._animation = value;
     if (value && value.length) {
       this._isInAnimation = true;
+      this._animatedCells = value.reduce((result, el) =>
+        el.cells ? [...result, ...el.cells] : result, []);
     }
   }
   public get animation(): IGridAnimation[] {
@@ -73,12 +71,20 @@ export class GridComponent implements OnInit {
   ngOnInit() {
   }
 
+  getBallVisibility(id: number): boolean {
+    if (!this._isInAnimation) {
+      return true;
+    }
+    return !this._animatedCells.some((cell) => cell.id === id);
+  }
+
   cellClicked(cell: ICell) {
     this._grid.dispatch(new SelectCellAction(cell));
   }
 
   animationCompleted() {
     this._isInAnimation = false;
+    this._animatedCells = [];
     this._grid.dispatch(new StartGameAction());
   }
 }
