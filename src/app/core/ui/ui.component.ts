@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { IBall, BallState } from '../shared/Ball';
 import { timer, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -13,9 +13,10 @@ import { IUIData } from 'src/app/core/shared/UIData';
     </div>
     <div class="ui__turn">{{ turn }}</div>
   `,
-  styleUrls: ['./ui.component.scss']
+  styleUrls: ['./ui.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiComponent implements OnInit, OnDestroy {
+export class UiComponent implements OnDestroy {
 
   private _data: IUIData;
   private _timerSubscription: Subscription;
@@ -24,7 +25,7 @@ export class UiComponent implements OnInit, OnDestroy {
   public score = 0;
   public turn = 0;
 
-  @Input() set data(value: IUIData) {
+  @Input() public set data(value: IUIData) {
     if (!value) {
       return;
     }
@@ -43,13 +44,8 @@ export class UiComponent implements OnInit, OnDestroy {
     }
   }
 
-  get data(): IUIData {
+  public get data(): IUIData {
     return this._data;
-  }
-
-  constructor() { }
-
-  ngOnInit() {
   }
 
   ngOnDestroy() {

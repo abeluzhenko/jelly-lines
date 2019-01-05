@@ -63,7 +63,7 @@ export class GridService {
     let matches = Grid.getMatches(state.turn.cells);
     const animation = [];
     const turn = state.turn;
-    const ui = state.ui;
+    const ui = { ...state.ui };
 
     while (matches.length) {
       // Add animations

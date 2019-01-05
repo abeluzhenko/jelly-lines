@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GridService } from '../grid.service';
 import { ITurnData } from 'src/app/core/shared/TurnData';
@@ -16,9 +16,9 @@ import { IUIData } from '../shared/UIData';
       [animation]="animation$ | async"></app-grid>
   `,
   styleUrls: ['./game.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameComponent implements OnInit, AfterViewInit {
+export class GameComponent implements OnInit {
 
   turn$: Observable<ITurnData>;
   ui$: Observable<IUIData>;
@@ -34,9 +34,5 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.animation$ = this._grid.state$.pipe(map((state) => state.animation));
     this.ui$ = this._grid.state$.pipe(map((state) => state.ui));
     this._grid.dispatch(new StartGameAction());
-  }
-
-  ngAfterViewInit() {
-    //
   }
 }
