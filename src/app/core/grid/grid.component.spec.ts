@@ -56,8 +56,8 @@ describe('GridComponent', () => {
   });
 
   it('should block input when animation is playing', (done) => {
-    const spy = spyOn(component, 'animationCompleted').and.callFake(() => {
-      expect(spy).toHaveBeenCalledTimes(1);
+    const completedSpy = spyOn(component, 'animationCompleted').and.callFake(() => {
+      expect(completedSpy).toHaveBeenCalledTimes(1);
       done();
     });
     component.animation = [ { type: GridAnimationType.None } ];

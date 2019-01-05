@@ -79,7 +79,9 @@ export class GridComponent implements OnInit {
   }
 
   cellClicked(cell: ICell) {
-    this._grid.dispatch(new SelectCellAction(cell));
+    if (!this._isInAnimation) {
+      this._grid.dispatch(new SelectCellAction(cell));
+    }
   }
 
   animationCompleted() {
