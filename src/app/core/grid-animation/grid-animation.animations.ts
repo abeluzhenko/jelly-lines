@@ -5,10 +5,10 @@ import {
   AnimationMetadata,
 } from '@angular/animations';
 
-export const APPEAR_DURATION = 720;
+export const APPEAR_DURATION = 320;
 export const MATCH_DURATION = 420;
-export const MOVING_DURATION = 600;
-export const WRONG_DURATION = 500;
+export const MOVING_DURATION = 480;
+export const WRONG_DURATION = 420;
 
 export type AnimationFunction = (
   position: { x: number, y: number },
@@ -29,8 +29,8 @@ export function getAddAnimation(
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
     // animate(`${ duration }ms ease`,
       keyframes([
-        style({ transform: `${ translate } scale(1.1)`, offset: 0.4 }),
-        style({ transform: `${ translate } scale(1)`, offset: 0.98 }),
+        style({ transform: `${ translate } scale(1.1)`, offset: 0.75 }),
+        style({ transform: `${ translate } scale(1)`, offset: 1 }),
       ],
     )),
     animate(`${ delayAfter + 1 }ms ease`,
