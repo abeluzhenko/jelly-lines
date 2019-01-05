@@ -165,11 +165,9 @@ describe('GridService', () => {
     state.turn.cells = cells;
 
     state = service.getUpdatedStateTest(state, new SelectCellAction(cells[0]));
-    // console.log(state);
     expect(state.turn.cells[0].ball).toBeDefined();
     expect(state.turn.cells[0].ball.state).toBe(BallState.active);
     const targetCell = state.turn.cells.filter((cell) => !cell.ball)[0];
-    // console.log(targetCell);
     expect(targetCell).toBeTruthy();
 
     state = service.getUpdatedStateTest(state, new SelectCellAction(targetCell));
