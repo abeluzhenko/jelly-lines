@@ -97,34 +97,38 @@ describe('GridService', () => {
     });
   })());
 
-  it('should setup new balls colors on a new turn', (done) => inject([GridService], (service: GridService) => {
-    const cells = Grid.getGrid(9);
-    let step = 0;
-    let existBalls;
-    let nextColors;
-    service.state$.subscribe((state) => {
-      if (step === 1) {
-        expect(state).toBeDefined();
-        expect(state.turn.cells.length).toBe(cells.length);
-        expect(state.ui.nextColors).toBeTruthy();
-        expect(state.ui.nextColors.length).toBe(3);
-        existBalls = state.turn.cells.filter(cell => cell.ball);
-        nextColors = state.ui.nextColors.sort();
-      }
-      if (step === 2) {
-        const newColors = state.turn.cells
-          .filter(cell => cell.ball && !existBalls.some(el => el.id === cell.id))
-          .map(cell => cell.ball.color)
-          .sort();
-        expect(newColors).toBeTruthy();
-        expect(newColors.length).toEqual(3);
-        expect(newColors).toEqual(nextColors);
-        done();
-      }
-      step++;
-    });
-    service.dispatch(new StartGameAction());
-    service.dispatch(new StartGameAction());
+  it('should setup new balls colors on a new turn',
+    () => inject([GridService], (service: GridServiceMocked) => {
+    let state = service.getUpdatedStateTest(new GameState(), new StartGameAction());
+    expect(state).toBeDefined();
+    expect(state.ui.nextColors).toBeTruthy();
+    expect(state.ui.nextColors.length).toBe(3);
+    const fullCells = state.turn.cells.filter((cell) => cell.ball);
+    expect(fullCells.length).toBe(3);
+    const nextColors = state.ui.nextColors.sort();
+
+    // Select the last cell with a ball
+    state = service.getUpdatedStateTest(
+      state,
+      new SelectCellAction(fullCells[fullCells.length - 1])
+    );
+    expect(state.animation.length).toBe(0);
+
+    // Move the selected ball
+    const emptyCell = state.turn.cells.filter((cell) => !cell.ball).pop();
+    state = service.getUpdatedStateTest(state, new SelectCellAction(emptyCell));
+    expect(state.animation.length).toBe(1);
+    fullCells[fullCells.length - 1] = state.turn.cells[emptyCell.id];
+
+    // Start a new turn
+    state = service.getUpdatedStateTest(state, new StartGameAction());
+    const newColors = state.turn.cells
+      .filter((cell) => cell.ball && !fullCells.some((el) => el.id === cell.id))
+      .map((cell) => cell.ball.color)
+      .sort();
+    expect(newColors).toBeTruthy();
+    expect(newColors.length).toEqual(3);
+    expect(newColors).toEqual(nextColors);
   })());
 
   it('should properly move the current ball (if there is a path to the target)',

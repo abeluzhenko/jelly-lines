@@ -24,7 +24,7 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
     <app-grid-animation
       [container]="elementRef"
       [animation]="animation"
-      (complete)="animationCompleted()"></app-grid-animation>
+      (completed)="animationCompleted()"></app-grid-animation>
   `,
   styleUrls: ['./grid.component.scss'],
   animations: [ cellBallAnimation ]

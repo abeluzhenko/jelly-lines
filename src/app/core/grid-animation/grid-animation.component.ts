@@ -10,6 +10,8 @@ import {
   ElementRef,
   OnDestroy
 } from '@angular/core';
+import { from, Subscription } from 'rxjs';
+import { reduce } from 'rxjs/operators';
 import { AnimationBuilder, AnimationMetadata, AnimationPlayer } from '@angular/animations';
 import { BallComponent } from '../ball/ball.component';
 import {
@@ -31,36 +33,48 @@ import { IGridAnimation, GridAnimationType } from 'src/app/core/shared/GridAnima
   selector: 'app-grid-animation',
   template: `
     <app-ball
-      class="ball"
-      *ngFor="let ball of data"
-      [data]="ball">
+      class='ball'
+      *ngFor='let ball of data'
+      [data]='ball'>
     </app-ball>
   `,
   styleUrls: ['./grid-animation.component.scss']
 })
 export class GridAnimationComponent implements OnInit, OnDestroy {
 
+  private _queueSubscripion: Subscription;
   private _wrongAnimationPlayer: AnimationPlayer;
   private _animationQueue: IGridAnimation[] = [];
   public data: IBall[];
 
   @ViewChildren(BallComponent) balls: QueryList<BallComponent>;
-
-  @Output() complete: EventEmitter<any> = new EventEmitter<any>();
-
+  @Output() completed: EventEmitter<any> = new EventEmitter<any>();
   @Input() public container: ElementRef;
-
   @Input() public set animation(value: IGridAnimation[]) {
     if (!value) {
       return;
     }
-    this._animationQueue.push(...value);
+    this._animationQueue = value;
+    this._queueSubscripion = from(this._animationQueue)
+      .pipe(
+        reduce((result: Promise<any>, animation: IGridAnimation) =>
+          result.then(() => this.playSingle(animation)), Promise.resolve()),
+      )
+      .subscribe((promise) => promise.then(() => {
+        this._queueSubscripion.unsubscribe();
+        this._animationQueue = [];
+        this.completed.emit();
+      }));
+  }
+
+  public get animationQueue(): IGridAnimation[] {
+    return this._animationQueue;
   }
 
   constructor(
     private _animationBuilder: AnimationBuilder,
     private _changeDetectorRef: ChangeDetectorRef,
-  ) { }
+  ) {}
 
   ngOnInit() {
   }
@@ -69,13 +83,20 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
     if (this._wrongAnimationPlayer) {
       this._wrongAnimationPlayer.destroy();
     }
+    if (this._queueSubscripion) {
+      this._queueSubscripion.unsubscribe();
+    }
   }
 
-  private playSingle(animation: IGridAnimation) {
+  private playSingle(animation: IGridAnimation): Promise<any> {
     switch (animation.type) {
       case GridAnimationType.Add:
-        this.buildGroupAnimation(animation.cells, getAddAnimation, APPEAR_DURATION);
-        break;
+        return this.buildGroupAnimation(
+          animation.cells,
+          getAddAnimation,
+          APPEAR_DURATION,
+        );
+
       case GridAnimationType.Move:
         this.data = [ animation.cells[animation.cells.length - 1].ball ];
         this._changeDetectorRef.detectChanges();
@@ -83,23 +104,30 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
         const steps = animation.cells.map(cell => Grid.getPosition(cell.id));
         const moveAnimation = this._animationBuilder.build(getMoveAnimation(steps, MOVING_DURATION));
         const movePlayer = moveAnimation.create(this.balls.first.elementRef.nativeElement);
-        movePlayer.onDone(() => {
-          movePlayer.destroy();
-          this.complete.emit();
-          this.data = null;
-        });
         movePlayer.play();
-        break;
+
+        return new Promise((resolve) =>
+          movePlayer.onDone(() => {
+            movePlayer.destroy();
+            this.data = null;
+            resolve();
+          }));
+
       case GridAnimationType.Match:
-        this.buildGroupAnimation(animation.cells, getMatchAnimation, MATCH_DURATION);
-        break;
+        return this.buildGroupAnimation(
+          animation.cells,
+          getMatchAnimation,
+          MATCH_DURATION,
+        );
+
       case GridAnimationType.Wrong:
         if (!this._wrongAnimationPlayer) {
           const wrongAnimation = this._animationBuilder.build(getWrongAnimation(WRONG_DURATION));
           this._wrongAnimationPlayer = wrongAnimation.create(this.container.nativeElement);
         }
         this._wrongAnimationPlayer.play();
-        break;
+        return new Promise((resolve) =>
+          this._wrongAnimationPlayer.onDone(() => resolve()));
     }
   }
 
@@ -129,7 +157,9 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
       doneList.push(done);
       player.play();
     });
-    return Promise.all(doneList).then(() => {
+    return Promise
+      .all(doneList)
+      .then(() => {
       this.data = null;
     });
   }

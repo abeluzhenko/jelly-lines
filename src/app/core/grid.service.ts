@@ -45,12 +45,18 @@ export class GridService {
   }
 
   protected getUpdatedState(state: IGameState, action: Action): IGameState {
-    let newState = state;
+    const newState = state;
     if (action instanceof SelectCellAction && action.payload) {
       newState.turn.cell = action.payload;
-      newState = action.payload.ball ? this.activate(state) : this.move(state);
-    } else {
-      newState = this.turn(state);
+      newState.animation = [];
+      return action.payload.ball ? this.activate(state) : this.move(state);
+    }
+    if (
+      !state.animation ||
+      !state.animation.length ||
+      state.animation[state.animation.length - 1].type !== GridAnimationType.Add
+    ) {
+      return this.turn(state);
     }
     return newState;
   }

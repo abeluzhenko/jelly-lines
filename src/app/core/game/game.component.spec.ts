@@ -6,7 +6,6 @@ import { CellComponent } from '../cell/cell.component';
 import { BallComponent } from '../ball/ball.component';
 import { UiComponent } from '../ui/ui.component';
 import { GridService } from '../grid.service';
-import { AnimationBuilder } from '@angular/animations';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 
@@ -26,7 +25,6 @@ describe('GameComponent', () => {
         UiComponent
       ],
       providers: [
-        AnimationBuilder,
         GridService,
       ]
     })
