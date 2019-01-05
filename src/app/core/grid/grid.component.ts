@@ -10,6 +10,10 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
 @Component({
   selector: 'app-grid',
   template: `
+    <app-grid-animation
+      [container]="elementRef"
+      [animation]="animation"
+      (completed)="animationCompleted()"></app-grid-animation>
     <app-cell
       *ngFor="let cell of turn?.cells"
       [data]="cell"
@@ -20,10 +24,6 @@ import { SelectCellAction, StartGameAction } from '../shared/Action';
         [style.visibility]="getBallVisibility(cell.id) ? 'visible' : 'hidden'"
         [data]="cell.ball"></app-ball>
     </app-cell>
-    <app-grid-animation
-      [container]="elementRef"
-      [animation]="animation"
-      (completed)="animationCompleted()"></app-grid-animation>
   `,
   styleUrls: ['./grid.component.scss']
 })
