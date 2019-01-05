@@ -231,4 +231,14 @@ describe('GridService', () => {
       expect(state.animation[i].type).toBe(GridAnimationType.Add);
     }
   })());
+
+  it('should increment the turn number',
+  () => inject([GridService], (service: GridServiceMocked) => {
+    let state = new GameState();
+    for (let i = 1; i < 10; i++) {
+      state.animation = [];
+      state = service.getUpdatedStateTest(state, new StartGameAction());
+      expect(state.ui.turn).toBe(i);
+    }
+  })());
 });
