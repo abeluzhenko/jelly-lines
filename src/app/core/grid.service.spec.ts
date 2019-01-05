@@ -107,20 +107,8 @@ describe('GridService', () => {
     expect(fullCells.length).toBe(3);
     const nextColors = state.ui.nextColors.sort();
 
-    // Select the last cell with a ball
-    state = service.getUpdatedStateTest(
-      state,
-      new SelectCellAction(fullCells[fullCells.length - 1])
-    );
-    expect(state.animation.length).toBe(0);
-
-    // Move the selected ball
-    const emptyCell = state.turn.cells.filter((cell) => !cell.ball).pop();
-    state = service.getUpdatedStateTest(state, new SelectCellAction(emptyCell));
-    expect(state.animation.length).toBe(1);
-    fullCells[fullCells.length - 1] = state.turn.cells[emptyCell.id];
-
     // Start a new turn
+    state.animation = [];
     state = service.getUpdatedStateTest(state, new StartGameAction());
     const newColors = state.turn.cells
       .filter((cell) => cell.ball && !fullCells.some((el) => el.id === cell.id))
@@ -236,6 +224,7 @@ describe('GridService', () => {
       expect(state.animation[i].type).toBe(GridAnimationType.Match);
     }
 
+    state.animation = [];
     state = service.getUpdatedStateTest(state, new StartGameAction());
     const fullCells2 = state.turn.cells.filter((cell) => cell.ball);
     expect(fullCells2.length).toBe(3);

@@ -25,6 +25,7 @@ export class UiComponent implements OnInit, OnDestroy {
   public turn = 0;
 
   @Input() set data(value: IUIData) {
+    console.log(value);
     if (!value) {
       return;
     }

@@ -6,7 +6,7 @@ import { BallState } from './shared/Ball';
 import { ICell } from './shared/Cell';
 import { Path } from './shared/Path';
 import { Grid } from './shared/Grid';
-import { IGridAnimation, GridAnimationType } from './shared/GridAnimation';
+import { GridAnimationType } from './shared/GridAnimation';
 import { Action, SelectCellAction } from './shared/Action';
 import { IGameState } from './shared/GameState';
 import { GridFactoryService } from './grid-factory.service';
@@ -48,13 +48,11 @@ export class GridService {
     const newState = state;
     if (action instanceof SelectCellAction && action.payload) {
       newState.turn.cell = action.payload;
-      newState.animation = [];
       return action.payload.ball ? this.activate(state) : this.move(state);
     }
     if (
-      !state.animation ||
       !state.animation.length ||
-      state.animation[state.animation.length - 1].type !== GridAnimationType.Add
+      state.animation[state.animation.length - 1].type === GridAnimationType.Move
     ) {
       return this.turn(state);
     }
@@ -191,6 +189,7 @@ export class GridService {
     });
     return {
       ...state,
+      animation: [ { type: GridAnimationType.None } ],
       turn: { cells }
     } as IGameState;
   }

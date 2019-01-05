@@ -89,6 +89,7 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
   }
 
   private playSingle(animation: IGridAnimation): Promise<any> {
+    console.log(animation);
     switch (animation.type) {
       case GridAnimationType.Add:
         return this.buildGroupAnimation(
@@ -128,6 +129,8 @@ export class GridAnimationComponent implements OnInit, OnDestroy {
         this._wrongAnimationPlayer.play();
         return new Promise((resolve) =>
           this._wrongAnimationPlayer.onDone(() => resolve()));
+
+      default: return Promise.resolve();
     }
   }
 
