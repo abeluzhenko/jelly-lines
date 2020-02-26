@@ -3,32 +3,21 @@ export enum BallColor {
   green = 'green',
   yellow = 'yellow',
   blue = 'blue',
-  purple = 'purple'
+  purple = 'purple',
 }
 
-export const BallColors: BallColor[] = [
-  BallColor.red,
-  BallColor.green,
-  BallColor.blue,
-  BallColor.yellow,
-  BallColor.purple
-];
+export const BALL_COLORS: BallColor[] = Object.values(BallColor);
 
 export enum BallState {
-  idle = 0,
-  active = 1,
-  animated = 2,
-  disabled = 3
+  idle,
+  active,
+  animated,
+  disabled,
 }
 
-export const BallStates = [
-  BallState.idle,
-  BallState.active,
-  BallState.animated,
-  BallState.disabled
-];
+export const BALL_STATES: BallState[] = <BallState[]> Object.values(BallState);
 
-export interface IBall {
+export interface Ball {
   id: number;
   state: BallState;
   color: BallColor;

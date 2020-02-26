@@ -1,6 +1,6 @@
 import { BallColor } from './Ball';
 
-export interface IUIData {
+export interface UIData {
   nextColors: BallColor[];
   score: number;
   turn: number;

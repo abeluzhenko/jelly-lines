@@ -1,10 +1,10 @@
 import { Grid } from './Grid';
 import { BallState, BallColor } from './Ball';
-import { ICell } from './Cell';
+import { Cell } from './Cell';
 
 describe('Grid module', () => {
   it('getGrid should return a proper grid', () => {
-    let grid: ICell[] = Grid.getGrid(9);
+    let grid: Cell[] = Grid.getGrid(9);
     expect(grid.length).toBe(81);
     expect(grid[50]).toEqual({ id: 50 });
 
@@ -14,7 +14,7 @@ describe('Grid module', () => {
   });
 
   it('getMatches should properly process zero matches', () => {
-    const grid: ICell[] = Grid.getGrid(9);
+    const grid: Cell[] = Grid.getGrid(9);
     const matches = Grid.getMatches(grid, 5);
     expect(matches).toEqual([]);
   });

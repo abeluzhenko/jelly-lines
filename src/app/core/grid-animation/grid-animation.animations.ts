@@ -9,6 +9,8 @@ export const APPEAR_DURATION = 320;
 export const MATCH_DURATION = 420;
 export const MOVING_DURATION = 480;
 export const WRONG_DURATION = 420;
+export const DELAY_MULTIPLIER = 100;
+export const POSITION_PERCENTAGE = 100;
 
 export type AnimationFunction = (
   position: { x: number, y: number },
@@ -23,7 +25,7 @@ export function getAddAnimation(
   duration: number = APPEAR_DURATION,
   delayAfter: number = 0,
 ): AnimationMetadata[] {
-  const translate = `translate3d(${ position.x * 100 }%, ${ position.y * 100 }%, 1px)`;
+  const translate = `translate3d(${ position.x * POSITION_PERCENTAGE }%, ${ position.y * POSITION_PERCENTAGE }%, 1px)`;
   return [
     style({ transform: `${ translate } scale(0)`, opacity: 1 }),
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
@@ -43,7 +45,7 @@ export function getMatchAnimation(
   delay: number,
   duration: number = MATCH_DURATION
 ): AnimationMetadata[] {
-  const translate = `translate3d(${ position.x * 100 }%, ${ position.y * 100 }%, 1px)`;
+  const translate = `translate3d(${ position.x * POSITION_PERCENTAGE }%, ${ position.y * POSITION_PERCENTAGE }%, 1px)`;
   return [
     style({ transform: `${ translate } scale(1)`, opacity: 1 }),
     animate(`${ duration }ms ${ delay + 1 }ms ease`,
@@ -61,7 +63,7 @@ export function getMoveAnimation(
 ): AnimationMetadata {
   const delta = 1 / (path.length - 1);
   const steps = path.map((p, i) => style({
-    transform: `translate3d(${ p.x * 100 }%, ${ p.y * 100 }%, 1px)`,
+    transform: `translate3d(${ p.x * POSITION_PERCENTAGE }%, ${ p.y * POSITION_PERCENTAGE }%, 1px)`,
     offset: delta * i,
     opacity: 1,
   }));

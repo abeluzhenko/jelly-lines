@@ -1,15 +1,17 @@
 import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, OnChanges, ChangeDetectorRef } from '@angular/core';
-import { IBall, BallState } from '../shared/Ball';
+import { Ball, BallState } from '../shared/Ball';
 import { timer, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { IUIData } from 'src/app/core/shared/UIData';
+import { UIData } from 'src/app/core/shared/UIData';
 
 @Component({
   selector: 'app-ui',
   template: `
     <div class="ui__score">{{ score }}</div>
     <div class="ui__colors">
-      <app-ball class="ui__ball" *ngFor="let ball of balls" [data]="ball"></app-ball>
+      <app-ball class="ui__ball"
+                *ngFor="let ball of balls"
+                [ball]="ball"></app-ball>
     </div>
     <div class="ui__turn">{{ turn }}</div>
   `,
@@ -17,41 +19,45 @@ import { IUIData } from 'src/app/core/shared/UIData';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiComponent implements OnDestroy {
-
-  private _data: IUIData;
+  private _data: UIData;
   private _timerSubscription: Subscription;
 
-  public balls: IBall[] = [];
+  private readonly COUNTER_INTERVAL = 20;
+
+  public balls: Ball[] = [];
   public score = 0;
   public turn = 0;
 
-  @Input() public set data(value: IUIData) {
+  @Input() public set data(value: UIData) {
     if (!value) {
       return;
     }
+
     if (value.nextColors) {
       this.balls = value.nextColors.map((color, i) =>
         ({ id: i, color, state: BallState.idle }));
     }
+
     this._data = value;
+
     if (value.score !== this.score) {
       const currentScore = this.score;
-      this._timerSubscription = timer(0, 20)
-        .pipe(takeWhile(val => val < (value.score - currentScore)))
+      this._timerSubscription = timer(0, this.COUNTER_INTERVAL)
+        .pipe(takeWhile((increment) => increment < (value.score - currentScore)))
         .subscribe(() => {
           this.score++;
-          this._changeDetectorRef.markForCheck();
+          this.changeDetectorRef.markForCheck();
         });
     }
     this.turn = value.turn;
   }
 
-  public get data(): IUIData {
+  public get data(): UIData {
     return this._data;
   }
 
   constructor(
-    private _changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnDestroy() {

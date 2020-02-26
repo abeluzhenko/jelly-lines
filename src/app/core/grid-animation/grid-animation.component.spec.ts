@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GridAnimationComponent } from './grid-animation.component';
 import { BallComponent } from '../ball/ball.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { IGridAnimation, GridAnimationType } from '../shared/GridAnimation';
+import { GridAnimation, GridAnimationType } from '../shared/GridAnimation';
 import { BallState, BallColor } from '../shared/Ball';
 
 describe('GridAnimationComponent', () => {
@@ -29,7 +29,7 @@ describe('GridAnimationComponent', () => {
   });
 
   it('should properly put all input animations to the queue', () => {
-    let animations: IGridAnimation[];
+    let animations: GridAnimation[];
     animations = [{
       type: GridAnimationType.Move, cells: [
         { id: 0, ball: { id: 0, state: BallState.idle, color: BallColor.red } },

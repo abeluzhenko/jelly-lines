@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { ICell } from '../shared/Cell';
+import { Cell } from '../shared/Cell';
 
 @Component({
   selector: 'app-cell',
@@ -8,11 +8,11 @@ import { ICell } from '../shared/Cell';
 })
 export class CellComponent {
 
-  @Input() data: ICell;
-  @Output() clicked: EventEmitter<ICell> = new EventEmitter<ICell>();
+  @Input() cell: Cell;
+  @Output() clicked: EventEmitter<Cell> = new EventEmitter<Cell>();
 
   @HostListener('click')
   onClick() {
-    this.clicked.emit(this.data);
+    this.clicked.emit(this.cell);
   }
 }

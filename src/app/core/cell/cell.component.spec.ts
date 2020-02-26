@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CellComponent } from './cell.component';
 import { BallComponent } from '../ball/ball.component';
 import { BallState, BallColor } from '../shared/Ball';
-import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CellComponent', () => {
@@ -30,15 +29,18 @@ describe('CellComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit an event when clicked', done => {
-    component.data = {
+  // TODO: replace with async test
+  it('should emit an event when clicked', (done) => {
+    component.cell = {
       id: 0,
       ball: { id: 0, state: BallState.idle, color: BallColor.red }
     };
-    component.clicked.subscribe(cell => {
-      expect(cell).toBe(component.data);
+
+    component.clicked.subscribe((cell) => {
+      expect(cell).toBe(component.cell);
       done();
     });
+
     fixture.debugElement.triggerEventHandler('click', {});
   });
 });
