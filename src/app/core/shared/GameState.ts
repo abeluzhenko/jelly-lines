@@ -1,25 +1,25 @@
-import { ITurnData } from './TurnData';
-import { IUIData } from './UIData';
-import { IGridAnimation } from './GridAnimation';
+import { TurnData } from './TurnData';
+import { UIData } from './UIData';
+import { GridAnimation } from './GridAnimation';
 import { Grid } from './Grid';
 
 export interface IGameState {
-  turn: ITurnData;
-  ui: IUIData;
-  animation: IGridAnimation[];
+  turn: TurnData;
+  ui: UIData;
+  animation: GridAnimation[];
 }
 
 export class GameState implements IGameState {
   constructor(
-    public turn: ITurnData = {
+    public turn: TurnData = {
       cells: Grid.getGrid(),
       cell: null,
-    } as ITurnData,
-    public ui: IUIData = {
+    } as TurnData,
+    public ui: UIData = {
       nextColors: [],
       score: 0,
       turn: 0,
     },
-    public animation: IGridAnimation[] = [],
+    public animation: GridAnimation[] = [],
   ) {}
 }

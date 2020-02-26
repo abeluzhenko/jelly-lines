@@ -1,31 +1,29 @@
 import { Component, Input, ElementRef } from '@angular/core';
-import { BallState, IBall } from '../shared/Ball';
+import { BallState, Ball } from '../shared/Ball';
 
-interface ISpriteClass {
-  active: boolean;
+interface SpriteClass {
+  [key: string]: boolean;
+  active?: boolean;
 }
 
 @Component({
   selector: 'app-ball',
   template: `
-  <div class="shadow" [ngClass]="getSpriteClass(data)"></div>
-  <div class="ball" [ngClass]="getSpriteClass(data)"></div>
+  <div class="shadow"
+       [ngClass]="spriteClass"></div>
+  <div class="ball"
+       [ngClass]="spriteClass"></div>
   `,
   styleUrls: ['./ball.component.scss']
 })
 export class BallComponent {
+  @Input() public ball: Ball;
 
-  @Input() public data: IBall;
-
-  public getSpriteClass(value: IBall): ISpriteClass {
-    if (!value) {
-      return null;
-    }
-    const spriteClass = {
-      'active': value.state === BallState.active
+  get spriteClass(): SpriteClass {
+    return {
+      [this.ball.color]: true,
+      active: this.ball.state === BallState.active,
     };
-    spriteClass[value.color] = true;
-    return spriteClass;
   }
 
   constructor(

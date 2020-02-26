@@ -4,18 +4,17 @@ import { GridService, SCORE_MULTIPLIER } from './grid.service';
 import { BallState, BallColor } from './shared/Ball';
 import { Grid } from './shared/Grid';
 import { GridAnimationType } from './shared/GridAnimation';
-import { SelectCellAction, Action, StartGameAction } from './shared/Action';
+import { SelectCellAction, Actions, StartGameAction } from './shared/Action';
 import { GameState, IGameState } from './shared/GameState';
-import { ICell } from './shared/Cell';
+import { Cell } from './shared/Cell';
 
 class GridServiceMocked extends GridService {
-  public getUpdatedStateTest(state: IGameState, action: Action): IGameState {
+  public getUpdatedStateTest(state: IGameState, action: Actions): IGameState {
     return super.getUpdatedState(state, action);
   }
 }
 
 describe('GridService', () => {
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [ { provide: GridService, useClass: GridServiceMocked } ]
@@ -122,8 +121,8 @@ describe('GridService', () => {
   it('should properly move the current ball (if there is a path to the target)',
     (done) => inject([GridService], (service: GridService) => {
     let step = 0;
-    let cell1: ICell;
-    let cell2: ICell;
+    let cell1: Cell;
+    let cell2: Cell;
     service.state$.subscribe((state) => {
       if (step === 1) {
         cell1 = state.turn.cells.filter((cell) => cell.ball)[0];

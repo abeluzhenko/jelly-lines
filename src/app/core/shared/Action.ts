@@ -1,15 +1,15 @@
-import { ICell } from './Cell';
+import { Cell } from './Cell';
 
-export type Action = SelectCellAction | StartGameAction;
+export type Actions = SelectCellAction | StartGameAction;
 
-export interface IAction {
-  payload?: ICell;
+export interface Action {
+  payload?: Cell;
 }
 
-export class SelectCellAction implements IAction {
-  constructor(public payload: ICell) {}
+export class SelectCellAction implements Action {
+  constructor(public payload: Cell) {}
 }
 
-export class StartGameAction implements IAction {
+export class StartGameAction implements Action {
   constructor() {}
 }

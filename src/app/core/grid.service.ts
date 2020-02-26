@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { scan, share } from 'rxjs/operators';
 
-import { BallState } from './shared/Ball';
-import { ICell } from './shared/Cell';
+import { BallState, BallColor } from './shared/Ball';
+import { Cell } from './shared/Cell';
 import { Path } from './shared/Path';
 import { Grid } from './shared/Grid';
 import { GridAnimationType } from './shared/GridAnimation';
-import { Action, SelectCellAction } from './shared/Action';
+import { Actions, SelectCellAction } from './shared/Action';
 import { IGameState } from './shared/GameState';
 import { GridFactoryService } from './grid-factory.service';
+import { TurnData } from './shared/TurnData';
 
 export const SCORE_MULTIPLIER = 10;
 
@@ -17,7 +18,7 @@ export const SCORE_MULTIPLIER = 10;
   providedIn: 'root'
 })
 export class GridService {
-  private _action$: Subject<Action>;
+  private action$: Subject<Actions>;
   private _state$: BehaviorSubject<IGameState>;
 
   public get state$(): Observable<IGameState> {
@@ -25,37 +26,45 @@ export class GridService {
   }
 
   public get initialState(): IGameState {
-    return this._gridFactory.getInitialState();
+    return this.gridFactory.getInitialState();
   }
 
-  constructor(private _gridFactory: GridFactoryService) {
-    this._action$ = new Subject<Action>();
+  constructor(private gridFactory: GridFactoryService) {
+    this.action$ = new Subject<Actions>();
     this._state$ = new BehaviorSubject<IGameState>(this.initialState);
-    this._action$
+    this.action$
       .pipe(
-        scan((state: IGameState, action: Action) =>
-          this.getUpdatedState(state, action), this.initialState),
+        scan((state: IGameState, action: Actions) =>
+          this.getUpdatedState(state, action),
+          this.initialState
+        ),
         share(),
       )
       .subscribe((state: IGameState) => this._state$.next(state));
   }
 
-  public dispatch(action: Action) {
-    this._action$.next(action);
+  public dispatch(action: Actions) {
+    this.action$.next(action);
   }
 
-  protected getUpdatedState(state: IGameState, action: Action): IGameState {
+  protected getUpdatedState(state: IGameState, action: Actions): IGameState {
     const newState = state;
+
     if (action instanceof SelectCellAction && action.payload) {
       newState.turn.cell = action.payload;
-      return action.payload.ball ? this.activate(state) : this.move(state);
+
+      return action.payload.ball
+        ? this.activate(state)
+        : this.move(state);
     }
+
     if (
       !state.animation.length ||
       state.animation[state.animation.length - 1].type === GridAnimationType.Move
     ) {
       return this.turn(state);
     }
+
     return newState;
   }
 
@@ -88,7 +97,7 @@ export class GridService {
 
     if (!animation.length) {
       // Process new turn
-      const cells: ICell[] = state.turn.cells;
+      const cells: Cell[] = state.turn.cells;
       const openCells = cells.filter((cell) => !cell.ball);
       let colors = [];
       if (
@@ -123,6 +132,7 @@ export class GridService {
         });
       }
     }
+
     return {
       turn,
       animation,
@@ -163,42 +173,38 @@ export class GridService {
     return {
       ...state,
       animation: [
-        path.length ?
-        { type: GridAnimationType.Move, cells: path } :
-        { type: GridAnimationType.Wrong }
+        path.length
+          ? { type: GridAnimationType.Move, cells: path }
+          : { type: GridAnimationType.Wrong }
       ],
     };
   }
 
   private activate(state: IGameState): IGameState {
     const cells = state.turn.cells.map((cell) => {
-      // If the current cell doesn't contain a ball
-      // then check if we have an active ball on the grid
       if (!cell.ball) {
         return cell;
       }
-      // If the current cell is the active one
-      // then set the proper state
-      if (cell.id === state.turn.cell.id) {
-        return Object.assign(cell,
-          { ball: Object.assign(cell.ball, { state: BallState.active }) });
-      }
-      // Set all the other cells balls to idle state
-      return Object.assign(cell,
-        { ball: Object.assign(cell.ball, { state: BallState.idle }) });
+
+      return {
+        ...cell,
+        ball: {
+          ...cell.ball,
+          state: cell.id === state.turn.cell.id
+            ? BallState.active
+            : BallState.idle
+        }
+      };
     });
+
     return {
       ...state,
-      animation: [ { type: GridAnimationType.None } ],
-      turn: { cells }
-    } as IGameState;
+      animation: [{ type: GridAnimationType.None }],
+      turn: { cells } as TurnData
+    };
   }
 
-  private getRandomColors() {
-    const colors = [];
-    for (let i = 0; i < Grid.ITEMS_PER_TURN; i++) {
-      colors.push(Grid.getRandomColor());
-    }
-    return colors;
+  private getRandomColors(): BallColor[] {
+    return Array.from({ length: Grid.ITEMS_PER_TURN }, () => Grid.getRandomColor());
   }
 }

@@ -1,4 +1,4 @@
-import { ICell } from './Cell';
+import { Cell } from './Cell';
 
 export enum GridAnimationType {
   None,
@@ -9,7 +9,7 @@ export enum GridAnimationType {
   Full,
 }
 
-export interface IGridAnimation {
+export interface GridAnimation {
   type: GridAnimationType;
-  cells?: ICell[];
+  cells?: Cell[];
 }

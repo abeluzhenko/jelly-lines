@@ -1,5 +1,5 @@
-import { BallColors, BallColor, BallState } from './Ball';
-import { ICell } from './Cell';
+import { BALL_COLORS, BallColor, BallState } from './Ball';
+import { Cell } from './Cell';
 
 export class Grid {
 
@@ -7,19 +7,19 @@ export class Grid {
   public static ITEMS_PER_TURN = 3;
 
   public static getRandomColor(): BallColor {
-    return BallColors[Math.floor(BallColors.length * Math.random())];
+    return BALL_COLORS[Math.floor(BALL_COLORS.length * Math.random())];
   }
 
-  public static getGrid(size: number = Grid.SIZE): ICell[] {
-    const result: ICell[] = [];
+  public static getGrid(size: number = Grid.SIZE): Cell[] {
+    const result: Cell[] = [];
     for (let i = 0; i < size * size; i++) {
       result.push({ id: i });
     }
     return result;
   }
 
-  public static getRandomGrid(size: number = Grid.SIZE): ICell[] {
-    const result: ICell[] = [];
+  public static getRandomGrid(size: number = Grid.SIZE): Cell[] {
+    const result: Cell[] = [];
     for (let i = 0; i < size * size; i++) {
       result.push({ id: i, ball: { id: i, color: Grid.getRandomColor(), state: BallState.idle} });
     }
@@ -36,13 +36,13 @@ export class Grid {
     };
   }
 
-  public static getMatches(grid: ICell[], length = 5, gridSize = Grid.SIZE): ICell[][] {
+  public static getMatches(grid: Cell[], length = 5, gridSize = Grid.SIZE): Cell[][] {
     const ROW = 1000;
     const COLUMN = -1000;
     const CURRENT = -2000;
     let result = [];
 
-    const isAdjacent = (cell0: ICell, cell1: ICell): boolean => {
+    const isAdjacent = (cell0: Cell, cell1: Cell): boolean => {
       const x0 = Math.floor(cell0.id / gridSize);
       const y0 = cell0.id % gridSize;
       const x1 = Math.floor(cell1.id / gridSize);
@@ -53,8 +53,8 @@ export class Grid {
     };
 
     const getSequences = (
-      flatGrid: { cell: ICell, slope: number }[],
-      matches: ICell[][]
+      flatGrid: { cell: Cell, slope: number }[],
+      matches: Cell[][]
     ) => {
       if (flatGrid.length < length) {
         return [];

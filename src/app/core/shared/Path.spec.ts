@@ -1,16 +1,19 @@
-import { Path, IPathCell } from './Path';
-import { ICell } from './Cell';
+import { Path, PathCell } from './Path';
+import { Cell } from './Cell';
 import { BallState, BallColor } from './Ball';
+
+
+const DEFAULT_SIZE = 100;
 
 describe('Path module', () => {
   it('getGrid should return a proper grid', () => {
-    const cells: ICell[] = [];
-    for (let i = 0; i < 100; i++) {
+    const cells: Cell[] = [];
+    for (let i = 0; i < DEFAULT_SIZE; i++) {
       cells.push({ id: i });
     }
-    let grid: IPathCell[] = Path.getPathGrid(cells);
+    let grid: PathCell[] = Path.getPathGrid(cells);
     expect(grid).toBeTruthy();
-    expect(grid.length).toBe(100);
+    expect(grid.length).toBe(DEFAULT_SIZE);
     expect(grid[50].order).toBe(0);
     expect(grid[50].cost).toBe(1);
 
@@ -24,7 +27,7 @@ describe('Path module', () => {
   });
 
   it('getClosest cells should return the closest cell', () => {
-    const cells: Set<IPathCell> = new Set();
+    const cells: Set<PathCell> = new Set();
     for (let i = 0; i < 10; i++) {
       cells.add({
         index: i,
@@ -39,8 +42,8 @@ describe('Path module', () => {
   });
 
   it('getAdjacent should return all the adjacent to the input cell', () => {
-    const grid: IPathCell[] = [];
-    for (let i = 0; i < 100; i++) {
+    const grid: PathCell[] = [];
+    for (let i = 0; i < DEFAULT_SIZE; i++) {
       grid.push({ index: i });
     }
 
@@ -107,10 +110,11 @@ describe('Path module', () => {
   });
 
   it('makePath should return a correct path array', () => {
-    const grid: IPathCell[] = [];
-    for (let i = 0; i < 100; i++) {
-      grid.push({ index: i, order: i + 1 });
-    }
+    const grid: PathCell[] = Array.from({ length: DEFAULT_SIZE }, (index: number) => ({
+      index: index,
+      order: index + 1
+    }));
+
     let path = Path.makePath(grid[9], grid, Path.getAdjacent, 0, 10);
     expect(path.length).toBe(10);
     expect(path[0]).toBe(grid[0]);
@@ -120,7 +124,7 @@ describe('Path module', () => {
     expect(path.length).toBe(0);
 
     const p = [ 0, 1, 2, 12, 22, 21, 20 ];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < DEFAULT_SIZE; i++) {
       const index = p.indexOf(i);
       if (index !== -1) {
         grid[i].order = index + 1;
@@ -134,8 +138,8 @@ describe('Path module', () => {
   });
 
   it('getPath should return the shortest path between two points', () => {
-    const grid: IPathCell[] = [];
-    for (let i = 0; i < 100; i++) {
+    const grid: PathCell[] = [];
+    for (let i = 0; i < DEFAULT_SIZE; i++) {
       grid.push({ index: i, cost: 0, order: 0 });
     }
     let path = Path.getPath(grid[0], grid[99], grid, 0, 10);

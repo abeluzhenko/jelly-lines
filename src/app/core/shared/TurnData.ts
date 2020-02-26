@@ -1,7 +1,7 @@
-import { IUIData } from './UIData';
-import { ICell } from './Cell';
+import { UIData } from './UIData';
+import { Cell } from './Cell';
 
-export interface ITurnData extends IUIData {
-  cells: ICell[];
-  cell?: ICell | null;
+export interface TurnData extends UIData {
+  cells: Cell[];
+  cell?: Cell | null;
 }

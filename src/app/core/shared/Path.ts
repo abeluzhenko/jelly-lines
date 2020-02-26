@@ -1,4 +1,4 @@
-export interface IPathCell {
+export interface PathCell {
   index: number;
   cost?: number;
   order?: number;
@@ -8,7 +8,7 @@ export interface IPathCell {
 
 export class Path {
   public static GRID_SIZE = 9;
-  public static getPathGrid(cells): IPathCell[] {
+  public static getPathGrid(cells): PathCell[] {
     return cells.map((cell, index) => ({
       index,
       order: 0,
@@ -16,20 +16,20 @@ export class Path {
     }));
   }
 
-  public static getClosestCell(cells: Set<IPathCell>): IPathCell {
+  public static getClosestCell(cells: Set<PathCell>): PathCell {
     return Array
       .from(cells)
       .reduce(
         (min, current) => current.cost < min.cost ? current : min,
-        { cost: Number.POSITIVE_INFINITY } as IPathCell
+        { cost: Number.POSITIVE_INFINITY } as PathCell
       );
   }
 
   public static getAdjacent(
-    cell: IPathCell,
-    grid: IPathCell[],
+    cell: PathCell,
+    grid: PathCell[],
     gridSize = Path.GRID_SIZE
-  ): IPathCell[] {
+  ): PathCell[] {
     const result = [];
     if (cell.index < 0 || cell.index >= gridSize * gridSize) {
       return result;
@@ -52,8 +52,8 @@ export class Path {
   }
 
   public static getDistance(
-    cell0: IPathCell,
-    cell1: IPathCell,
+    cell0: PathCell,
+    cell1: PathCell,
     gridSize = Path.GRID_SIZE
   ): number {
     const [x0, y0] = [Math.floor(cell0.index / gridSize), cell0.index % gridSize];
@@ -62,8 +62,8 @@ export class Path {
   }
 
   public static makePath(
-    from: IPathCell,
-    grid: IPathCell[],
+    from: PathCell,
+    grid: PathCell[],
     adjacentFn: Function,
     emptyCellValue = 0,
     gridSize = Path.GRID_SIZE
@@ -85,9 +85,9 @@ export class Path {
   }
 
   public static getPath(
-    from: IPathCell,
-    to: IPathCell,
-    grid: IPathCell[],
+    from: PathCell,
+    to: PathCell,
+    grid: PathCell[],
     emptyValue = 0,
     gridSize = Path.GRID_SIZE
   ) {
@@ -96,8 +96,8 @@ export class Path {
       return [from, to];
     }
 
-    const opened = new Set();
-    const closed = new Set();
+    const opened = new Set<PathCell>();
+    const closed = new Set<PathCell>();
     opened.add(from);
     from.cost = 1;
     let done = false;
