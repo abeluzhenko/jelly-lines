@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "lines-game"
+  "defaultProject": "lines-game",
+  "cli": {
+    "analytics": "5a83a74a-4e04-4ecb-a775-6a655b7209d9"
+  }
 }
