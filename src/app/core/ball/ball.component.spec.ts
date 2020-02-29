@@ -1,9 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BallComponent } from './ball.component';
-import { BALL_COLORS, BallColor, BallState } from '../shared/Ball';
+import { BallColor, BallState } from '../shared/Ball';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DebugElement } from '@angular/core';
+
+
+const DEFAULT_BALL_COLOR = BallColor.purple;
 
 describe('BallComponent', () => {
   let component: BallComponent;
@@ -30,33 +34,34 @@ describe('BallComponent', () => {
   });
 
   it('should render proper color', () => {
-    // TODO: remove foreach
-    for (const color of BALL_COLORS) {
-      component.ball = { id: 0, state: BallState.idle, color: color as BallColor };
-
-      fixture.detectChanges();
-      const ballEl = fixture.debugElement.query(By.css('.ball'));
-
-      expect(ballEl.classes[color]).toBeTruthy();
-    }
-  });
-
-  // TODO: split to two tests
-  it('should render proper class', () => {
-    component.ball = { id: 0, state: BallState.idle, color: BallColor.red };
+    component.ball = { id: 0, state: BallState.idle, color: DEFAULT_BALL_COLOR };
 
     fixture.detectChanges();
 
     const ballEl = fixture.debugElement.query(By.css('.ball'));
-    // TODO: fix: .ball?
-    const shadowEl = fixture.debugElement.query(By.css('.ball'));
+    expect(ballEl.classes[DEFAULT_BALL_COLOR]).toBeTruthy();
+  });
 
-    expect(ballEl.classes['active']).toBeFalsy();
-    expect(shadowEl.classes['active']).toBeFalsy();
+  describe('should render proper class for the ball', () => {
+    let ballEl: DebugElement;
 
-    component.ball = { id: 0, state: BallState.active, color: BallColor.red };
-    fixture.detectChanges();
-    expect(ballEl.classes['active']).toBeTruthy();
-    expect(shadowEl.classes['active']).toBeTruthy();
+    beforeEach(() => {
+      component.ball = { id: 0, state: BallState.idle, color: DEFAULT_BALL_COLOR };
+
+      fixture.detectChanges();
+
+      ballEl = fixture.debugElement.query(By.css('.ball'));
+    });
+
+    it('should be inactive', () => {
+      expect(ballEl.classes['active']).toBeFalsy();
+    });
+
+    it('should be active', () => {
+      component.ball = { id: 0, state: BallState.active, color: BallColor.red };
+      fixture.detectChanges();
+
+      expect(ballEl.classes['active']).toBeTruthy();
+    });
   });
 });

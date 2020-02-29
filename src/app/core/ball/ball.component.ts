@@ -20,7 +20,7 @@ export class BallComponent {
   @Input() public ball: Ball;
 
   get spriteClass(): SpriteClass {
-    return {
+    return this.ball && {
       [this.ball.color]: true,
       active: this.ball.state === BallState.active,
     };
