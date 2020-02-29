@@ -2,133 +2,158 @@ import { Grid } from './Grid';
 import { BallState, BallColor } from './Ball';
 import { Cell } from './Cell';
 
+
+const DEFAULT_GRID_SIZE = 9;
+const DEFAULT_MATCH_LENGTH = 5;
+
 describe('Grid module', () => {
-  it('getGrid should return a proper grid', () => {
-    let grid: Cell[] = Grid.getGrid(9);
-    expect(grid.length).toBe(81);
-    expect(grid[50]).toEqual({ id: 50 });
+  describe('getGrid should return', () => {
+    it('a grid of proper size', () => {
+      const gridSize = 10;
+      const expectedGridLength = 100;
 
-    grid = Grid.getGrid(10);
-    expect(grid.length).toBe(100);
-    expect(grid[50]).toEqual({ id: 50 });
+      expect(Grid.getGrid(gridSize).length).toBe(expectedGridLength);
+    });
+
+    it('a grid with properly instanciated cells', () => {
+      const cellIndex = 50;
+      const grid = Grid.getGrid(DEFAULT_GRID_SIZE);
+
+      expect(grid[cellIndex]).toEqual({ id: cellIndex });
+    });
   });
 
-  it('getMatches should properly process zero matches', () => {
-    const grid: Cell[] = Grid.getGrid(9);
-    const matches = Grid.getMatches(grid, 5);
-    expect(matches).toEqual([]);
-  });
+  describe('getMatches should return', () => {
+    let grid: Cell[];
 
-  it('getMatches should return all the horizontal matches on the grid', () => {
-    let grid = Grid.getGrid(9);
-    for (let i = 0; i < 5; i++) {
-      grid[i + 2].ball = { id: i + 2, state: BallState.idle, color: BallColor.blue };
-      grid[i + 10].ball = { id: i + 10, state: BallState.idle, color: BallColor.red };
-      grid[i + 15].ball = { id: i + 15, state: BallState.idle, color: BallColor.green };
-      grid[i + 30].ball = { id: i + 30, state: BallState.idle, color: BallColor.green };
-    }
-    grid[29].ball = grid[30].ball;
-    grid[30] = { id: 30 };
+    const state = BallState.idle;
 
-    grid[8] = {id : 8, ball: { id: 8, state: BallState.idle, color: BallColor.red }};
-    grid[9] = {id : 9, ball: { id: 9, state: BallState.idle, color: BallColor.yellow }};
-    grid[15] = {id : 15, ball: { id: 15, state: BallState.idle, color: BallColor.yellow }};
+    const getCellsByIndecies = (...indecies: number[]) => indecies.map((index) => grid[index]);
 
-    let matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(2);
-    expect(matches[0].length).toBe(5);
-    expect(matches[0][0]).toEqual(grid[2]);
-    expect(matches[0][4]).toEqual(grid[6]);
+    beforeEach(() => {
+      grid = Grid.getGrid(DEFAULT_GRID_SIZE);
+    });
 
-    expect(matches[1].length).toBe(5);
-    expect(matches[1][0]).toEqual(grid[10]);
-    expect(matches[1][4]).toEqual(grid[14]);
+    it('an empty array when there are zero matches', () => {
+      expect(Grid.getMatches(Grid.getGrid(DEFAULT_GRID_SIZE), DEFAULT_MATCH_LENGTH))
+        .toEqual([]);
+    });
 
-    grid = Grid.getGrid(9);
-    for (let i = 0; i < 6; i++) {
-      grid[i + 10].ball = { id: i + 10, state: BallState.idle, color: BallColor.red };
-    }
-    // Add noise
-    grid[2] = { id: 2, ball: { id: 2, state: BallState.idle, color: BallColor.red } };
+    describe('all the horizontal matches', () => {
+      // tslint:disable: no-magic-numbers
+      it('two short matches', () => {
+        const matchesStartIndecies = [2, 10, 15, 30];
+        const matchesColors = [BallColor.blue, BallColor.red, BallColor.green, BallColor.green];
+        for (let i = 0; i < DEFAULT_MATCH_LENGTH; i++) {
+          matchesStartIndecies.forEach((index) => {
+            grid[i + index].ball = { id: i + index, state, color: matchesColors[index] };
+          });
+        }
 
-    matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(1);
-    expect(matches[0].length).toBe(6);
-    expect(matches[0][0]).toEqual(grid[10]);
-    expect(matches[0][5]).toEqual(grid[15]);
-  });
+        grid[29].ball = grid[30].ball;
+        grid[30] = { id: 30 };
 
+        [
+          { id : 8, ball: { id: 8, state, color: BallColor.red } },
+          { id : 9, ball: { id: 9, state, color: BallColor.yellow } },
+          { id : 15, ball: { id: 15, state, color: BallColor.yellow } }
+        ].forEach((cell) => {
+          grid[cell.id] = cell;
+        });
 
-  it('getMatches should return all the vertical matches on the grid', () => {
-    let grid = Grid.getGrid(9);
-    for (let i = 0; i < 5; i++) {
-      grid[i * 9 + 2].ball = { id: i * 9 + 2, state: BallState.idle, color: BallColor.blue };
-      grid[i * 9 + 4].ball = { id: i * 9 + 4, state: BallState.idle, color: BallColor.red };
-      grid[i * 9 + 8].ball = { id: i * 9 + 8, state: BallState.idle, color: BallColor.red };
-    }
-    grid[53].ball = grid[44].ball;
-    grid[44] = { id: 44 };
-    // Add noise
-    grid[41] = {id : 41, ball: { id: 41, state: BallState.idle, color: BallColor.yellow }};
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([
+          getCellsByIndecies(2, 3, 4, 5, 6),
+          getCellsByIndecies(10, 11, 12, 13, 14)
+        ]);
+      });
 
-    let matches = Grid.getMatches(grid, 5, 9);
-    expect(matches.length).toBe(2);
-    expect(matches[0].length).toBe(5);
-    expect(matches[0][0]).toEqual(grid[2]);
-    expect(matches[0][4]).toEqual(grid[38]);
+      it('one long match', () => {
+        for (let i = 0; i < DEFAULT_MATCH_LENGTH + 1; i++) {
+          grid[i + 10].ball = { id: i + 10, state, color: BallColor.red };
+        }
+        grid[2] = { id: 2, ball: { id: 2, state, color: BallColor.red } };
 
-    expect(matches[1].length).toBe(5);
-    expect(matches[1][0]).toEqual(grid[4]);
-    expect(matches[1][4]).toEqual(grid[40]);
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([
+          getCellsByIndecies(10, 11, 12, 13, 14, 15)
+        ]);
+      });
+    });
 
-    grid = Grid.getGrid(9);
-    for (let i = 0; i < 6; i++) {
-      grid[i * 9 + 10].ball = { id: i * 9 + 10, state: BallState.idle, color: BallColor.red };
-    }
-    // Add noise
-    grid[18] = {id : 18, ball: { id: 18, state: BallState.idle, color: BallColor.red }};
-    matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(1);
-    expect(matches[0].length).toBe(6);
-    expect(matches[0][0]).toEqual(grid[10]);
-    expect(matches[0][5]).toEqual(grid[55]);
-  });
+    describe('all the vertical matches', () => {
+      it('two short matches', () => {
+        const matchesStartIndecies = [2, 4, 8];
+        const matchesColors = [BallColor.blue, BallColor.blue, BallColor.red, BallColor.red];
+        for (let i = 0; i < DEFAULT_MATCH_LENGTH; i++) {
+          matchesStartIndecies.forEach((index) => {
+            grid[i * DEFAULT_GRID_SIZE + index].ball = {
+              id: i + index,
+              state,
+              color: matchesColors[index]
+            };
+          });
+        }
 
-  it('getMatches should return all the diagonal matches on the grid', () => {
-    const grid = Grid.getGrid(9);
-    for (let i = 0; i < 9; i++) {
-      grid[(i + 1) * 8].ball = { id: (i + 1) * 8, state: BallState.idle, color: BallColor.red };
-      grid[i * 10].ball = { id: i * 10, state: BallState.idle, color: BallColor.red };
-    }
-    grid[40] = { id: 40 };
-    let matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(0);
+        grid[53].ball = grid[44].ball;
+        grid[44] = { id: 44 };
 
-    grid[40] = { id: 40, ball: { id: 40, state: BallState.idle, color: BallColor.red } };
-    matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(2);
-    expect(matches[0].length).toBe(9);
-    expect(matches[0][0]).toEqual(grid[0]);
-    expect(matches[0][8]).toEqual(grid[80]);
-    expect(matches[1].length).toBe(9);
-    expect(matches[1][0]).toEqual(grid[8]);
-    expect(matches[1][8]).toEqual(grid[72]);
-  });
+        grid[41] = {id : 41, ball: { id: 41, state, color: BallColor.yellow }};
 
-  it('getMatches should return all the corner matches on the grid', () => {
-    const grid = Grid.getGrid(9);
-    for (let i = 0; i < 5; i++) {
-      grid[i * 9].ball = { id: i * 9, state: BallState.idle, color: BallColor.red };
-      grid[i].ball = { id: i, state: BallState.idle, color: BallColor.red };
-    }
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH, DEFAULT_GRID_SIZE)).toEqual([
+          getCellsByIndecies(2, 11, 20, 29, 38),
+          getCellsByIndecies(4, 13, 22, 31, 40),
+        ]);
+      });
 
-    const matches = Grid.getMatches(grid, 5);
-    expect(matches.length).toBe(2);
-    expect(matches[0].length).toBe(5);
-    expect(matches[0][0]).toEqual(grid[0]);
-    expect(matches[0][4]).toEqual(grid[4]);
-    expect(matches[1].length).toBe(5);
-    expect(matches[1][0]).toEqual(grid[0]);
-    expect(matches[1][4]).toEqual(grid[36]);
+      it('one long match', () => {
+        for (let i = 0; i < DEFAULT_MATCH_LENGTH + 1; i++) {
+          grid[i * DEFAULT_GRID_SIZE + 10].ball = {
+            id: i * DEFAULT_GRID_SIZE + 10,
+            state,
+            color: BallColor.red
+          };
+        }
+
+        grid[18] = {id : 18, ball: { id: 18, state, color: BallColor.red }};
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([
+          getCellsByIndecies(10, 19, 28, 37, 46, 55)
+        ]);
+      });
+    });
+
+    describe('all the diagonal matches', () => {
+      const color = BallColor.red;
+
+      it('no matches', () => {
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([]);
+      });
+
+      it('simple match', () => {
+        for (let i = 0; i < DEFAULT_GRID_SIZE; i++) {
+          grid[(i + 1) * 8].ball = { id: (i + 1) * 8, state, color };
+          grid[i * 10].ball = { id: i * 10, state, color };
+        }
+        grid[40] = { id: 40 };
+        grid[40] = { id: 40, ball: { id: 40, state, color } };
+
+        expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([
+          getCellsByIndecies(0, 10, 20, 30, 40, 50, 60, 70, 80),
+          getCellsByIndecies(8, 16, 24, 32, 40, 48, 56, 64, 72)
+        ]);
+      });
+    });
+
+    it('all the corner matches', () => {
+      const color = BallColor.red;
+      for (let i = 0; i < DEFAULT_MATCH_LENGTH; i++) {
+        grid[i * DEFAULT_GRID_SIZE].ball = { id: i * DEFAULT_GRID_SIZE, state, color };
+        grid[i].ball = { id: i, state, color };
+      }
+
+      expect(Grid.getMatches(grid, DEFAULT_MATCH_LENGTH)).toEqual([
+        getCellsByIndecies(0, 1, 2, 3, 4),
+        getCellsByIndecies(0, 9, 18, 27, 36),
+      ]);
+    });
+    // tslint:enable: no-magic-numbers
   });
 });
