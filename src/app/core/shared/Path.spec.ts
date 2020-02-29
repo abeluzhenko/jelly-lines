@@ -3,162 +3,217 @@ import { Cell } from './Cell';
 import { BallState, BallColor } from './Ball';
 
 
-const DEFAULT_SIZE = 100;
+const DEFAULT_LENGTH = 100;
+const DEFAULT_SIZE = 10;
+
+const generatePathGridMock = (): PathCell[] =>
+  Array.from({ length: DEFAULT_LENGTH }, (_el, index) => ({
+    index,
+    cost: 0,
+    order: 0
+  }));
 
 describe('Path module', () => {
-  it('getGrid should return a proper grid', () => {
-    const cells: Cell[] = [];
-    for (let i = 0; i < DEFAULT_SIZE; i++) {
-      cells.push({ id: i });
-    }
-    let grid: PathCell[] = Path.getPathGrid(cells);
-    expect(grid).toBeTruthy();
-    expect(grid.length).toBe(DEFAULT_SIZE);
-    expect(grid[50].order).toBe(0);
-    expect(grid[50].cost).toBe(1);
+  describe('getGrid should return', () => {
+    const cells: Cell[] = Array.from({ length: DEFAULT_LENGTH }, (_el, id) => ({
+      id
+    }));
+    const grid: PathCell[] = Path.getPathGrid(cells);
+    const testCellIndex = 50;
 
-    cells[50].ball = {
-      id: cells[50].id,
-      state: BallState.idle,
-      color: BallColor.purple
-    };
-    grid = Path.getPathGrid(cells);
-    expect(grid[50].cost).toBe(Number.POSITIVE_INFINITY);
+    it('a grid with proper size', () => {
+      expect(grid.length).toBe(DEFAULT_LENGTH);
+    });
+
+    it('a grid with proper cells values', () => {
+      expect(grid[testCellIndex]).toEqual({ index: testCellIndex, order: 0, cost: 1 });
+    });
+
+    it('a grid with untraversable cells', () => {
+      const changedCells: Cell[] = Array.from({ length: DEFAULT_LENGTH }, (_el, id) => ({
+        id,
+        ...(id === testCellIndex
+          ? { ball: { id, state: BallState.idle, color: BallColor.purple }}
+          : {}
+        )
+      }));
+      const changedGrid: PathCell[] = Path.getPathGrid(changedCells);
+
+      expect(changedGrid[testCellIndex].cost).toBe(Number.POSITIVE_INFINITY);
+    });
   });
 
-  it('getClosest cells should return the closest cell', () => {
-    const cells: Set<PathCell> = new Set();
-    for (let i = 0; i < 10; i++) {
-      cells.add({
-        index: i,
-        cost: i,
-      });
-    }
-    expect(Path.getClosestCell(cells)).toEqual({ index: 0, cost: 0 });
-    cells.add({ index: 10, cost: -1 });
-    expect(Path.getClosestCell(cells)).toEqual({ index: 10, cost: -1 });
-    cells.add({ index: 11, cost: Number.NEGATIVE_INFINITY });
-    expect(Path.getClosestCell(cells)).toEqual({ index: 11, cost: Number.NEGATIVE_INFINITY });
+  describe('getClosest should return', () => {
+    const cellsAmount = 10;
+    let cells: Set<PathCell>;
+
+    beforeEach(() => {
+      cells = new Set(Array.from({ length: cellsAmount }, (_el, index) => ({
+        index,
+        cost: index
+      })));
+    });
+
+    it('the first cell on a fresh grid', () => {
+      expect(Path.getClosestCell(cells)).toEqual({ index: 0, cost: 0 });
+    });
+
+    it('a cell with the lowest cost', () => {
+      cells.add({ index: 11, cost: Number.NEGATIVE_INFINITY });
+
+      expect(Path.getClosestCell(cells))
+        .toEqual({ index: 11, cost: Number.NEGATIVE_INFINITY });
+    });
   });
 
-  it('getAdjacent should return all the adjacent to the input cell', () => {
-    const grid: PathCell[] = [];
-    for (let i = 0; i < DEFAULT_SIZE; i++) {
-      grid.push({ index: i });
-    }
+  describe('getAdjacent should return', () => {
+    const grid = generatePathGridMock();
 
-    const checkCorner = (cell, n1, n2) => {
-      const adjacent = Path.getAdjacent(cell, grid, 10);
-      expect(adjacent.length).toBe(2);
-      expect(adjacent).toContain(n1);
-      expect(adjacent).toContain(n2);
-    };
-    const checkSide = (cell, n1, n2, n3) => {
-      const adjacent = Path.getAdjacent(cell, grid, 10);
-      expect(adjacent.length).toBe(3);
-      expect(adjacent).toContain(n1);
-      expect(adjacent).toContain(n2);
-      expect(adjacent).toContain(n3);
-    };
-    const checkOther = (cell, n1, n2, n3, n4) => {
-      const adjacent = Path.getAdjacent(cell, grid, 10);
-      expect(adjacent.length).toBe(4);
-      expect(adjacent).toContain(n1);
-      expect(adjacent).toContain(n2);
-      expect(adjacent).toContain(n3);
-      expect(adjacent).toContain(n4);
+    const getCellsByIndex = (...indecies: number[]) => indecies.map((i) => grid[i]);
+
+    const isAdjacent = (
+      cells: PathCell[]
+    ) => {
+      const [target, ...neighbours] = cells;
+      const adjacent = Path.getAdjacent(target, grid, DEFAULT_SIZE);
+
+      return neighbours.every(
+        (neighbour) => adjacent.find(
+          ({ index }) => neighbour.index === index
+        )
+      );
     };
 
-    // Corner cases
-    // Top left
-    checkCorner(grid[0], grid[1], grid[10]);
-    // Top right
-    checkCorner(grid[9], grid[8], grid[19]);
-    // Bottom left
-    checkCorner(grid[90], grid[91], grid[80]);
-    // Bottom right
-    checkCorner(grid[99], grid[89], grid[98]);
+    // tslint:disable: no-magic-numbers
+    it('all the adjacent cells for a corner', () => {
+      expect(isAdjacent(getCellsByIndex(0, 1, 10))).toBeTruthy('top left');
+      expect(isAdjacent(getCellsByIndex(9, 8, 19))).toBeTruthy('top right');
+      expect(isAdjacent(getCellsByIndex(90, 91, 80))).toBeTruthy('bottom left');
+      expect(isAdjacent(getCellsByIndex(99, 89, 98))).toBeTruthy('bottom right');
+    });
 
-    // Sides
-    // Top center
-    checkSide(grid[5], grid[4], grid[6], grid[15]);
-    // Bottom center
-    checkSide(grid[95], grid[94], grid[96], grid[85]);
-    // Left center
-    checkSide(grid[49], grid[39], grid[48], grid[59]);
-    // Right center
-    checkSide(grid[40], grid[50], grid[30], grid[41]);
+    it('all the adjacent cell for a side', () => {
+      expect(isAdjacent(getCellsByIndex(5, 4, 6, 15))).toBeTruthy('top center');
+      expect(isAdjacent(getCellsByIndex(95, 94, 96, 85))).toBeTruthy('bottom center');
+      expect(isAdjacent(getCellsByIndex(49, 39, 48, 59))).toBeTruthy('left center');
+      expect(isAdjacent(getCellsByIndex(40, 50, 30, 41))).toBeTruthy('right center');
+    });
 
-    checkOther(grid[55], grid[54], grid[56], grid[65], grid[45]);
+    it('all the adjacent cell for the center', () => {
+      expect(isAdjacent(getCellsByIndex(55, 54, 56, 65, 45))).toBeTruthy();
+    });
+    // tslint:enable: no-magic-numbers
 
-    // Invalid input
-    expect(Path.getAdjacent({ index: Number.POSITIVE_INFINITY }, grid)).toEqual([]);
-    expect(Path.getAdjacent({ index: Number.NEGATIVE_INFINITY }, [])).toEqual([]);
+    it('an empty array for invalid input', () => {
+      expect(Path.getAdjacent({ index: Number.POSITIVE_INFINITY }, grid)).toEqual([]);
+      expect(Path.getAdjacent({ index: Number.NEGATIVE_INFINITY }, [])).toEqual([]);
+    });
   });
 
-  it('getDistance should return a correct Manhatan distance value', () => {
-    expect(Path.getDistance({ index: 0 }, { index: 22 }, 10)).toBe(4);
-    expect(Path.getDistance({ index: 0 }, { index: 99 }, 10)).toBe(18);
-    expect(Path.getDistance({ index: 10 }, { index: 11 }, 10)).toBe(1);
-    expect(Path.getDistance({ index: 50 }, { index: 50 }, 10)).toBe(0);
-    expect(Path.getDistance({ index: 0 }, { index: 9 }, 10)).toBe(9);
+  describe('getDistance should return', () => {
+    // tslint:disable: no-magic-numbers
+    it('return a correct Manhatan distance value', () => {
+      expect(Path.getDistance({ index: 0 }, { index: 22 }, 10)).toBe(4, 'forward');
+      expect(Path.getDistance({ index: 10 }, { index: 11 }, 10)).toBe(1, 'one step');
+      expect(Path.getDistance({ index: 50 }, { index: 50 }, 10)).toBe(0, 'the same cell');
+      expect(Path.getDistance({ index: 0 }, { index: 9 }, 10)).toBe(9, 'backward');
+    });
 
-    // Invalid input
-    expect(Path.getDistance({ index: undefined }, { index: undefined }, 10)).toBeNaN();
-    expect(Path.getDistance({ index: 0 }, { index: undefined }, 10)).toBeNaN();
-    expect(Path.getDistance({ index: Number.POSITIVE_INFINITY }, { index: Number.NEGATIVE_INFINITY }, 10)).toBeNaN();
+    it('return NaN on invalid input', () => {
+      expect(Path.getDistance({ index: undefined }, { index: undefined }, 10)).toBeNaN();
+      expect(Path.getDistance({ index: 0 }, { index: undefined }, 10)).toBeNaN();
+      expect(Path.getDistance({ index: Number.POSITIVE_INFINITY }, { index: Number.NEGATIVE_INFINITY }, 10)).toBeNaN();
+    });
+    // tslint:enable: no-magic-numbers
   });
 
-  it('makePath should return a correct path array', () => {
-    const grid: PathCell[] = Array.from({ length: DEFAULT_SIZE }, (index: number) => ({
-      index: index,
+  describe('makePath', () => {
+    const PATH_LENGTH = 10;
+    const grid: PathCell[] = Array.from({ length: DEFAULT_LENGTH }, (_el, index: number) => ({
+      index,
       order: index + 1
     }));
 
-    let path = Path.makePath(grid[9], grid, Path.getAdjacent, 0, 10);
-    expect(path.length).toBe(10);
-    expect(path[0]).toBe(grid[0]);
-    expect(path[9]).toBe(grid[9]);
+    it('should return a correct straight path', () => {
+      const path = Path.makePath(grid[PATH_LENGTH - 1], grid, Path.getAdjacent, 0, PATH_LENGTH);
+      const expectedPathBorders = [grid[0], grid[PATH_LENGTH - 1]];
+      const actualPathBorders = [path[0], path[PATH_LENGTH - 1]];
 
-    path = Path.makePath(grid[99], grid, Path.getAdjacent, 0, 10);
-    expect(path.length).toBe(0);
+      expect(actualPathBorders).toEqual(expectedPathBorders);
+    });
 
-    const p = [ 0, 1, 2, 12, 22, 21, 20 ];
-    for (let i = 0; i < DEFAULT_SIZE; i++) {
-      const index = p.indexOf(i);
-      if (index !== -1) {
-        grid[i].order = index + 1;
-        continue;
-      }
-      grid[i].order = 0;
-    }
-    path = Path.makePath(grid[20], grid, Path.getAdjacent, 0, 10);
-    expect(path.length).toBe(7);
-    expect(path.map(el => el.index)).toEqual(p);
+    it('should return an empty array is there is no path', () => {
+      const path = Path.makePath(grid[DEFAULT_LENGTH - 1], grid, Path.getAdjacent, 0, PATH_LENGTH);
+
+      expect(path).toEqual([]);
+    });
+
+    it('should return a correct curved path', () => {
+      // tslint:disable-next-line: no-magic-numbers
+      const expectedPathPoints = [0, 1, 2, 12, 22, 21, 20];
+      const [lastPathPoint] = expectedPathPoints.slice().reverse();
+      const reorderedGrid = grid.map((cell, i) => {
+        const index = expectedPathPoints.indexOf(i);
+
+        return {
+          ...cell,
+          order: index !== - 1 ? index + 1 : 0
+        };
+      });
+
+      const path = Path.makePath(
+        reorderedGrid[lastPathPoint],
+        reorderedGrid,
+        Path.getAdjacent,
+        0,
+        PATH_LENGTH
+      );
+      const actualPathPoints = path.map(({ index }) => index);
+
+      expect(actualPathPoints).toEqual(expectedPathPoints);
+    });
   });
 
-  it('getPath should return the shortest path between two points', () => {
-    const grid: PathCell[] = [];
-    for (let i = 0; i < DEFAULT_SIZE; i++) {
-      grid.push({ index: i, cost: 0, order: 0 });
-    }
-    let path = Path.getPath(grid[0], grid[99], grid, 0, 10);
-    expect(path).not.toEqual([]);
-    expect(path.length).toBe(19);
+  describe('getPath should return', () => {
+    let grid: PathCell[];
 
-    for (let i = 0; i < 10; i++) {
-      grid[10 + i].cost = Number.POSITIVE_INFINITY;
-    }
-    path = Path.getPath(grid[0], grid[20], grid, 0, 10);
-    expect(path).toEqual([]);
+    const getIndecies = (values: ({ index: number })[]): number[] =>
+      values.map(({ index }) => index);
 
-    grid[19].cost = 1;
-    path = Path.getPath(grid[0], grid[20], grid, 0, 10);
-    expect(path).not.toEqual([]);
-    expect(path.length).toBe(21);
+    beforeEach(() => {
+      grid = generatePathGridMock();
+    });
 
-    path = Path.getPath(grid[0], grid[1], grid, 0, 10);
-    expect(path).not.toEqual([]);
-    expect(path.length).toBe(2);
+    // tslint:disable: no-magic-numbers
+    it('a simple path', () => {
+      const actualPath = Path.getPath(grid[0], grid[1], grid, 0, DEFAULT_SIZE);
+      expect(getIndecies(actualPath)).toEqual([0, 1]);
+    });
+
+    it('a corner path', () => {
+      const actualPath = Path.getPath(grid[0], grid[99], grid, 0, DEFAULT_SIZE);
+
+      expect(getIndecies(actualPath))
+        .toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 29, 39, 49, 59, 69, 79, 89, 99]);
+    });
+
+    it('a complex path', () => {
+      for (let i = 0; i < 9; i++) {
+        grid[10 + i].cost = Number.POSITIVE_INFINITY;
+      }
+      const actualPath = Path.getPath(grid[0], grid[20], grid, 0, DEFAULT_SIZE);
+
+      expect(getIndecies(actualPath))
+        .toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20]);
+    });
+
+    it('an intraversable path', () => {
+      for (let i = 0; i < 10; i++) {
+        grid[10 + i].cost = Number.POSITIVE_INFINITY;
+      }
+      const actualPath = Path.getPath(grid[0], grid[20], grid, 0, DEFAULT_SIZE);
+
+      expect(actualPath).toEqual([]);
+    });
   });
 });
