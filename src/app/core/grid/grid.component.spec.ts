@@ -4,12 +4,11 @@ import { GridComponent } from './grid.component';
 import { CellComponent } from '../../core/cell/cell.component';
 import { BallComponent } from '../../core/ball/ball.component';
 import { By } from '@angular/platform-browser';
-import { Grid } from '../shared/Grid';
 import { UiComponent } from '../ui/ui.component';
 import { GridAnimationComponent } from '../grid-animation/grid-animation.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { GridAnimationType } from '../shared/GridAnimation';
-import { TurnData } from '../shared/TurnData';
+import { TurnData, GridAnimationType } from '../shared';
+import * as Grid from '../shared/Grid';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -40,7 +39,8 @@ describe('GridComponent', () => {
   });
 
   it('should properly dispatch cell click', () => {
-    component.turn = { cells: Grid.getRandomGrid() } as TurnData;
+    const cells = Grid.getRandomGrid();
+    component.turn = { cells } as TurnData;
     fixture.detectChanges();
     const cellEls = fixture.debugElement.queryAll(By.css('app-cell'));
     expect(cellEls.length).toBe(component.turn.cells.length);

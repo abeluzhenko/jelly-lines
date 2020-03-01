@@ -1,12 +1,18 @@
 import { inject, TestBed } from '@angular/core/testing';
 
 import { GridService, SCORE_MULTIPLIER } from './grid.service';
-import { BallState, BallColor } from './shared/Ball';
-import { Grid } from './shared/Grid';
-import { GridAnimationType } from './shared/GridAnimation';
-import { SelectCellAction, Actions, StartGameAction } from './shared/Action';
-import { GameState, IGameState } from './shared/GameState';
-import { Cell } from './shared/Cell';
+import {
+  BallState,
+  BallColor,
+  IGameState,
+  Actions,
+  StartGameAction,
+  GameState,
+  SelectCellAction,
+  GridAnimationType,
+  Cell
+} from './shared';
+import * as Grid from './shared/Grid';
 
 class GridServiceMocked extends GridService {
   public getUpdatedStateTest(state: IGameState, action: Actions): IGameState {

@@ -1,126 +1,163 @@
-import { BALL_COLORS, BallColor, BallState } from './Ball';
-import { Cell } from './Cell';
+import { BALL_COLORS, BallColor, BallState, Cell } from './';
 
-export class Grid {
 
-  public static SIZE = 9;
-  public static ITEMS_PER_TURN = 3;
+const SIZE = 9;
+const MATCH_LENGTH = 5;
 
-  public static getRandomColor(): BallColor {
-    return BALL_COLORS[Math.floor(BALL_COLORS.length * Math.random())];
-  }
+export const ITEMS_PER_TURN = 3;
 
-  public static getGrid(size: number = Grid.SIZE): Cell[] {
-    const result: Cell[] = [];
-    for (let i = 0; i < size * size; i++) {
-      result.push({ id: i });
+export const getRandomColor = (): BallColor =>
+  BALL_COLORS[Math.floor(BALL_COLORS.length * Math.random())];
+
+export const getGrid = (size: number = SIZE): Cell[] =>
+  Array.from({ length: size * size }, (_el, id) => ({ id }));
+
+export const getRandomGrid = (size: number = SIZE): Cell[] =>
+  Array.from({ length: size * size }, (_el, id) => ({
+    id,
+    ball: {
+      id,
+      color: getRandomColor(),
+      state: BallState.idle
     }
-    return result;
-  }
+  }));
 
-  public static getRandomGrid(size: number = Grid.SIZE): Cell[] {
-    const result: Cell[] = [];
-    for (let i = 0; i < size * size; i++) {
-      result.push({ id: i, ball: { id: i, color: Grid.getRandomColor(), state: BallState.idle} });
-    }
-    return result;
-  }
+export const getPosition = (
+  index: number,
+  gridSize = SIZE
+): { x: number, y: number } => ({
+  y: Math.floor(index / gridSize),
+  x: index % gridSize,
+});
 
-  public static getPosition(
-    index: number,
-    gridSize = Grid.SIZE
-  ): { x: number, y: number } {
-    return {
-      y: Math.floor(index / gridSize),
-      x: index % gridSize,
-    };
-  }
+const isAdjacent = (cellA: Cell, cellB: Cell, gridSize: number): boolean => {
+  const [[ax, ay], [bx, by]] = [cellA, cellB].map(({ id }) =>
+    [Math.floor(id / gridSize), id % gridSize]);
 
-  public static getMatches(grid: Cell[], length = 5, gridSize = Grid.SIZE): Cell[][] {
-    const ROW = 1000;
-    const COLUMN = -1000;
-    const CURRENT = -2000;
-    let result = [];
+  const [dx, dy] = [Math.abs(ax - bx), Math.abs(ay - by)];
 
-    const isAdjacent = (cell0: Cell, cell1: Cell): boolean => {
-      const x0 = Math.floor(cell0.id / gridSize);
-      const y0 = cell0.id % gridSize;
-      const x1 = Math.floor(cell1.id / gridSize);
-      const y1 = cell1.id % gridSize;
-      const dx = Math.abs(x0 - x1);
-      const dy = Math.abs(y0 - y1);
-      return ((dx === 1 && dy === 1) || (!dx && dy === 1) || (!dy && dx === 1));
-    };
+  return (dx === 1 && dy === 1) || (!dx && dy === 1) || (!dy && dx === 1);
+};
 
-    const getSequences = (
-      flatGrid: { cell: Cell, slope: number }[],
-      matches: Cell[][]
-    ) => {
-      if (flatGrid.length < length) {
-        return [];
-      }
-      const primeItem = flatGrid[0];
-      let lastItem = flatGrid[1];
-      let lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell) ? lastItem : primeItem;
-      let sequence = [];
-      const sequencies = [];
-      for (let i = 2; i <= flatGrid.length; i++) {
-        const currentItem = flatGrid[i];
-        if (currentItem
-          && (currentItem.slope === lastItem.slope)
-          && isAdjacent(lastSequenceItem.cell, currentItem.cell)
-        ) {
-          if (!sequence.length) {
-            sequence.push(lastItem);
-          }
-          sequence.push(currentItem);
-          lastSequenceItem = currentItem;
-          lastItem = currentItem;
-          continue;
-        }
-        if (sequence.length >= length - 1) {
-          const n = [primeItem, ...sequence].map(data => data.cell);
-          if (!matches.some(s => s[s.length - 1].id === n[n.length - 1].id)) {
-            sequencies.push(n);
-          }
-        }
-        if (currentItem) {
-          sequence = [];
-          lastItem = currentItem;
-          lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell) ? lastItem : primeItem;
-        }
-      }
-      return sequencies;
-    };
-    for (let i = 0; i < grid.length - length + 1; i++) {
-      if (!grid[i].ball) {
-        continue;
-      }
-      const currItem = grid[i];
-      const currPos = Grid.getPosition(i, gridSize);
-      const sortedGrid = grid
-        .slice(i)
-        .filter(cell => cell.ball && cell.ball.color === currItem.ball.color)
-        .map(cell => {
-          const cellPos = Grid.getPosition(cell.id, gridSize);
-          let slope = 0;
-          if (cell.id === currItem.id) {
-            slope = CURRENT;
-          } else if (currPos.x === cellPos.x) {
-            slope = ROW;
-          } else if (currPos.y === cellPos.y) {
-            slope = COLUMN;
-          } else {
-            slope = (cellPos.y - currPos.y) / (cellPos.x - currPos.x);
-          }
-          return { cell, slope };
-        })
-        .sort((a, b) => a.slope > b.slope ? 1 : (a.slope < b.slope ? -1 : a.cell.id - b.cell.id));
-      result = [
-        ...result,
-        ...getSequences(sortedGrid, result)
-      ];
-    }
-    return result;
-  }
+interface MatchingItem {
+  cell: Cell;
+  slope: number;
 }
+
+const SLOPE_ROW = 1000;
+const SLOPE_COLUMN = -1000;
+const SLOPE_CURRENT = -2000;
+
+export const getSortedGrid = (grid: Cell[], index: number, gridSize: number): MatchingItem[] => {
+  const currentItem = grid[index];
+  const { x: currentX, y: currentY} = getPosition(index, gridSize);
+
+  return grid
+    .slice(index)
+    .filter(({ ball }) => ball && ball.color === currentItem.ball.color)
+    .map((cell) => {
+      const { x, y } = getPosition(cell.id, gridSize);
+      let slope = 0;
+
+      if (cell.id === currentItem.id) {
+        slope = SLOPE_CURRENT;
+      } else if (currentX === x) {
+        slope = SLOPE_ROW;
+      } else if (currentY === y) {
+        slope = SLOPE_COLUMN;
+      } else {
+        slope = (y - currentY) / (x - currentX);
+      }
+
+      return { cell, slope };
+    })
+    .sort((a, b) => a.slope > b.slope
+      ? 1
+      : (a.slope < b.slope
+          ? -1
+          : a.cell.id - b.cell.id
+        )
+    );
+};
+
+const getSequences = (
+  flatGrid: MatchingItem[],
+  matches: Cell[][],
+  { gridSize, matchLength }: {
+    gridSize: number;
+    matchLength: number;
+  }
+) => {
+  const SORTING_START_INDEX = 2;
+
+  if (flatGrid.length < matchLength) { return []; }
+
+  const primeItem = flatGrid[0];
+  let lastItem = flatGrid[1];
+
+  let lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell, gridSize)
+    ? lastItem
+    : primeItem;
+
+  const sequencies = [];
+  let sequence = [];
+
+  for (let i = SORTING_START_INDEX; i <= flatGrid.length; i++) {
+    const currentItem = flatGrid[i];
+
+    if (
+      currentItem &&
+      currentItem.slope === lastItem.slope &&
+      isAdjacent(lastSequenceItem.cell, currentItem.cell, gridSize)
+    ) {
+      if (!sequence.length) {
+        sequence.push(lastItem);
+      }
+      sequence.push(currentItem);
+
+      lastSequenceItem = currentItem;
+      lastItem = currentItem;
+
+      continue;
+    }
+
+    if (sequence.length >= matchLength - 1) {
+      const newSequence = [primeItem, ...sequence].map(({ cell }) => cell);
+      const isUniqMatch = !matches.some(
+        (match) => match[match.length - 1].id === newSequence[newSequence.length - 1].id
+      );
+
+      if (isUniqMatch) {
+        sequencies.push(newSequence);
+      }
+    }
+
+    if (currentItem) {
+      sequence = [];
+      lastItem = currentItem;
+      lastSequenceItem = isAdjacent(primeItem.cell, lastItem.cell, gridSize)
+        ? lastItem
+        : primeItem;
+    }
+  }
+  return sequencies;
+};
+
+export const getMatches = (
+  grid: Cell[],
+  { matchLength = MATCH_LENGTH, gridSize = SIZE }: { matchLength?: number, gridSize?: number } = {}
+): Cell[][] =>
+  grid.slice(0, -matchLength + 1).reduce((accumulator, value, index) => {
+    if (!value.ball) {
+      return accumulator;
+    }
+
+    return [
+      ...accumulator,
+      ...getSequences(
+        getSortedGrid(grid, index, gridSize),
+        accumulator,
+        { gridSize, matchLength }
+      )
+    ];
+  }, []);

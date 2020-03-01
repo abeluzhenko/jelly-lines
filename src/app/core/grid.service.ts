@@ -2,15 +2,20 @@ import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { scan, share } from 'rxjs/operators';
 
-import { BallState, BallColor } from './shared/Ball';
-import { Cell } from './shared/Cell';
-import { Path } from './shared/Path';
-import { Grid } from './shared/Grid';
-import { GridAnimationType } from './shared/GridAnimation';
-import { Actions, SelectCellAction } from './shared/Action';
-import { IGameState } from './shared/GameState';
+import {
+  Cell,
+  Path,
+  BallState,
+  BallColor,
+  Actions,
+  SelectCellAction,
+  TurnData,
+  IGameState,
+  GridAnimationType
+} from './shared';
 import { GridFactoryService } from './grid-factory.service';
-import { TurnData } from './shared/TurnData';
+import * as Grid from './shared/Grid';
+
 
 export const SCORE_MULTIPLIER = 10;
 

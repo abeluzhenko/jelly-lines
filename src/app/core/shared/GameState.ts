@@ -1,7 +1,7 @@
 import { TurnData } from './TurnData';
 import { UIData } from './UIData';
 import { GridAnimation } from './GridAnimation';
-import { Grid } from './Grid';
+import * as Grid from './Grid';
 
 export interface IGameState {
   turn: TurnData;
