@@ -25,9 +25,8 @@ import {
   AnimationFunction,
   DELAY_MULTIPLIER,
 } from './grid-animation.animations';
-import { Grid } from '../shared/Grid';
-import { Cell } from '../shared/Cell';
-import { Ball } from '../shared/Ball';
+import * as Grid from '../shared/Grid';
+import { Cell, Ball } from '../shared';
 import { GridAnimation, GridAnimationType } from 'src/app/core/shared/GridAnimation';
 
 @Component({

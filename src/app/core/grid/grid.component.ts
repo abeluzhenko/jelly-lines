@@ -1,12 +1,9 @@
 import { Component, Input, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { TurnData } from 'src/app/core/shared/TurnData';
-import { Grid } from 'src/app/core/shared/Grid';
-import { GridAnimation } from 'src/app/core/shared/GridAnimation';
-import { Cell } from 'src/app/core/shared/Cell';
 import { GridService } from '../grid.service';
-import { SelectCellAction, StartGameAction } from '../shared/Action';
 import { POSITION_PERCENTAGE } from '../grid-animation/grid-animation.animations';
+import { GridAnimation, Cell, TurnData, SelectCellAction, StartGameAction } from '../shared';
+import * as Grid from 'src/app/core/shared/Grid';
 
 @Component({
   selector: 'app-grid',
