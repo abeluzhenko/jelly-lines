@@ -1,7 +1,7 @@
-import { UIData } from './UIData';
-import { Cell } from './Cell';
+import { Cell, UIData } from './';
 
-export interface TurnData extends UIData {
+
+export interface TurnData extends Partial<UIData> {
   cells: Cell[];
-  cell?: Cell | null;
+  cell?: Cell;
 }

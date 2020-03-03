@@ -1,4 +1,4 @@
-import { Cell } from './Cell';
+import { cloneDeep, Cell, INITIAL_STATE } from './';
 
 export type Actions = SelectCellAction | StartGameAction;
 

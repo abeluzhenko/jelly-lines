@@ -10,7 +10,7 @@ import {
   Actions,
   SelectCellAction,
   TurnData,
-  IGameState,
+  GameState,
   GridAnimationType
 } from './shared';
 import { GridFactoryService } from './grid-factory.service';
@@ -24,35 +24,35 @@ export const SCORE_MULTIPLIER = 10;
 })
 export class GridService {
   private action$: Subject<Actions>;
-  private _state$: BehaviorSubject<IGameState>;
+  private _state$: BehaviorSubject<GameState>;
 
-  public get state$(): Observable<IGameState> {
+  public get state$(): Observable<GameState> {
     return this._state$.asObservable();
   }
 
-  public get initialState(): IGameState {
-    return this.gridFactory.getInitialState();
+  public get initialState(): GameState {
+    return this.gridFactory.initialState;
   }
 
   constructor(private gridFactory: GridFactoryService) {
     this.action$ = new Subject<Actions>();
-    this._state$ = new BehaviorSubject<IGameState>(this.initialState);
+    this._state$ = new BehaviorSubject<GameState>(this.initialState);
     this.action$
       .pipe(
-        scan((state: IGameState, action: Actions) =>
+        scan((state: GameState, action: Actions) =>
           this.getUpdatedState(state, action),
           this.initialState
         ),
         share(),
       )
-      .subscribe((state: IGameState) => this._state$.next(state));
+      .subscribe((state: GameState) => this._state$.next(state));
   }
 
   public dispatch(action: Actions) {
     this.action$.next(action);
   }
 
-  protected getUpdatedState(state: IGameState, action: Actions): IGameState {
+  protected getUpdatedState(state: GameState, action: Actions): GameState {
     const newState = state;
 
     if (action instanceof SelectCellAction && action.payload) {
@@ -73,7 +73,7 @@ export class GridService {
     return newState;
   }
 
-  private turn(state: IGameState): IGameState {
+  private turn(state: GameState): GameState {
     let matches = Grid.getMatches(state.turn.cells);
     const animation = [];
     const turn = state.turn;
@@ -145,7 +145,7 @@ export class GridService {
     };
   }
 
-  private move(state: IGameState): IGameState {
+  private move(state: GameState): GameState {
     const activeCell = state.turn.cells
       .filter((cell) => cell.ball && cell.ball.state === BallState.active)[0];
 
@@ -185,7 +185,7 @@ export class GridService {
     };
   }
 
-  private activate(state: IGameState): IGameState {
+  private activate(state: GameState): GameState {
     const cells = state.turn.cells.map((cell) => {
       if (!cell.ball) {
         return cell;
