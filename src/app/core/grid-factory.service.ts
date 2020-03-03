@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { IGameState, GameState } from './shared/GameState';
+import { GameState, INITIAL_STATE, cloneDeep } from './shared';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GridFactoryService {
-
-  constructor() { }
-
-  public getInitialState(): IGameState {
-    return new GameState();
+  get initialState(): GameState {
+    return cloneDeep(INITIAL_STATE);
   }
 }

@@ -45,7 +45,7 @@ export class GridAnimationComponent implements OnDestroy {
   private wrongAnimationPlayer: AnimationPlayer;
   private _animationQueue: GridAnimation[] = [];
 
-  public balls: Ball[];
+  public balls: Ball[] = [];
 
   @ViewChildren(BallComponent) ballsEls: QueryList<BallComponent>;
 
@@ -170,6 +170,8 @@ export class GridAnimationComponent implements OnDestroy {
       );
     });
 
-    return await Promise.all(doneList).then(() => this.balls = null);
+    return await Promise.all(doneList).then(() => {
+      this.balls = [];
+    });
   }
 }

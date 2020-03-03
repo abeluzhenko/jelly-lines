@@ -4,18 +4,19 @@ import { GridService, SCORE_MULTIPLIER } from './grid.service';
 import {
   BallState,
   BallColor,
-  IGameState,
   Actions,
   StartGameAction,
   GameState,
   SelectCellAction,
   GridAnimationType,
-  Cell
+  Cell,
+  cloneDeep,
+  INITIAL_STATE
 } from './shared';
 import * as Grid from './shared/Grid';
 
 class GridServiceMocked extends GridService {
-  public getUpdatedStateTest(state: IGameState, action: Actions): IGameState {
+  public getUpdatedStateTest(state: GameState, action: Actions): GameState {
     return super.getUpdatedState(state, action);
   }
 }
@@ -45,6 +46,7 @@ describe('GridService', () => {
     });
   })());
 
+  // tslint:disable: no-magic-numbers
   it('should properly set the current ball', () =>
     inject([GridService], (service: GridServiceMocked) => {
     const cells = Grid.getGrid(10);
@@ -59,7 +61,7 @@ describe('GridService', () => {
     cells[0] = cell1;
     cells[10] = cell2;
 
-    let newState = new GameState();
+    let newState = cloneDeep(INITIAL_STATE);
     newState.turn.cells = cells;
 
     // Select the first ball
@@ -104,7 +106,7 @@ describe('GridService', () => {
 
   it('should setup new balls colors on a new turn',
     () => inject([GridService], (service: GridServiceMocked) => {
-    let state = service.getUpdatedStateTest(new GameState(), new StartGameAction());
+    let state = service.getUpdatedStateTest(cloneDeep(INITIAL_STATE), new StartGameAction());
     expect(state).toBeDefined();
     expect(state.ui.nextColors).toBeTruthy();
     expect(state.ui.nextColors.length).toBe(3);
@@ -166,7 +168,7 @@ describe('GridService', () => {
     cells[1] = { id: 1, ball: { id: 1, color: BallColor.red, state: BallState.idle }};
     cells[9] = { id: 9, ball: { id: 9, color: BallColor.red, state: BallState.idle }};
 
-    let state = new GameState();
+    let state = cloneDeep(INITIAL_STATE);
     state.turn.cells = cells;
 
     state = service.getUpdatedStateTest(state, new SelectCellAction(cells[0]));
@@ -193,7 +195,7 @@ describe('GridService', () => {
     }
     expect(Grid.getMatches(cells).length).toBe(1);
 
-    let state = new GameState();
+    let state = cloneDeep(INITIAL_STATE);
     state.turn.cells = cells;
     state = service.getUpdatedStateTest(state, new StartGameAction());
     expect(state.animation.length).toEqual(1);
@@ -216,7 +218,7 @@ describe('GridService', () => {
     for (let i = 0; i < 81 - 3; i++) {
       cells[i].ball = { id: i, state: BallState.idle, color: BallColor.blue };
     }
-    let state = new GameState();
+    let state = cloneDeep(INITIAL_STATE);
     state.turn.cells = cells;
 
     state = service.getUpdatedStateTest(state, new StartGameAction());
@@ -239,7 +241,7 @@ describe('GridService', () => {
 
   it('should increment the turn number',
   () => inject([GridService], (service: GridServiceMocked) => {
-    let state = new GameState();
+    let state = cloneDeep(INITIAL_STATE);
     for (let i = 1; i < 10; i++) {
       state.animation = [];
       state = service.getUpdatedStateTest(state, new StartGameAction());

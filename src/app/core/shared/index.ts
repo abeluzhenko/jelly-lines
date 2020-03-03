@@ -7,3 +7,4 @@ export * from './GridAnimation';
 export * from './Path';
 export * from './TurnData';
 export * from './UIData';
+export * from './Utils';
