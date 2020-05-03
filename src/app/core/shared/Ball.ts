@@ -1,3 +1,4 @@
+// TODO: change to capital case
 export enum BallColor {
   red = 'red',
   green = 'green',
@@ -8,6 +9,7 @@ export enum BallColor {
 
 export const BALL_COLORS: BallColor[] = Object.values(BallColor);
 
+// TODO: change to capital case
 export enum BallState {
   idle,
   active,

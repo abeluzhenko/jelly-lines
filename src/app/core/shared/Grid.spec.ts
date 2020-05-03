@@ -1,12 +1,8 @@
 import * as Grid from './Grid';
 import { BallState, BallColor } from './Ball';
 import { Cell } from './Cell';
+import { GRID_CONFIG } from './Common.spec';
 
-
-const GRID_CONFIG = {
-  gridSize: 9,
-  matchLength: 5
-};
 
 describe('Grid module', () => {
   describe('getGrid should return', () => {
