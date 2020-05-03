@@ -117,15 +117,17 @@ export class GridService {
       const updated = [];
       const newAmount = Math.min(openCells.length, Grid.ITEMS_PER_TURN);
       for (let i = 0; i < newAmount; i++) {
-        const r = Math.floor(openCells.length * Math.random());
-        const cell = cells[openCells[r].id];
+        const randomIndex = this.getRandomOpenCellIndex(openCells);
+        const cell = cells[openCells[randomIndex].id];
+
         cell.ball = {
-          id: openCells[r].id,
+          id: openCells[randomIndex].id,
           color: colors[i],
           state: BallState.idle
         };
+
         updated.push(cell);
-        openCells.splice(r, 1);
+        openCells.splice(randomIndex, 1);
       }
 
       ui.nextColors = this.getRandomColors();
@@ -141,13 +143,14 @@ export class GridService {
     return {
       turn,
       animation,
-      ui,
+      ui
     };
   }
 
   private move(state: GameState): GameState {
-    const activeCell = state.turn.cells
-      .filter((cell) => cell.ball && cell.ball.state === BallState.active)[0];
+    const [activeCell] = state.turn.cells.filter(
+      ({ ball }) => ball && ball.state === BallState.active
+    );
 
     // If we have an active ball
     // check if the ball can be moved to the cell
@@ -211,5 +214,9 @@ export class GridService {
 
   private getRandomColors(): BallColor[] {
     return Array.from({ length: Grid.ITEMS_PER_TURN }, () => Grid.getRandomColor());
+  }
+
+  private getRandomOpenCellIndex(openCells: Cell[]): number {
+    return Math.floor(openCells.length * Math.random());
   }
 }
