@@ -75,8 +75,9 @@ export class GridService {
 
   private turn(state: GameState): GameState {
     let matches = Grid.getMatches(state.turn.cells);
+
     const animation = [];
-    const turn = state.turn;
+    const { turn } = state;
     const ui = { ...state.ui, turn: state.ui.turn + 1 };
 
     while (matches.length) {
@@ -102,20 +103,17 @@ export class GridService {
 
     if (!animation.length) {
       // Process new turn
-      const cells: Cell[] = state.turn.cells;
+      const { ui: { nextColors }, turn: { cells } } = state;
+
       const openCells = cells.filter((cell) => !cell.ball);
-      let colors = [];
-      if (
-        state.ui.nextColors &&
-        state.ui.nextColors.length === Grid.ITEMS_PER_TURN
-      ) {
-        colors = state.ui.nextColors;
-      } else {
-        colors = this.getRandomColors();
-      }
+
+      const colors = nextColors && nextColors.length === Grid.ITEMS_PER_TURN
+        ? state.ui.nextColors
+        : this.getRandomColors();
 
       const updated = [];
       const newAmount = Math.min(openCells.length, Grid.ITEMS_PER_TURN);
+
       for (let i = 0; i < newAmount; i++) {
         const randomIndex = this.getRandomOpenCellIndex(openCells);
         const cell = cells[openCells[randomIndex].id];
@@ -138,6 +136,10 @@ export class GridService {
           cells: updated
         });
       }
+    }
+
+    if (turn.cells.every(({ ball }) => !!ball)) {
+      animation.push({ type: GridAnimationType.Full });
     }
 
     return {

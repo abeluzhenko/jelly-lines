@@ -339,21 +339,26 @@ describe('GridService', () => {
       })());
     });
 
-    xit('should finish the game when the grid is full', () => inject([GridService], (service: GridService) => {
+    it('should finish the game when the grid is full', () => inject([GridService], (service: GridService) => {
+      const colorsSet = [BALL_COLORS[0], ...BALL_COLORS];
       const actualState: GameState = (service as any).getUpdatedState(
-        initialState,
-        new StartGameAction(),
-        initialState.turn.cells.map((cell, index) => ({
-          ...cell,
-          ball: {
-            ...defaultBallMock,
-            id: cell.id,
-            color: BALL_COLORS[index % BALL_COLORS.length]
-          }
-        }))
+        getChangedStateMock(
+          initialState,
+          undefined,
+          initialState.turn.cells.map((cell, index) => ({
+            ...cell,
+            ball: {
+              ...defaultBallMock,
+              id: cell.id,
+              color: colorsSet[index % colorsSet.length]
+            }
+          }))
+        ),
+        new StartGameAction()
       );
 
-      expect(actualState.animation).toEqual([{ type: GridAnimationType.Full }]);
+      expect(actualState.animation[actualState.animation.length - 1])
+        .toEqual({ type: GridAnimationType.Full });
     })());
 
     it('increment the turn number', () => inject([GridService], (service: GridService) => {
