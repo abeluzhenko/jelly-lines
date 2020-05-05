@@ -1,6 +1,6 @@
 import { inject, TestBed } from '@angular/core/testing';
 
-import { GridService } from './grid.service';
+import { GridService, SCORE_MULTIPLIER } from './grid.service';
 import {
   BallState,
   BallColor,
@@ -337,6 +337,10 @@ describe('GridService', () => {
           [...fullCellsIndecies, ...newTurnCellsIndecies].every((id) => !changedState.turn.cells[id].ball)
         ).toBeTruthy();
       })());
+
+      it('add scores', () => {
+        expect(actualState.ui.score).toBe(matchCellsIndecies.length * SCORE_MULTIPLIER);
+      });
     });
 
     it('should finish the game when the grid is full', () => inject([GridService], (service: GridService) => {
@@ -361,7 +365,7 @@ describe('GridService', () => {
         .toEqual({ type: GridAnimationType.Full });
     })());
 
-    it('increment the turn number', () => inject([GridService], (service: GridService) => {
+    it('increment a turn number', () => inject([GridService], (service: GridService) => {
       const actualState: GameState = (service as any).getUpdatedState(
         initialState,
         new StartGameAction()
