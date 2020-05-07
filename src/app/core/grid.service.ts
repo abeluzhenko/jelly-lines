@@ -130,7 +130,7 @@ export class GridService {
 
       ui.nextColors = this.getRandomColors();
 
-      if (updated) {
+      if (updated.length) {
         animation.push({
           type: GridAnimationType.Add,
           cells: updated

@@ -1,4 +1,4 @@
-import { $$, By, ElementFinder } from 'protractor';
+import { $$, ElementFinder } from 'protractor';
 
 export class Game {
   getCells() {
