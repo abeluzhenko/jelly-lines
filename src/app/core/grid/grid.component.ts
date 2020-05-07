@@ -11,11 +11,13 @@ import * as Grid from 'src/app/core/shared/Grid';
     <app-grid-animation [container]="elementRef"
                         [animation]="animation"
                         (completed)="animationCompleted()"></app-grid-animation>
-    <app-cell *ngFor="let cell of turn?.cells"
+    <app-cell *ngFor="let cell of turn?.cells; index as i"
+              [attr.id]="'grid-cell-' + i"
               [cell]="cell"
               [style.transform]="styles[cell.id]"
               (clicked)="cellClicked($event)">
       <app-ball *ngIf="cell.ball"
+                [attr.id]="'grid-ball-' + i"
                 [style.visibility]="getBallVisibility(cell.id) ? 'visible' : 'hidden'"
                 [ball]="cell.ball"></app-ball>
     </app-cell>
