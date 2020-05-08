@@ -176,7 +176,9 @@ export class GridService {
         id: state.turn.cell.id,
         state: BallState.idle,
       };
-      state.turn.cells[activeCell.id].ball = undefined;
+
+      delete state.turn.cells[activeCell.id].ball;
+
       state.turn.cells[state.turn.cell.id].ball = ballToMove;
     }
     return {

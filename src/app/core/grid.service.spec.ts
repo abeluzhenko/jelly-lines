@@ -17,6 +17,7 @@ import {
   BALL_COLORS
 } from './shared';
 import * as Grid from './shared/Grid';
+import { getChangedStateMock } from './grid.mock';
 
 describe('GridService', () => {
   beforeEach(() => {
@@ -120,21 +121,6 @@ describe('GridService', () => {
     let currentCell: Cell;
     let selectedCell: Cell;
 
-    const getChangedStateMock = (
-      state: GameState,
-      cell: Cell,
-      cells: Cell[] = []
-    ): GameState => ({
-      ...state,
-      turn: {
-        ...state.turn,
-        cells: state.turn.cells.map(
-          (initialCell) => cells.find(({ id }) => id === initialCell.id) || initialCell
-        ),
-        cell,
-      }
-    });
-
     beforeEach(() => {
       initialState = cloneDeep(INITIAL_STATE);
 
@@ -142,16 +128,16 @@ describe('GridService', () => {
       selectedCell = initialState.turn.cells[selectedCellIndex];
     });
 
-    it('select a ball when clicked on', () => inject([GridService], (service: GridService) => {
+    it('select a ball when clicked on', inject([GridService], (service: GridService) => {
       const actualState: GameState = (service as any).getUpdatedState(
         initialState,
         new SelectCellAction(currentCell)
       );
 
       expect(actualState.turn.cell).toEqual(currentCell);
-    })());
+    }));
 
-    it('set a ball animation when clicked on', () => inject([GridService], (service: GridService) => {
+    it('set a ball animation when clicked on', inject([GridService], (service: GridService) => {
       const expectedBall: Ball = { ...defaultBallMock };
       currentCell.ball = { ...expectedBall, state: BallState.idle };
 
@@ -161,9 +147,9 @@ describe('GridService', () => {
       );
 
       expect(actualState.turn.cells[currentCellIndex].ball).toEqual(expectedBall);
-    })());
+    }));
 
-    it('switch current ball when clicked on', () => inject([GridService], (service: GridService) => {
+    it('switch current ball when clicked on', inject([GridService], (service: GridService) => {
       const changedState = getChangedStateMock(initialState, currentCell);
 
       const actualState: GameState = (service as any).getUpdatedState(
@@ -172,9 +158,9 @@ describe('GridService', () => {
       );
 
       expect(actualState.turn.cell).toEqual(selectedCell);
-    })());
+    }));
 
-    it('switch current ball animation when clicked on', () => inject([GridService], (service: GridService) => {
+    it('switch current ball animation when clicked on', inject([GridService], (service: GridService) => {
       const expectedBall: Ball = { ...defaultBallMock, state: BallState.idle };
       const changedState = getChangedStateMock(initialState, currentCell);
 
@@ -187,14 +173,14 @@ describe('GridService', () => {
       );
 
       expect(actualState.turn.cells[currentCellIndex].ball).toEqual(expectedBall);
-    })());
+    }));
 
     describe('if there is a path to the selected cell', () => {
       let expectedBall: Ball;
       let changedState: GameState;
       let actualState: GameState;
 
-      beforeEach(() => inject([GridService], (service: GridService) => {
+      beforeEach(inject([GridService], (service: GridService) => {
         expectedBall = {
           ...defaultBallMock,
           id: selectedCellIndex,
@@ -213,7 +199,7 @@ describe('GridService', () => {
           changedState,
           new SelectCellAction(selectedCell)
         );
-      })());
+      }));
 
       it('move the current ball', () => {
         expect(actualState.turn.cells[selectedCellIndex].ball).toEqual(expectedBall);
@@ -239,7 +225,7 @@ describe('GridService', () => {
       let changedState: GameState;
       let actualState: GameState;
 
-      beforeEach(() => inject([GridService], (service: GridService) => {
+      beforeEach(inject([GridService], (service: GridService) => {
         expectedBall = { ...defaultBallMock, state: BallState.active };
 
         currentCell.ball = expectedBall;
@@ -260,7 +246,7 @@ describe('GridService', () => {
           changedState,
           new SelectCellAction(selectedCell)
         );
-      })());
+      }));
 
       it('not move the current ball', () => {
         expect(actualState.turn.cells[selectedCellIndex].ball).toBeUndefined();
@@ -284,7 +270,7 @@ describe('GridService', () => {
       let actualState: GameState;
       let matchCells: Cell[] = [];
 
-      beforeEach(() => inject([GridService], (service: GridService) => {
+      beforeEach(inject([GridService], (service: GridService) => {
         matchCells = matchCellsIndecies.map((id) => ({
           id,
           ball: { ...defaultBallMock, id, state: BallState.idle }
@@ -298,7 +284,7 @@ describe('GridService', () => {
           changedState,
           new StartGameAction()
         );
-      })());
+      }));
 
       it('add match animation', () => {
         expect(actualState.animation).toEqual([{
@@ -313,7 +299,7 @@ describe('GridService', () => {
         ).toBeTruthy();
       });
 
-      xit('on a new turn', () => inject([GridService], (service: GridService) => {
+      xit('on a new turn', inject([GridService], (service: GridService) => {
         // tslint:disable-next-line: no-magic-numbers
         const newTurnCellsIndecies = [60, 61, 62];
 
@@ -336,14 +322,14 @@ describe('GridService', () => {
         expect(
           [...fullCellsIndecies, ...newTurnCellsIndecies].every((id) => !changedState.turn.cells[id].ball)
         ).toBeTruthy();
-      })());
+      }));
 
       it('add scores', () => {
         expect(actualState.ui.score).toBe(matchCellsIndecies.length * SCORE_MULTIPLIER);
       });
     });
 
-    it('should finish the game when the grid is full', () => inject([GridService], (service: GridService) => {
+    it('should finish the game when the grid is full', inject([GridService], (service: GridService) => {
       const colorsSet = [BALL_COLORS[0], ...BALL_COLORS];
       const actualState: GameState = (service as any).getUpdatedState(
         getChangedStateMock(
@@ -363,15 +349,15 @@ describe('GridService', () => {
 
       expect(actualState.animation[actualState.animation.length - 1])
         .toEqual({ type: GridAnimationType.Full });
-    })());
+    }));
 
-    it('increment a turn number', () => inject([GridService], (service: GridService) => {
+    it('increment a turn number', inject([GridService], (service: GridService) => {
       const actualState: GameState = (service as any).getUpdatedState(
         initialState,
         new StartGameAction()
       );
 
       expect(actualState.ui.turn).toBe(1);
-    })());
+    }));
   });
 });
