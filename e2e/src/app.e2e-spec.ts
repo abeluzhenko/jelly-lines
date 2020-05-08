@@ -1,16 +1,37 @@
-import { AppPage } from './app.po';
-import { $ } from 'protractor';
+import { Application } from './app.po';
+import { $, browser } from 'protractor';
+import { cloneDeep, INITIAL_STATE, BallColor, BallState } from '../../src/app/core/shared';
+import { getChangedStateMock } from '../../src/app/core/grid.mock';
 
 describe('App', () => {
-  let page: AppPage;
+  let app: Application;
 
   beforeEach(() => {
-    page = new AppPage();
+    app = new Application();
 
-    page.navigateTo();
+    app.navigateTo();
+  });
+
+  afterEach(() => {
+    app.clearStorage();
   });
 
   it('should create app', () => {
     expect($('app-game').getText()).toBeTruthy();
+  });
+
+  it('should restore state data from localStorage', () => {
+    const initialState = getChangedStateMock(cloneDeep(INITIAL_STATE), null, [{
+      id: 0,
+      ball: { id: 0, color: BallColor.red, state: BallState.active }
+    }]);
+
+    app.saveStateToStorage(getChangedStateMock(initialState, initialState.turn.cells[0]));
+    app.navigateTo();
+
+    // tslint:disable-next-line: no-magic-numbers
+    browser.sleep(500);
+
+    expect($('app-ball .ball.active').isPresent()).toBeTruthy();
   });
 });

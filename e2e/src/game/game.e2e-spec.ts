@@ -1,6 +1,6 @@
 import { Game } from './game.po';
 import { UI } from './game.ui.po';
-import { AppPage } from '../app.po';
+import { Application } from '../app.po';
 import { Animation } from './game.animation.po';
 import { browser } from 'protractor';
 import { ITEMS_PER_TURN } from '../../../src/app/core/shared';
@@ -8,18 +8,22 @@ import { ITEMS_PER_TURN } from '../../../src/app/core/shared';
 const DEFAULT_TIMEOUT = 500;
 
 describe('Game', () => {
-  let app: AppPage;
+  let app: Application;
   let game: Game;
   let ui: UI;
   let animation: Animation;
 
   beforeEach(() => {
-    app = new AppPage();
+    app = new Application();
     game = new Game();
     ui = new UI();
     animation = new Animation();
 
     app.navigateTo();
+  });
+
+  afterEach(() => {
+    app.clearStorage();
   });
 
   describe('on a new turn should', () => {
