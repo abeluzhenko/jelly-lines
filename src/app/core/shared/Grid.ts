@@ -1,5 +1,5 @@
-import { BALL_COLORS, BallColor, BallState, Cell } from './';
-
+import { BALL_COLORS, BallColor, BallState } from './Ball';
+import { Cell } from './Cell';
 
 const SIZE = 9;
 const MATCH_LENGTH = 5;

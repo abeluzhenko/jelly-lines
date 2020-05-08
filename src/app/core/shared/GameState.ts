@@ -1,7 +1,7 @@
 import { TurnData } from './TurnData';
 import { UIData } from './UIData';
 import { GridAnimation } from './GridAnimation';
-import * as Grid from './Grid';
+import { getGrid } from './Grid';
 
 export interface GameState {
   turn: TurnData;
@@ -11,7 +11,7 @@ export interface GameState {
 
 export const INITIAL_STATE: GameState = {
   turn: {
-    cells: Grid.getGrid(),
+    cells: getGrid(),
   },
   ui: {
     nextColors: [],

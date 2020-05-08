@@ -15,6 +15,11 @@
     "lib": [
       "es2017",
       "dom"
-    ]
-  }
+    ],
+  },
+  "exclude": [
+    "**/*.mock.ts",
+    "**/*.prod.ts",
+    "./src/test.ts"
+  ]
 }
