@@ -1,6 +1,6 @@
 import { browser } from 'protractor';
 import { GameState } from '../../src/app/core/shared';
-import { GridFactoryService } from '../../src/app/core/grid-factory.service';
+import { GridFactoryService } from '../../src/app/core/services/grid-factory.service';
 
 export class Application {
   navigateTo() {

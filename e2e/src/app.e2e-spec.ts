@@ -1,7 +1,7 @@
 import { Application } from './app.po';
 import { $, browser } from 'protractor';
-import { cloneDeep, INITIAL_STATE, BallColor, BallState } from '../../src/app/core/shared';
-import { getChangedStateMock } from '../../src/app/core/grid.mock';
+import { getInitialState, BallColor, BallState } from '../../src/app/core/shared';
+import { getChangedStateMock } from '../../src/app/core/services/grid.mock';
 
 describe('App', () => {
   let app: Application;
@@ -21,7 +21,7 @@ describe('App', () => {
   });
 
   it('should restore state data from localStorage', () => {
-    const initialState = getChangedStateMock(cloneDeep(INITIAL_STATE), null, [{
+    const initialState = getChangedStateMock(getInitialState(), null, [{
       id: 0,
       ball: { id: 0, color: BallColor.red, state: BallState.active }
     }]);
