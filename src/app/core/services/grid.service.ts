@@ -4,7 +4,6 @@ import { scan, share } from 'rxjs/operators';
 
 import {
   Cell,
-  Path,
   BallState,
   BallColor,
   Actions,
@@ -13,8 +12,9 @@ import {
   GameState,
   GridAnimationType
 } from '../shared';
-import { GridFactoryService } from './grid-factory.service';
 import * as Grid from '../shared/grid';
+import * as Path from '../shared/path';
+import { GridFactoryService } from './grid-factory.service';
 
 
 export const SCORE_MULTIPLIER = 10;

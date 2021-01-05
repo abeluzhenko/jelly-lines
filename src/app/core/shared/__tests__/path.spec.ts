@@ -1,4 +1,5 @@
-import { Cell, BallState, BallColor, Path, PathCell } from '../index';
+import { Cell, BallState, BallColor, PathCell } from '../';
+import * as Path from '../path';
 
 
 const DEFAULT_LENGTH = 100;
@@ -67,7 +68,7 @@ describe('Path module', () => {
   describe('getAdjacent should return', () => {
     const grid = generatePathGridMock();
 
-    const getCellsByIndex = (...indecies: number[]) => indecies.map((i) => grid[i]);
+    const getCellsByIndex = (...indices: number[]) => indices.map((i) => grid[i]);
 
     const isAdjacent = (
       cells: PathCell[]
@@ -110,7 +111,7 @@ describe('Path module', () => {
 
   describe('getDistance should return', () => {
     // tslint:disable: no-magic-numbers
-    it('return a correct Manhatan distance value', () => {
+    it('return a correct Manhattan distance value', () => {
       expect(Path.getDistance({ index: 0 }, { index: 22 }, 10)).toBe(4, 'forward');
       expect(Path.getDistance({ index: 10 }, { index: 11 }, 10)).toBe(1, 'one step');
       expect(Path.getDistance({ index: 50 }, { index: 50 }, 10)).toBe(0, 'the same cell');
@@ -175,7 +176,7 @@ describe('Path module', () => {
   describe('getPath should return', () => {
     let grid: PathCell[];
 
-    const getIndecies = (values: ({ index: number })[]): number[] =>
+    const getIndices = (values: ({ index: number })[]): number[] =>
       values.map(({ index }) => index);
 
     beforeEach(() => {
@@ -185,13 +186,13 @@ describe('Path module', () => {
     // tslint:disable: no-magic-numbers
     it('a simple path', () => {
       const actualPath = Path.getPath(grid[0], grid[1], grid, 0, DEFAULT_SIZE);
-      expect(getIndecies(actualPath)).toEqual([0, 1]);
+      expect(getIndices(actualPath)).toEqual([0, 1]);
     });
 
     it('a corner path', () => {
       const actualPath = Path.getPath(grid[0], grid[99], grid, 0, DEFAULT_SIZE);
 
-      expect(getIndecies(actualPath))
+      expect(getIndices(actualPath))
         .toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 29, 39, 49, 59, 69, 79, 89, 99]);
     });
 
@@ -201,11 +202,11 @@ describe('Path module', () => {
       }
       const actualPath = Path.getPath(grid[0], grid[20], grid, 0, DEFAULT_SIZE);
 
-      expect(getIndecies(actualPath))
+      expect(getIndices(actualPath))
         .toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 19, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20]);
     });
 
-    it('an intraversable path', () => {
+    it('an untraversable path', () => {
       for (let i = 0; i < 10; i++) {
         grid[10 + i].cost = Number.POSITIVE_INFINITY;
       }
